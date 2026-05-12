@@ -5,6 +5,7 @@ This folder contains reusable prompt files for MCP-driven workflows.
 ## Commands
 - `/get-ado-details <ado-link-or-id>`
 - `/figma-to-code <optional-ado-link-or-figma-link>`
+- `/validate-ui <optional-url-or-route>`
 - `/create-pr <optional-ado-link-or-change-summary>`
 
 ## MCP Prerequisites

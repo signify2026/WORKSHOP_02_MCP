@@ -25,7 +25,12 @@ Process:
      - Description:
      - Acceptance Criteria:
      - Comments:
-5. End by asking if user wants next actions (branch creation, TODO extraction, file impact analysis).
+5. **Extract Figma Links**: Scan the description and comments for Figma URLs (https://figma.com/...). 
+   - If found, highlight them in a "Design References" section
+   - Preserve context around each link (e.g., full-page link vs widget link)
+6. End by suggesting next actions. Prioritize as follows:
+   - If Figma links found: Suggest `/figma-to-code` with the extracted Figma link(s)
+   - Otherwise: Ask if user wants branch creation, TODO extraction, or file impact analysis
 
 Use these rules:
 - Follow `.github/instructions/azure-devops.instructions.md`.

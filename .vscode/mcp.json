@@ -32,6 +32,13 @@
         "@azure-devops/mcp",
         "${input:azure-devops-org}"
       ]
+    },
+    "playwright": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@playwright/mcp@latest"
+      ]
     }
   }
 }
