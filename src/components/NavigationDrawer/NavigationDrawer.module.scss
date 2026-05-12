@@ -1,0 +1,194 @@
+// Navigation Drawer Styles - Exact Figma Design Implementation
+
+.navigationDrawer {
+    position: fixed;
+    left: 0;
+    top: 60px; /* Below header - exact height from Figma */
+    width: 280px; /* Width from Figma: 210px + 40px padding + 30px for borders/spacing */
+    height: calc(100vh - 60px);
+    background-color: #FFFFFF; /* White background as per Figma */
+    border-right: 1px solid rgba(60, 65, 80, 0.2); /* Border from Figma */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    z-index: 100;
+    transition: width 0.3s ease, transform 0.3s ease;
+    overflow: hidden;
+}
+
+/* Collapsed state */
+.collapsed {
+    width: 64px; /* Just enough for icons + padding */
+}
+
+.menuContainer {
+    padding: 40px 0 0; /* Top padding as per Figma */
+    display: flex;
+    flex-direction: column;
+    gap: 10px; /* Gap between menu groups from Figma */
+}
+
+.menuGroup {
+    width: 100%; /* Full width instead of fixed 210px for responsiveness */
+}
+
+.menuGroupTitle {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 10px 0 16px;
+}
+
+.divider {
+    align-self: stretch;
+    height: 1px;
+    background-color: rgba(60, 65, 80, 0.2); /* Figma divider color */
+    margin: 0;
+}
+
+.labelWrapper {
+    padding: 0 16px;
+}
+
+.moreLabel {
+    font-family: 'Roboto', sans-serif;
+    font-weight: 500;
+    font-size: 11px;
+    line-height: 1.45;
+    letter-spacing: 4.55%;
+    text-transform: uppercase;
+    color: #8A8A8A; /* Figma "More" label color */
+}
+
+.menuList {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.menuListItem {
+    margin: 0;
+    padding: 0;
+}
+
+.menuItem {
+    display: flex;
+    align-items: center;
+    gap: 8px; /* Gap between icon and text from Figma */
+    width: 100%;
+    padding: 16px; /* Padding from Figma */
+    background: none;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    text-align: left;
+    
+    /* Default state styling */
+    &:hover {
+        background-color: rgba(0, 0, 0, 0.05); /* Light hover effect */
+    }
+}
+
+/* Active/Selected state - Figma blue background */
+.activeItem {
+    background-color: #DCE6F5; /* Light blue background for active state from Figma */
+    
+    .menuIcon {
+        color: #1455B4; /* Blue icon color for active state from Figma */
+    }
+    
+    .menuCaption {
+        color: #303240; /* Dark text color for active state from Figma */
+    }
+    
+    &:hover {
+        background-color: #DCE6F5;
+    }
+}
+
+.menuIcon {
+    font-size: 24px;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #636773; /* Figma icon color */
+    transition: color 0.2s ease;
+    flex-shrink: 0;
+}
+
+.menuCaption {
+    font-family: 'Roboto', sans-serif;
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 1.43;
+    letter-spacing: 0.71%;
+    color: #303240; /* Figma text color */
+    transition: color 0.2s ease;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.toggleButton {
+    padding: 16px;
+    display: flex;
+    justify-content: flex-start;
+}
+
+.chevronButton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    transition: background-color 0.2s ease, transform 0.3s ease;
+    
+    &:hover {
+        background-color: rgba(0, 0, 0, 0.05);
+        border-radius: 2px;
+    }
+}
+
+.chevronIcon {
+    font-size: 20px;
+    color: #636773; /* Figma chevron color */
+    transition: transform 0.3s ease;
+    font-weight: bold;
+    line-height: 1;
+}
+
+/* Rotate chevron when collapsed */
+.expandIcon {
+    transform: rotate(180deg);
+}
+
+/* Responsive adjustments */
+@media (max-width: 1024px) {
+    .navigationDrawer {
+        width: 240px;
+    }
+    
+    .collapsed {
+        width: 56px;
+    }
+}
+
+@media (max-width: 768px) {
+    .navigationDrawer {
+        transform: translateX(-100%);
+        
+        &:not(.collapsed) {
+            transform: translateX(0);
+        }
+    }
+    
+    .collapsed {
+        transform: translateX(-100%);
+    }
+}

@@ -1,0 +1,37 @@
+{
+  "inputs": [
+    {
+      "type": "promptString",
+      "id": "figma-api-key",
+      "description": "Figma API key",
+      "password": true
+    },
+    {
+      "type": "promptString",
+      "id": "azure-devops-org",
+      "description": "Azure DevOps organization name"
+    }
+  ],
+  "servers": {
+    "Framelink Figma MCP": {
+      "command": "cmd",
+      "args": [
+        "/c",
+        "npx",
+        "-y",
+        "figma-developer-mcp",
+        "--figma-api-key=${input:figma-api-key}",
+        "--stdio"
+      ]
+    },
+    "ado": {
+      "type": "stdio",
+      "command": "npx",
+      "args": [
+        "-y",
+        "@azure-devops/mcp",
+        "${input:azure-devops-org}"
+      ]
+    }
+  }
+}

@@ -1,0 +1,321 @@
+/* Leaderboard Table Container - Clean Integration with Filter Tabs */
+.leaderboardContainer {
+  margin-top: 0;
+  width: 100%;
+  /* Removed background, border-radius, and box-shadow for seamless integration */
+}
+
+/* Class Name Header with Divider - Attached to Table */
+.classHeaderContainer {
+  position: relative;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  padding-left: 24px;
+  background-color: #FFFFFF; /* White background to attach to table */
+  border: 1px solid #E1E3EB;
+  border-bottom: none; /* No bottom border - connects to table */
+  border-radius: 6px 6px 0 0; /* Rounded top corners only */
+}
+
+.dividerLine {
+  position: absolute;
+  top: 47px;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background-color: #CED0DB;
+}
+
+.classHeaderText {
+  font-family: 'Source Sans Pro', sans-serif;
+  font-weight: 600;
+  font-size: 18px;
+  line-height: 1.3333333333333333em;
+  color: #303240;
+}
+
+/* C-UI DataTable Custom Styling - Connected to Header */
+.leaderboardTable {
+  width: 100% !important;
+  min-width: 100%;
+  background-color: #FFFFFF;
+  border: 1px solid #E1E3EB;
+  border-top: none; /* No top border when connected to header */
+  
+  /* Ensure table takes full width */
+  table {
+    width: 100% !important;
+    table-layout: fixed; /* Fixed layout for consistent column widths */
+    border-collapse: collapse;
+  }
+  
+  /* Header styling following Figma */
+  thead th {
+    font-family: 'Source Sans Pro', sans-serif;
+    font-weight: 600;
+    font-size: 12px;
+    line-height: 1.5em;
+    text-transform: uppercase;
+    letter-spacing: 0.7142857249294009%;
+    color: #474A59;
+    padding: 6px 12px;
+    border-bottom: 1px solid #E1E3EB;
+    background: #FAFAFC;
+    text-align: left;
+    
+    &:first-child {
+      padding-left: 12px;
+      text-align: center;
+    }
+    
+    &:nth-child(3),
+    &:nth-child(4),
+    &:nth-child(5) {
+      text-align: center;
+    }
+  }
+  
+  /* Row styling following Figma */
+  tbody tr {
+    border-bottom: 1px solid #E1E3EB;
+    background: #FFFFFF;
+    
+    &:hover {
+      background-color: #F5F6FA;
+    }
+    
+    &:last-child {
+      border-bottom: none;
+    }
+  }
+  
+  /* Cell padding and alignment - Exact Figma measurements */
+  td {
+    padding: 3px 12px;
+    vertical-align: middle;
+    font-family: 'Source Sans Pro', sans-serif;
+    font-size: 14px;
+    line-height: 1.2857142857142858em;
+    color: #CECECE;
+    
+    &:first-child {
+      text-align: center;
+    }
+    
+    &:nth-child(3),
+    &:nth-child(4),
+    &:nth-child(5) {
+      text-align: center;
+    }
+  }
+}
+
+/* Standalone table styling (when no class header) */
+.leaderboardTableStandalone {
+  border-top: 1px solid #E1E3EB; /* Add top border for standalone tables */
+  border-radius: 10px 10px 0 0; /* Rounded top corners */
+}
+
+/* Column-specific styles following Figma widths */
+.rankText {
+  font-family: 'Source Sans Pro', sans-serif;
+  font-weight: 400;
+  font-size: 14px;
+  color: #CECECE;
+}
+
+.nameCell {
+  padding: 6px 0;
+}
+
+.nameText {
+  font-family: 'Source Sans Pro', sans-serif;
+  font-weight: 400;
+  font-size: 14px;
+  color: #CECECE;
+}
+
+.classText {
+  font-family: 'Source Sans Pro', sans-serif;
+  font-weight: 400;
+  font-size: 14px;
+  color: #D1D1D1;
+}
+
+.scoreText {
+  font-family: 'Source Sans Pro', sans-serif;
+  font-weight: 400;
+  font-size: 14px;
+  color: #CECECE;
+}
+
+.percentageText {
+  font-family: 'Source Sans Pro', sans-serif;
+  font-weight: 400;
+  font-size: 14px;
+  color: #CECECE;
+}
+
+/* Pagination Container - Connected to Table */
+.paginationContainer {
+  padding: 20px 24px; /* Add horizontal padding back for content */
+  background-color: #FFFFFF; /* White background to connect to table */
+  border: 1px solid #E1E3EB;
+  border-top: 1px solid #E1E3EB;
+  border-radius: 0 0 6px 6px; /* Rounded bottom corners only */
+}
+
+.paginationContent {
+  width: 100%;
+}
+
+.paginationNavigation {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.paginationRight {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.paginationInfo {
+  display: flex;
+  align-items: center;
+}
+
+.paginationText {
+  font-family: 'Source Sans Pro', sans-serif;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 1.3125em;
+  color: #3C4150;
+}
+
+.pageSizeContainer {
+  display: flex;
+  align-items: center;
+}
+
+.pageSizeSelect {
+  background: #FFFFFF;
+  border: 1px solid #E1E3EB;
+  border-radius: 2px;
+  padding: 6px 10px;
+  font-family: 'Source Sans Pro', sans-serif;
+  font-weight: 400;
+  font-size: 14px;
+  color: #3C4150;
+  min-width: 60px;
+  cursor: pointer;
+  
+  &:focus {
+    outline: none;
+    border-color: #009ECC;
+    box-shadow: 0 0 0 2px rgba(0, 158, 204, 0.2);
+  }
+  
+  &:hover {
+    border-color: #CED0DB;
+  }
+}
+
+/* Empty State Styling - Clean Integration */
+.emptyState {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 48px 24px;
+  text-align: center;
+  color: #6C6F80;
+  font-size: 16px;
+  /* Removed border, border-radius, and background for seamless integration */
+}
+
+/* Responsive Design for Mobile Devices */
+@media (max-width: 768px) {
+  .leaderboardTable {
+    table {
+      font-size: 12px;
+    }
+    
+    thead th {
+      padding: 4px 8px;
+      font-size: 10px;
+    }
+    
+    tbody td {
+      padding: 2px 8px;
+      font-size: 12px;
+    }
+  }
+  
+  .nameCell {
+    padding: 4px 0;
+    
+    /* Stack avatar and name on mobile */
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+  
+  .paginationContainer {
+    padding: 12px 0; /* Remove horizontal padding */
+  }
+  
+  .paginationContent {
+    flex-direction: column;
+    gap: 12px;
+    align-items: stretch;
+  }
+  
+  .paginationInfo {
+    justify-content: center;
+  }
+  
+  .pageSizeContainer {
+    justify-content: center;
+  }
+  
+  .pageSizeSelect {
+    width: 100%;
+    max-width: 120px;
+  }
+}
+
+@media (max-width: 480px) {
+  .leaderboardContainer {
+    margin: 0 -16px; /* Extend to screen edges on very small screens */
+    /* Removed border-radius override */
+  }
+  
+  .leaderboardTable {
+    /* Removed border-radius override */
+    
+    table {
+      font-size: 11px;
+    }
+    
+    thead th {
+      padding: 3px 6px;
+      font-size: 9px;
+    }
+    
+    tbody td {
+      padding: 2px 6px;
+      font-size: 11px;
+    }
+  }
+  
+  .nameCell {
+    gap: 3px;
+  }
+  
+  .paginationContainer {
+    padding: 8px 0; /* Remove horizontal padding */
+    /* Removed border-radius override */
+  }
+}

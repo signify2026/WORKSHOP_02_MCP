@@ -1,0 +1,113 @@
+// MainPage - Layout for EPAM Campus Leaderboard
+.mainContainer {
+  min-height: 100vh;
+  background-color: #F5F6FA;
+  display: flex;
+  flex-direction: column;
+  padding-top: 60px; // Account for fixed header height
+}
+
+// Content layout - positioned below header
+.contentLayout {
+  display: flex;
+  flex: 1;
+  position: relative;
+  min-height: calc(100vh - 60px); // Ensure full height minus header
+}
+
+// Navigation Drawer styling
+.navigationDrawer {
+  flex-shrink: 0;
+  transition: all 0.3s ease;
+}
+
+// Main content area - Exact Figma spacing: 24px gap from sidebar
+.mainContentArea {
+  flex: 1;
+  margin-left: 280px; // Account for fixed drawer width (280px)
+  transition: margin-left 0.3s ease;
+  background-color: #F5F6FA;
+}
+
+// Expanded content when drawer is collapsed
+.expandedContent {
+  margin-left: 64px; // Account for collapsed drawer width (64px)
+}
+
+// Class Overview Cards Section
+.classOverviewSection {
+  margin-bottom: 32px; // Space between sections per Figma layout
+}
+
+// Leaderboard Section - Using UUI FlexRow for proper spacing
+.leaderboardSection {
+  .sectionTitle {
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--uui-color-neutral-80);
+    margin: 0 0 20px 0;
+    font-family: 'Source Sans Pro', sans-serif;
+  }
+}
+
+// Right sidebar for Learning Programme Widget
+.rightSidebar {
+  position: relative;
+  height: fit-content;
+  align-self: flex-start;
+  
+  > div {
+    position: sticky;
+    top: 84px; // Account for header height (60px) + spacing
+  }
+}
+
+.widgetPlaceholder {
+  padding: 20px;
+  text-align: center;
+  background: var(--cui-color-surface-main);
+  border-radius: 12px;
+  border: 1px solid var(--cui-color-border-default);
+  color: var(--cui-color-text-secondary);
+  font-size: 14px;
+}
+
+.widgetError {
+  padding: 20px;
+  text-align: center;
+  background: var(--cui-color-surface-main);
+  border-radius: 12px;
+  border: 1px solid var(--cui-color-border-critical);
+  color: var(--cui-color-text-critical);
+  font-size: 14px;
+}
+
+// Responsive adjustments
+@media (max-width: 1024px) {
+  .mainContentArea {
+    margin-left: 240px; // Adjusted for smaller drawer width
+  }
+  
+  .expandedContent {
+    margin-left: 56px; // Adjusted for smaller collapsed width
+  }
+  
+  // Hide right sidebar on tablets and smaller
+  .rightSidebar {
+    display: none;
+  }
+}
+
+@media (max-width: 768px) {
+  .mainContentArea {
+    margin-left: 0; // Full width on mobile (drawer slides out)
+  }
+  
+  .expandedContent {
+    margin-left: 0; // Full width when collapsed on mobile
+  }
+  
+  .rightSidebar {
+    display: none; // Hide on mobile
+  }
+}

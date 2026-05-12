@@ -1,0 +1,142 @@
+/* Learning Programme Widget Styles - Following Figma Design Exactly */
+
+.widgetContainer {
+  max-width: 320px;
+  min-width: 280px;
+  padding: 20px;
+  border-radius: 12px;
+  border: 1px solid var(--cui-color-border-default);
+  background: var(--cui-color-surface-main);
+  box-shadow: var(--cui-shadow-level-1);
+}
+
+/* Header Section */
+.header {
+  margin-bottom: 16px;
+}
+
+.timeBadge {
+  padding: 6px 12px;
+  border-radius: 20px;
+  background-color: var(--cui-color-bg-secondary);
+  border: 1px solid var(--cui-color-border-subtle);
+  font-size: 12px;
+  font-weight: 500;
+}
+
+/* Overall Progress Bar Section */
+.overallProgressContainer {
+  margin-bottom: 20px;
+}
+
+.multiColorProgressBar {
+  display: flex;
+  height: 8px;
+  background-color: var(--cui-color-bg-subtle);
+  border-radius: 4px;
+  overflow: hidden;
+  width: 100%;
+}
+
+.progressSegment {
+  height: 100%;
+  transition: width 0.3s ease;
+}
+
+.segment-success {
+  background-color: #7cb342; /* Green for JavaScript */
+}
+
+.segment-info {
+  background-color: #2196f3; /* Blue for Java */
+}
+
+.segment-neutral {
+  background-color: #616161; /* Gray for Microsoft */
+}
+
+/* Programme List */
+.programmeList {
+  gap: 12px;
+  display: flex;
+  flex-direction: column;
+}
+
+.programmeRow {
+  padding: 4px 0;
+  align-items: center;
+}
+
+/* Color Indicators (dots) */
+.colorIndicator {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.color-success {
+  background-color: #7cb342; /* Green dot for JavaScript */
+}
+
+.color-info {
+  background-color: #2196f3; /* Blue dot for Java */
+}
+
+.color-neutral {
+  background-color: #616161; /* Gray dot for Microsoft */
+}
+
+/* Text Elements */
+.programmeName {
+  flex: 1;
+  min-width: 0; /* Allows text to truncate if needed */
+}
+
+.progressPercentage {
+  font-weight: 500;
+  min-width: 40px;
+  text-align: right;
+}
+
+.timeSpent {
+  min-width: 60px;
+  text-align: right;
+  color: var(--cui-color-text-secondary);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .widgetContainer {
+    max-width: 100%;
+    min-width: 240px;
+  }
+  
+  .timeSpent {
+    font-size: 12px;
+    min-width: 50px;
+  }
+}
+
+/* Hover states for better UX */
+.programmeRow:hover {
+  background-color: var(--cui-color-bg-hover);
+  border-radius: 6px;
+  padding: 8px 4px;
+  margin: -4px 0;
+}
+
+/* Animation for progress bar updates */
+@keyframes progressUpdate {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+.progressSegment {
+  transform-origin: left;
+  animation: progressUpdate 0.5s ease-out;
+}
