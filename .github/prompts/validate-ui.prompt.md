@@ -1,14 +1,11 @@
 ---
-description: "Launch the app, validate rendered UI against Figma design using Playwright, and fix discrepancies."
 agent: agent
-argument-hint: "URL or route to validate (default: http://localhost:3000)"
+description: "Launch the app, validate rendered UI against Figma design using Playwright, and fix discrepancies."
 tools:
-  - read
-  - edit
-  - search
-  - execute
-  - playwright/*
-  - Framelink Figma MCP/*
+  - mcp_playwright
+  - mcp_framelink
+  - run_in_terminal
+  - read_file
 ---
 
 # Validate UI with Playwright
@@ -57,7 +54,7 @@ This prompt pairs with the **Playwright Validation** skill (`.github/skills/play
 
 ## Rules
 
-- Design constraints from `.github/instructions/figma-instructions.md` apply automatically for `.tsx`/`.scss` edits.
+- Follow `.github/instructions/figma-instructions.md` for design accuracy standards.
 - Follow `.github/skills/playwright-validation/SKILL.md` for validation patterns.
 - Use Playwright MCP tools for all browser interactions (navigate, snapshot, click, screenshot).
 - Fix UI using UUI library components (`@epam/uui`, `@epam/uui-components`, `@epam/uui-core`).

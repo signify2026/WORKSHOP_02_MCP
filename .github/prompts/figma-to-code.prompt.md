@@ -1,19 +1,15 @@
 ---
-description: "Convert Figma design into implemented React components using UUI library."
 agent: agent
-argument-hint: "Figma URL, local image path, or context from /get-user-story"
+description: "Convert Figma design into implemented React components using UUI library."
 tools:
-  - read
-  - edit
-  - search
-  - Framelink Figma MCP/*
+  - mcp_framelink
+  - read_file
+  - semantic_search
 ---
 
 # Figma to Code
 
 Convert a Figma design into a fully implemented React component using the UUI library.
-
-This prompt uses the **Figma Analysis** skill (`.github/skills/figma-analysis/SKILL.md`) for design analysis methodology, and the **Figma Design Constraints** instruction (`.github/instructions/figma-instructions.md`) auto-loads for `.tsx`/`.scss` files.
 
 ## Inputs
 
@@ -30,14 +26,14 @@ If none are available, ask the user for design details using the fallback templa
    - If a Figma URL is provided → use `Framelink Figma MCP` server to retrieve design data.
    - If local image paths are referenced → read and analyze those images.
    - If neither → ask for manual design details.
-2. **Analyze the design** (follow `.github/skills/figma-analysis/SKILL.md` methodology):
+2. **Analyze the design**:
    - Parse layout structure and component hierarchy.
    - Extract dimensions, spacing, padding, margins, and alignment.
    - Identify typography (font family, size, weight, color).
-   - Map UI elements to UUI components (check `.github/instructions/uui-library/`).
+   - Map UI elements to UUI components.
 3. **Present implementation plan**:
    - Layout interpretation with component tree.
-   - UUI component mapping table.
+   - UUI component mapping (reference `.github/instructions/uui-library/` docs).
    - File structure plan (component file, SCSS module, test file, index barrel).
    - Ask for user confirmation before generating code.
 4. **Generate code**:
@@ -58,8 +54,8 @@ If no Figma link or image is available, ask user to provide:
 
 ## Rules
 
-- Follow `.github/skills/figma-analysis/SKILL.md` for design analysis methodology.
-- Design constraints from `.github/instructions/figma-instructions.md` apply automatically.
+- Follow `.github/instructions/figma-instructions.md` for design accuracy.
+- Generate implementation strictly with UUI library (`@epam/uui`, `@epam/uui-components`, `@epam/uui-core`).
 - Before custom markup, search `.github/instructions/uui-library/` for the closest matching UUI component.
 - Keep design replication pixel-accurate.
 - Ask clarifying questions for ambiguous placement or style.
