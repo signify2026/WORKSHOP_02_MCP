@@ -1,38 +1,40 @@
 ---
+description: "[BONUS — requires ADO access] Fetch Azure DevOps work item details from a provided ADO link or ID."
 agent: agent
-description: Fetch Azure DevOps work item details from a provided ADO link or ID, with manual fallback.
+argument-hint: "ADO work item URL or ID"
+tools:
+  - ado/*
 ---
 
-Command: /get-ado-details <ado-link-or-id>
+# Get ADO Details (Bonus Extension)
 
-Objective:
-- Retrieve and present Azure DevOps work item details.
-- If no valid ADO link/ID is passed, ask for manual work item details.
+> **Note**: This prompt requires access to an Azure DevOps organization via the `ado` MCP server.
+> For the main flow, use `/get-user-story` instead which reads a local user story file.
 
-Process:
-1. Parse the parameter after `/get-ado-details` as ADO URL, ID, or query text.
-2. Use the `ado` MCP server to fetch details.
-3. Return a structured output with:
+## Objective
+
+Retrieve and present Azure DevOps work item details from a provided link or ID.
+
+## Steps
+
+1. **Parse input**: Accept an ADO URL, work item ID, or query text.
+2. **Fetch from ADO**: Use the `ado` MCP server to retrieve work item details.
+3. **Present structured output**:
    - Work item type, ID, title
    - Status, assignee, priority
-   - Description
+   - Description (preserve markdown)
    - Acceptance criteria
    - Comments/history highlights
-4. If MCP retrieval fails or parameter is missing:
-   - Ask user to provide manual details in this format:
-     - ID:
-     - Title:
-     - Description:
-     - Acceptance Criteria:
-     - Comments:
-5. **Extract Figma Links**: Scan the description and comments for Figma URLs (https://figma.com/...). 
-   - If found, highlight them in a "Design References" section
-   - Preserve context around each link (e.g., full-page link vs widget link)
-6. End by suggesting next actions. Prioritize as follows:
-   - If Figma links found: Suggest `/figma-to-code` with the extracted Figma link(s)
-   - Otherwise: Ask if user wants branch creation, TODO extraction, or file impact analysis
+4. **Fallback on failure**: If the MCP call fails or no input is provided, ask user for:
+   - ID, Title, Description, Acceptance Criteria, Comments
+5. **Extract design references**: Scan description and comments for Figma URLs.
+   - If found, present in a **Design References** section with context.
+6. **Suggest next steps**:
+   - If Figma links found → suggest `/figma-to-code`
+   - Otherwise → suggest implementation planning or file impact analysis
 
-Use these rules:
+## Rules
+
 - Follow `.github/instructions/azure-devops.instructions.md`.
 - Preserve markdown formatting in descriptions and comments.
 - Do not fabricate missing fields.

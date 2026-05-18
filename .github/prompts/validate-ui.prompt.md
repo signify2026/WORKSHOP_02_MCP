@@ -1,53 +1,65 @@
 ---
+description: "Launch the app, validate rendered UI against Figma design using Playwright, and fix discrepancies."
 agent: agent
-description: Launch the app, open it in the browser, navigate to a screen, visually validate UI against Figma design, and fix issues.
+argument-hint: "URL or route to validate (default: http://localhost:3000)"
+tools:
+  - read
+  - edit
+  - search
+  - execute
+  - playwright/*
+  - Framelink Figma MCP/*
 ---
 
-Command: /validate-ui <optional-url-or-route>
+# Validate UI with Playwright
 
-Objective:
-- Start the project dev server, open the app in the browser, visually validate the rendered UI against the Figma design, and fix any discrepancies.
+Start the dev server, open the app in a browser via Playwright MCP, visually validate the rendered UI against the design, and fix any discrepancies — all live.
 
-Process:
+This prompt pairs with the **Playwright Validation** skill (`.github/skills/playwright-validation/SKILL.md`) which provides best-practice patterns for UI validation.
+
+## Steps
+
 1. **Start the dev server**:
-   - Run `npm start` in the terminal (background process).
-   - Wait for the server to be ready (default: `http://localhost:3000`).
+   - Run `npm start` as a background process.
+   - Wait for `http://localhost:3000` to be ready.
+
 2. **Open the app in the browser**:
-   - Use the Playwright browser tools to open the app URL.
-   - If a specific route or URL is provided as parameter, navigate to it.
-   - Otherwise, open the root URL.
+   - Use Playwright MCP tools to navigate to the app URL.
+   - If a specific route is provided, navigate there; otherwise open the root.
+
 3. **Capture the current state**:
-   - Take a screenshot of the rendered page.
-   - Read the page DOM structure using `read_page`.
-4. **Compare against Figma design**:
-   - If a Figma link is available (from prior `/get-ado-details` or `/figma-to-code` context), fetch the Figma design using the `Framelink Figma MCP` server.
-   - If no Figma link is available, ask the user for one or skip design comparison.
-   - Compare layout, spacing, colors, typography, component placement, and alignment.
+   - Take a snapshot/screenshot of the rendered page.
+   - Inspect the DOM structure for component hierarchy and layout.
+
+4. **Compare against the design**:
+   - If a Figma link is available (from prior `/get-user-story` or `/figma-to-code` context), fetch the design via `Framelink Figma MCP`.
+   - If local design images exist in `src/assets/figma-analysis/`, use those as reference.
+   - If neither is available, ask the user for a reference or skip comparison.
+   - Compare: layout, spacing, colors, typography, component placement, alignment.
+
 5. **Report findings**:
-   - Present a side-by-side summary of discrepancies:
-     - Layout/positioning issues
-     - Spacing/padding/margin mismatches
+   - Present a structured discrepancy summary:
+     - Layout / positioning issues
+     - Spacing / padding / margin mismatches
      - Color or typography differences
      - Missing or extra elements
-     - Responsive behavior issues
-   - Rate overall fidelity (High / Medium / Low)
-6. **Fix issues**:
-   - For each identified issue, propose a code fix.
-   - Ask user for confirmation before applying fixes.
-   - After applying fixes, reload the browser and re-validate.
-   - Repeat until user is satisfied or no issues remain.
-7. **Interactive navigation** (optional):
-   - If user requests, navigate to other routes/screens and repeat validation.
+   - Rate overall design fidelity: **High** / **Medium** / **Low**
+
+6. **Fix and re-validate** (iterative):
+   - For each issue, propose a code fix.
+   - Ask user for confirmation before applying.
+   - After applying, reload the browser and take a new screenshot.
+   - Compare again. Repeat until all issues are resolved or user is satisfied.
+
+7. **Interactive testing** (optional):
+   - Navigate to other routes/screens and repeat validation.
    - Test hover states, click interactions, and navigation flows.
 
-Inputs:
-- URL or route to validate (optional, defaults to `http://localhost:3000`)
-- Figma link for comparison (optional, can be inherited from prior workflow)
+## Rules
 
-Use these rules:
-- Follow `.github/instructions/figma-instructions.md` for design accuracy standards.
-- Use Playwright browser tools (`open_browser_page`, `navigate_page`, `screenshot_page`, `read_page`) for browser interaction.
-- Use `Framelink Figma MCP` server for fetching design context when Figma links are available.
+- Design constraints from `.github/instructions/figma-instructions.md` apply automatically for `.tsx`/`.scss` edits.
+- Follow `.github/skills/playwright-validation/SKILL.md` for validation patterns.
+- Use Playwright MCP tools for all browser interactions (navigate, snapshot, click, screenshot).
 - Fix UI using UUI library components (`@epam/uui`, `@epam/uui-components`, `@epam/uui-core`).
-- Do not stop at first issue — do a full-page scan before reporting.
+- Do a full-page scan before reporting — do not stop at the first issue.
 - Always screenshot before and after fixes to confirm resolution.
