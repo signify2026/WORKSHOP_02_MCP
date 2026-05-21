@@ -1,0 +1,1214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Playwright MCP — Complete Cheatsheet</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,500;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;500&display=swap');
+
+    /* ── tokens ── */
+    :root {
+      --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+      --font-mono: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
+      --text-xs: 0.75rem; --text-sm: 0.875rem; --text-base: 1rem;
+      --text-h1: 1.75rem; --text-h2: 1.375rem; --text-h3: 1rem; --text-h4: 0.875rem;
+      --radius-sm: 4px; --radius-md: 6px; --radius-lg: 8px; --radius-xl: 12px; --radius-full: 9999px;
+      --space-1: 0.25rem; --space-1-5: 0.375rem; --space-2: 0.5rem; --space-2-5: 0.625rem;
+      --space-3: 0.75rem; --space-4: 1rem; --space-5: 1.25rem; --space-6: 1.5rem; --space-8: 2rem;
+      --shadow-sm: 0 1px 2px rgba(0,0,0,0.4);
+      --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.5), 0 2px 4px -2px rgba(0,0,0,0.3);
+      --transition-base: 200ms ease;
+      --color-bg-page: #141416; --color-bg-card: #1A1A1C; --color-bg-secondary: #212224;
+      --color-bg-quaternary: #2C2C30; --color-bg-elevated: #2A2A2E; --color-bg-hover: #24242A;
+      --color-text-primary: #FFFFFF; --color-text-secondary: #F0EEF0; --color-text-tertiary: #CCCCCC;
+      --color-text-muted: #AAAAAA; --color-text-heading: #BBBBBB;
+      --color-border-structural: #2E2E34; --color-border-primary: #2E2E34; --color-border-secondary: #3F3F47;
+      --color-success: #259F4C; --color-success-bg: #182419; --color-success-border: #2B6B38; --color-success-text: #34D058;
+      --color-error: #F9303C; --color-error-bg: #241818; --color-error-border: #6B2B2B; --color-error-text: #FF5A65;
+      --color-warning: #F5A534; --color-warning-bg: #241E10; --color-warning-border: #5C420A; --color-warning-text: #F5A534;
+      --color-info: #2297F6; --color-info-bg: #0D1D2E; --color-info-border: #153559; --color-info-text: #4DB8FF;
+      --color-purple: #C084FC; --color-purple-bg: #20142E; --color-purple-border: #3D2060; --color-purple-text: #D8A8FF;
+      --gradient-primary-btn: linear-gradient(90deg, #672D92, #547CCC);
+      --status-success-text: #34D058; --status-success-bg: #182419; --status-success-border: #2B6B38;
+      --status-error-text: #FF5A65; --status-error-bg: #241818; --status-error-border: #6B2B2B;
+      --status-warning-text: #F5A534; --status-warning-bg: #241E10; --status-warning-border: #5C420A;
+      --status-in-progress-text: #4DB8FF; --status-in-progress-bg: #0D1D2E; --status-in-progress-border: #153559;
+      --status-advanced-text: #D8A8FF; --status-advanced-bg: #20142E; --status-advanced-border: #3D2060;
+      --status-not-started-text: #888888; --status-not-started-bg: #252525; --status-not-started-border: #3A3A3A;
+    }
+
+    /* ── reset & base ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 16px; scroll-behavior: smooth; }
+    body { font-family: var(--font-sans); font-size: var(--text-sm); line-height: 1.5;
+           color: var(--color-text-primary); background-color: var(--color-bg-page);
+           -webkit-font-smoothing: antialiased; }
+    a { color: var(--color-info-text); text-decoration: none; }
+    ul, ol { list-style: none; }
+    code, pre, kbd { font-family: var(--font-mono); }
+    code { font-size: 0.82em; background: var(--color-bg-quaternary); color: var(--color-text-secondary);
+           padding: 0.1em 0.4em; border-radius: var(--radius-sm); border: 1px solid var(--color-border-primary); }
+    pre { background: var(--color-bg-quaternary); border: 1px solid var(--color-border-primary);
+          border-radius: var(--radius-md); padding: var(--space-2-5) var(--space-3); overflow-x: auto;
+          font-size: 0.7rem; line-height: 1.6; color: var(--color-text-secondary); }
+    pre code { background: transparent; border: none; padding: 0; font-size: inherit; }
+    ::-webkit-scrollbar { width: 5px; height: 5px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--color-border-secondary); border-radius: var(--radius-full); }
+    h1 { font-size: var(--text-h1); font-weight: 700; color: var(--color-text-primary); letter-spacing: -0.02em; }
+    h2 { font-size: var(--text-h2); font-weight: 600; color: var(--color-text-primary); }
+    h3 { font-size: var(--text-h3); font-weight: 600; color: var(--color-text-primary); }
+    h4 { font-size: var(--text-h4); font-weight: 600; color: var(--color-text-primary); }
+    p { color: var(--color-text-secondary); font-size: var(--text-sm); line-height: 1.6; }
+    .text-muted { color: var(--color-text-muted); }
+    .text-xs { font-size: var(--text-xs); }
+    .text-success { color: var(--color-success-text); }
+    .text-error { color: var(--color-error-text); }
+    .text-warning { color: var(--color-warning-text); }
+    .text-info { color: var(--color-info-text); }
+    .font-semibold { font-weight: 600; }
+    .font-bold { font-weight: 700; }
+    .font-mono { font-family: var(--font-mono); }
+
+    /* ── badge ── */
+    .badge { display: inline-flex; align-items: center; gap: 0.375rem; padding: 0 0.5rem; height: 17px;
+              border-radius: var(--radius-full); border: 1px solid; font-size: 0.6rem; font-weight: 700;
+              text-transform: uppercase; letter-spacing: 0.04em; white-space: nowrap; }
+    .badge-dot { width: 6px; height: 6px; border-radius: var(--radius-full); flex-shrink: 0; display: inline-block; }
+    .badge-success { background: var(--status-success-bg); color: var(--status-success-text); border-color: var(--status-success-border); }
+    .badge-success .badge-dot { background: var(--status-success-text); }
+    .badge-error { background: var(--status-error-bg); color: var(--status-error-text); border-color: var(--status-error-border); }
+    .badge-warning { background: var(--status-warning-bg); color: var(--status-warning-text); border-color: var(--status-warning-border); }
+    .badge-in-progress { background: var(--status-in-progress-bg); color: var(--status-in-progress-text); border-color: var(--status-in-progress-border); }
+    .badge-advanced { background: var(--status-advanced-bg); color: var(--status-advanced-text); border-color: var(--status-advanced-border); }
+
+    /* ── tag ── */
+    .tag { display: inline-flex; align-items: center; padding: 1px 0.5rem; border-radius: var(--radius-md);
+            border: 1px solid var(--color-border-secondary); background: var(--color-bg-secondary);
+            font-size: 0.7rem; font-weight: 600; color: var(--color-text-tertiary); }
+    .tag-green { background: var(--color-success-bg); border-color: var(--color-success-border); color: var(--color-success-text); }
+    .tag-red { background: var(--color-error-bg); border-color: var(--color-error-border); color: var(--color-error-text); }
+    .tag-blue { background: var(--color-info-bg); border-color: var(--color-info-border); color: var(--color-info-text); }
+    .tag-amber { background: var(--color-warning-bg); border-color: var(--color-warning-border); color: var(--color-warning-text); }
+    .tag-purple { background: var(--color-purple-bg); border-color: var(--color-purple-border); color: var(--color-purple-text); }
+
+    /* ── alert ── */
+    .alert { display: flex; align-items: flex-start; gap: var(--space-2); padding: var(--space-1-5) var(--space-3);
+              border-radius: var(--radius-md); border: 1px solid; font-size: 0.7rem; line-height: 1.5; }
+    .alert-info { background: var(--color-info-bg); border-color: var(--color-info-border); color: var(--color-info-text); }
+    .alert-success { background: var(--color-success-bg); border-color: var(--color-success-border); color: var(--color-success-text); }
+    .alert-warning { background: var(--color-warning-bg); border-color: var(--color-warning-border); color: var(--color-warning-text); }
+    .alert-error { background: var(--color-error-bg); border-color: var(--color-error-border); color: var(--color-error-text); }
+
+    /* ── table ── */
+    .table-wrapper { width: 100%; overflow-x: auto; }
+    table.table { width: 100%; border-collapse: collapse; font-size: 0.68rem; }
+    .table thead tr th { text-align: left; padding: var(--space-1-5) var(--space-2-5); font-weight: 600;
+                          color: var(--color-text-primary); background: var(--color-bg-quaternary);
+                          border-bottom: 1px solid var(--color-border-secondary); white-space: nowrap; }
+    .table thead tr th:first-child { border-radius: var(--radius-md) 0 0 0; }
+    .table thead tr th:last-child { border-radius: 0 var(--radius-md) 0 0; }
+    .table tbody tr td { padding: var(--space-1-5) var(--space-2-5); color: var(--color-text-secondary);
+                          border-bottom: 1px solid var(--color-border-structural); vertical-align: top; }
+    .table tbody tr:last-child td { border-bottom: none; }
+    .table tbody tr:hover td { background: var(--color-bg-hover); }
+    .table .cat-header td { background: var(--color-bg-elevated); color: var(--color-text-muted);
+                              font-size: 0.6rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em;
+                              padding: var(--space-1) var(--space-2-5); border-bottom: 1px solid var(--color-border-secondary); }
+
+    /* ── utilities ── */
+    .flex { display: flex; } .flex-col { flex-direction: column; } .items-center { align-items: center; }
+    .items-start { align-items: flex-start; } .justify-between { justify-content: space-between; }
+    .flex-wrap { flex-wrap: wrap; } .flex-1 { flex: 1; } .flex-shrink-0 { flex-shrink: 0; }
+    .grid { display: grid; } .gap-2 { gap: var(--space-2); } .gap-3 { gap: var(--space-3); }
+    .gap-4 { gap: var(--space-4); } .gap-6 { gap: var(--space-6); }
+    .mt-1 { margin-top: var(--space-1); } .mt-2 { margin-top: var(--space-2); }
+    .mt-3 { margin-top: var(--space-3); } .mt-4 { margin-top: var(--space-4); }
+    .mb-2 { margin-bottom: var(--space-2); } .mb-3 { margin-bottom: var(--space-3); } .mb-4 { margin-bottom: var(--space-4); }
+    .p-3 { padding: var(--space-3); } .p-4 { padding: var(--space-4); }
+    .w-full { width: 100%; } .min-w-0 { min-width: 0; }
+    .border-top { border-top: 1px solid var(--color-border-structural); }
+    .rounded-lg { border-radius: var(--radius-lg); }
+    .overflow-hidden { overflow: hidden; }
+
+    /* ── layout ── */
+    .container { max-width: 1440px; margin: 0 auto; padding: 0 var(--space-6); }
+
+    .page-header { padding: var(--space-5) 0 var(--space-3); border-bottom: 1px solid var(--color-border-structural); margin-bottom: var(--space-3); }
+    .page-header h1 { font-size: 1.5rem; margin-bottom: 4px; }
+    .page-header p { font-size: 0.78rem; color: var(--color-text-muted); }
+
+    /* ── nav strip ── */
+    .nav-strip { display: flex; gap: var(--space-1); flex-wrap: wrap; align-items: center;
+                 padding: var(--space-2) 0; border-bottom: 1px solid var(--color-border-structural);
+                 margin-bottom: var(--space-4); }
+    .nav-pill { display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.2rem 0.6rem;
+                border-radius: var(--radius-full); font-size: 0.65rem; font-weight: 600;
+                color: var(--color-text-muted); border: 1px solid var(--color-border-structural);
+                background: var(--color-bg-secondary); text-decoration: none;
+                transition: all var(--transition-base); white-space: nowrap; }
+    .nav-pill:hover { border-color: var(--color-info-border); color: var(--color-info-text); background: var(--color-info-bg); }
+
+    /* ── section label ── */
+    .section-label {
+      font-size: 0.6rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.1em; color: var(--color-text-heading);
+      margin-bottom: var(--space-2); margin-top: var(--space-5); display: flex; align-items: center; gap: var(--space-2);
+    }
+    .section-label:first-of-type { margin-top: 0; }
+    .section-label::after { content: ''; flex: 1; height: 1px; background: var(--color-border-structural); }
+
+    /* ── cheat grid ── */
+    .cheat-grid { display: grid; gap: var(--space-3); margin-bottom: var(--space-3); align-items: start; }
+    .grid-3 { grid-template-columns: repeat(3, 1fr); }
+    .grid-2 { grid-template-columns: repeat(2, 1fr); }
+    .grid-2-1 { grid-template-columns: 2fr 1fr; }
+    .grid-1-2 { grid-template-columns: 1fr 2fr; }
+    .grid-4 { grid-template-columns: repeat(4, 1fr); }
+
+    /* ── section cards ── */
+    .section-card { background: var(--color-bg-card); border: 1px solid var(--color-border-structural);
+                    border-radius: var(--radius-xl); overflow: hidden; display: flex; flex-direction: column;
+                    align-self: start; /* never stretch to match tallest sibling */ }
+    .section-card.green { border-color: var(--color-success-border); }
+    .section-card.red   { border-color: var(--color-error-border); }
+    .section-card.amber { border-color: var(--color-warning-border); }
+    .section-card.blue  { border-color: var(--color-info-border); }
+    .section-card.purple { border-color: var(--color-purple-border); }
+
+    .section-card-header {
+      display: flex; align-items: center; gap: var(--space-1-5);
+      padding: var(--space-2) var(--space-3);
+      border-bottom: 1px solid var(--color-border-structural);
+      background: var(--color-bg-secondary); flex-shrink: 0;
+    }
+    .section-card.green  .section-card-header { background: var(--color-success-bg); border-color: var(--color-success-border); }
+    .section-card.red    .section-card-header { background: var(--color-error-bg);   border-color: var(--color-error-border); }
+    .section-card.amber  .section-card-header { background: var(--color-warning-bg); border-color: var(--color-warning-border); }
+    .section-card.blue   .section-card-header { background: var(--color-info-bg);    border-color: var(--color-info-border); }
+    .section-card.purple .section-card-header { background: var(--color-purple-bg);  border-color: var(--color-purple-border); }
+
+    .section-card-title { font-size: 0.7rem; line-height: 1; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; }
+    .section-card.green  .section-card-title { color: var(--color-success-text); }
+    .section-card.red    .section-card-title { color: var(--color-error-text); }
+    .section-card.amber  .section-card-title { color: var(--color-warning-text); }
+    .section-card.blue   .section-card-title { color: var(--color-info-text); }
+    .section-card.purple .section-card-title { color: var(--color-purple-text); }
+    .section-card        .section-card-title { color: var(--color-text-muted); }
+
+    .section-card-body { padding: var(--space-3); font-size: 0.7rem; }
+    .section-card-body.no-pad { padding: 0; }
+
+    /* ── inline items ── */
+    .item-row { display: flex; gap: var(--space-2); align-items: flex-start; padding: var(--space-1) 0;
+                border-bottom: 1px solid var(--color-border-structural); }
+    .item-row:last-child { border-bottom: none; }
+    .item-icon { flex-shrink: 0; margin-top: 1px; font-size: 0.7rem; }
+    .item-icon.ok::before  { content: '✓'; color: var(--color-success-text); font-weight: 700; }
+    .item-icon.no::before  { content: '✕'; color: var(--color-error-text);   font-weight: 700; }
+    .item-icon.warn::before { content: '⚠'; color: var(--color-warning-text); font-weight: 700; }
+    .item-icon.num { color: var(--color-info-text); font-weight: 700; font-size: 0.65rem; min-width: 14px; }
+
+    /* ── selector levels ── */
+    .selector-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-1-5); }
+    .sel-level { display: flex; align-items: flex-start; gap: var(--space-2); padding: var(--space-1) var(--space-2);
+                 border-radius: var(--radius-md); margin-bottom: 0; }
+    .sel-level-1 { background: rgba(52,208,88,0.10); border: 1px solid var(--color-success-border); }
+    .sel-level-2 { background: rgba(52,208,88,0.06); border: 1px solid rgba(43,107,56,0.5); }
+    .sel-level-3 { background: rgba(77,184,255,0.06); border: 1px solid rgba(21,53,89,0.8); }
+    .sel-level-4 { background: rgba(245,165,52,0.06); border: 1px solid rgba(92,66,10,0.8); }
+    .sel-level-5 { background: rgba(216,168,255,0.06); border: 1px solid rgba(61,32,96,0.8); }
+    .sel-level-6 { background: rgba(216,168,255,0.04); border: 1px solid rgba(61,32,96,0.5); }
+    .sel-level-7 { background: rgba(77,184,255,0.04); border: 1px solid rgba(21,53,89,0.5); }
+    .sel-level-x { background: rgba(255,90,101,0.08); border: 1px solid var(--color-error-border); }
+    .sel-rank { font-weight: 800; font-size: 0.82rem; min-width: 16px; flex-shrink: 0; margin-top: 1px; }
+    .sel-level-1 .sel-rank, .sel-level-2 .sel-rank { color: var(--color-success-text); }
+    .sel-level-3 .sel-rank, .sel-level-7 .sel-rank { color: var(--color-info-text); }
+    .sel-level-4 .sel-rank { color: var(--color-warning-text); }
+    .sel-level-5 .sel-rank, .sel-level-6 .sel-rank { color: var(--color-purple-text); }
+    .sel-level-x .sel-rank { color: var(--color-error-text); }
+    .sel-content { flex: 1; min-width: 0; }
+    .sel-code { font-family: var(--font-mono); font-size: 0.67rem; color: var(--color-text-secondary); }
+    .sel-why { font-size: 0.63rem; color: var(--color-text-muted); margin-top: 1px; }
+
+    /* ── flow ── */
+    .flow { display: flex; align-items: center; gap: var(--space-1); flex-wrap: wrap; margin: var(--space-2) 0; }
+    .flow-box { background: var(--color-bg-elevated); border: 1px solid var(--color-border-structural);
+                border-radius: var(--radius-md); padding: 3px var(--space-2);
+                font-size: 0.65rem; font-weight: 500; color: var(--color-text-secondary); white-space: nowrap; }
+    .flow-box.g { background: var(--color-success-bg); border-color: var(--color-success-border); color: var(--color-success-text); }
+    .flow-box.b { background: var(--color-info-bg); border-color: var(--color-info-border); color: var(--color-info-text); }
+    .flow-arrow { color: var(--color-text-muted); font-size: 0.75rem; }
+
+    /* ── step pill ── */
+    .step-row { display: flex; gap: var(--space-2); align-items: flex-start; margin-bottom: var(--space-2); }
+    .step-num { width: 18px; height: 18px; border-radius: var(--radius-full); display: flex; align-items: center;
+                justify-content: center; font-size: 0.6rem; font-weight: 700; flex-shrink: 0;
+                background: var(--color-info-bg); color: var(--color-info-text); border: 1px solid var(--color-info-border); }
+    .step-num.green { background: var(--color-success-bg); color: var(--color-success-text); border-color: var(--color-success-border); }
+    .step-num.amber { background: var(--color-warning-bg); color: var(--color-warning-text); border-color: var(--color-warning-border); }
+    .step-num.red   { background: var(--color-error-bg); color: var(--color-error-text); border-color: var(--color-error-border); }
+    .step-body { flex: 1; min-width: 0; }
+    .step-title { font-size: 0.7rem; font-weight: 600; color: var(--color-text-primary); margin-bottom: 2px; }
+    .step-desc { font-size: 0.65rem; color: var(--color-text-muted); line-height: 1.45; }
+
+    /* ── two-col split inside card ── */
+    .split-2 { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-3); }
+
+    /* ── assert pill ── */
+    .assert-group { margin-bottom: var(--space-2); }
+    .assert-group-label { font-size: 0.58rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em;
+                           color: var(--color-text-muted); margin-bottom: var(--space-1); border-bottom: 1px solid var(--color-border-structural);
+                           padding-bottom: 2px; }
+    .assert-row { display: flex; gap: var(--space-1-5); align-items: baseline; padding: 2px 0; }
+    .assert-code { font-family: var(--font-mono); font-size: 0.65rem; color: var(--color-info-text); flex-shrink: 0; }
+    .assert-desc { font-size: 0.63rem; color: var(--color-text-muted); }
+
+    /* ── footer ── */
+    .cheat-footer { margin-top: var(--space-6); padding: var(--space-3) 0; border-top: 1px solid var(--color-border-structural);
+                    display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: var(--space-2); }
+
+    /* ── responsive ── */
+    @media (max-width: 1200px) {
+      .grid-3 { grid-template-columns: repeat(2, 1fr); }
+      .grid-4 { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 780px) {
+      .grid-3, .grid-2, .grid-2-1, .grid-1-2, .grid-4 { grid-template-columns: 1fr; }
+      .split-2, .selector-grid { grid-template-columns: 1fr; }
+    }
+
+    /* ── lucide icons ──
+       Lucide replaces <i class="icon" data-lucide="..."> with <svg class="icon ...">
+       so all size/stroke rules must target .icon directly, NOT .icon svg            */
+    .icon { display: inline-block; flex-shrink: 0; vertical-align: middle;
+            width: 12px; height: 12px; stroke-width: 2.15; }
+    .section-card-header .icon { width: 13px; height: 13px; }
+    .nav-pill .icon { width: 10px !important; height: 10px !important;
+                      stroke-width: 2.2; stroke: currentColor; margin-right: 0 !important; }
+    .section-card.green  .section-card-header .icon { stroke: var(--color-success-text); }
+    .section-card.red    .section-card-header .icon { stroke: var(--color-error-text); }
+    .section-card.amber  .section-card-header .icon { stroke: var(--color-warning-text); }
+    .section-card.blue   .section-card-header .icon { stroke: var(--color-info-text); }
+    .section-card.purple .section-card-header .icon { stroke: var(--color-purple-text); }
+    .section-card        .section-card-header .icon { stroke: var(--color-text-muted); }
+
+    @media print {
+      body { background: white; color: black; font-size: 10px; }
+      .container { max-width: 100%; padding: 0 8px; }
+      .section-card { break-inside: avoid; }
+      .cheat-grid { gap: 6px; }
+      .section-label { margin-top: 12px; }
+    }
+  </style>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+</head>
+<body>
+<div class="container" style="padding-top: var(--space-5); padding-bottom: var(--space-8);">
+
+  <!-- ── HEADER ── -->
+  <div class="page-header">
+    <div class="flex items-center justify-between flex-wrap gap-3">
+      <div>
+        <div class="flex items-center gap-3 mb-2">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" id="Playwright--Streamline-Svg-Logos" height="26" width="26" style="flex-shrink:0;">
+            <path fill="#2d4552" d="M7.99585 13.141725c-0.87725 0.248975 -1.452775 0.685475 -1.8319 1.12165 0.363125 -0.317775 0.849525 -0.609425 1.505675 -0.795425 0.6711 -0.1902 1.243625 -0.188825 1.7167 -0.09755v-0.369925c-0.40355 -0.0369 -0.866225 -0.0075 -1.390475 0.14125Zm-1.872 -3.109775 -3.25795 0.858325s0.059375 0.083875 0.1693 0.195775l2.76235 -0.727875s-0.03915 0.5044 -0.379075 0.9556c0.643 -0.486475 0.705375 -1.281825 0.705375 -1.281825Zm2.727125 7.65675C4.26615 18.923575 1.8404825 13.61025 1.1060875 10.852425c-0.3393 -1.273 -0.487415 -2.2371 -0.5268925 -2.859275 -0.0042425 -0.0646 -0.0022825 -0.11905 0.002285 -0.16895 -0.237835 0.01435 -0.3517015 0.137975 -0.328535 0.49525 0.0394775 0.621825 0.187595 1.585875 0.526895 2.859275C1.5139075 13.936125 3.9399 19.24945 8.52475 18.0146c0.99795 -0.26885 1.747675 -0.758525 2.310475 -1.383625 -0.51875 0.468525 -1.168 0.8375 -1.98425 1.057725Zm0.861575 -10.90855v0.3263h1.79835c-0.0369 -0.115525 -0.074075 -0.219625 -0.110975 -0.3263h-1.687375Z" stroke-width="0.25"></path>
+            <path fill="#2d4552" d="M11.9129 9.46735c0.80875 0.229675 1.2365 0.7967 1.462575 1.2985l0.90175 0.2561s-0.123 -1.756175 -1.711525 -2.2074c-1.486075 -0.422225 -2.400575 0.8257 -2.5118 0.9872 0.4323 -0.308 1.063575 -0.56015 1.859 -0.3344Zm7.178175 1.3066c-1.487425 -0.424125 -2.401575 0.8264 -2.511175 0.985625 0.432625 -0.307625 1.063575 -0.559875 1.85865 -0.3331 0.80745 0.23005 1.23485 0.796375 1.461625 1.298525l0.90305 0.25705s-0.125 -1.756525 -1.71215 -2.2081Zm-0.8959 4.6305 -7.501475 -2.097125s0.0812 0.411725 0.3928 0.94485l6.3159 1.765675c0.519975 -0.30085 0.792775 -0.6134 0.792775 -0.6134ZM12.994375 19.918475C7.054675 18.326 7.77275 10.758025 8.733875 7.171825c0.395725 -1.4779 0.802575 -2.576375 1.13995 -3.312725 -0.2013 -0.041425 -0.368025 0.0646 -0.532775 0.39965 -0.358225 0.726575 -0.8163 1.90955 -1.259625 3.5656 -0.96085 3.586125 -1.67895 11.15385 4.2605 12.746325 2.79955 0.75 4.980475 -0.3899 6.60625 -2.18005 -1.543175 1.3977 -3.513425 2.181325 -5.9538 1.52785Z" stroke-width="0.25"></path>
+            <path fill="#e2574c" d="M9.7126 15.915175V14.388l-4.243175 1.2032s0.313525 -1.82175 2.526475 -2.4495c0.6711 -0.1902 1.2437 -0.1889 1.7167 -0.09755V6.780125h2.124575c-0.231325 -0.714825 -0.4551 -1.26515 -0.64305 -1.64755 -0.310925 -0.632925 -0.62965 -0.21335 -1.35325 0.39185 -0.50965 0.425775 -1.797675 1.33405 -3.7359 1.85635 -1.938275 0.522625 -3.50525 0.384025 -4.15906 0.2708 -0.9268825 -0.1599 -1.4116925 -0.36345 -1.3663375 0.34155 0.03947 0.621825 0.187595 1.58595 0.5268925 2.859275C1.8405325 13.609875 4.266525 18.9232 8.85135 17.68835c1.197625 -0.3227 2.04295 -0.960525 2.6289 -1.7735h-1.76765v0.000325ZM2.865625 10.89025l3.258275 -0.858325s-0.094975 1.25345 -1.31645 1.57545c-1.2218 0.321675 -1.941825 -0.717125 -1.941825 -0.717125Z" stroke-width="0.25"></path>
+            <path fill="#2ead33" d="M21.975075 6.8525c-0.84695 0.148475 -2.878875 0.33345 -5.389975 -0.339625 -2.5118 -0.672675 -4.17835 -1.849175 -4.838625 -2.402175 -0.936 -0.783975 -1.347725 -1.328825 -1.752925 -0.5047 -0.358225 0.726875 -0.816325 1.909875 -1.259725 3.565925 -0.960775 3.586125 -1.67885 11.15385 4.260525 12.7463 5.938125 1.591125 9.09945 -5.322175 10.0603 -8.908625 0.4434 -1.655725 0.637825 -2.9095 0.691325 -3.717925 0.061 -0.915775 -0.568025 -0.64995 -1.7709 -0.439175ZM10.0418 9.81945s0.936 -1.45575 2.523525 -1.00455c1.588525 0.451225 1.711525 2.207425 1.711525 2.207425l-4.23505 -1.202875ZM13.917 16.352c-2.79235 -0.817975 -3.223 -3.04465 -3.223 -3.04465l7.501125 2.0972c0 -0.00035 -1.5141 1.755175 -4.278125 0.94745Zm2.6521 -4.57605s0.9347 -1.45475 2.521925 -1.00225c1.587175 0.4519 1.71215 2.2081 1.71215 2.2081l-4.234075 -1.20585Z" stroke-width="0.25"></path>
+            <path fill="#d65348" d="M8.2299 14.808525 5.4695 15.590875s0.29985 -1.708225 2.33335 -2.385175l-1.563075 -5.865975 -0.135075 0.04105c-1.93825 0.5227 -3.505225 0.384025 -4.15903 0.2708 -0.9268775 -0.159825 -1.411685 -0.36345 -1.3663375 0.341625 0.0394775 0.621825 0.187595 1.585875 0.5268925 2.85925 0.7340675 2.757425 3.160075 8.07075 7.744875 6.8359l0.135075 -0.042425 -0.756275 -2.8374ZM2.8657 10.8903l3.258275 -0.858375s-0.094975 1.25345 -1.316425 1.57545c-1.221825 0.321675 -1.94185 -0.717075 -1.94185 -0.717075Z" stroke-width="0.25"></path>
+            <path fill="#1d8d22" d="m14.04295 16.382625 -0.1263 -0.0307c-2.792325 -0.8179 -3.223 -3.044575 -3.223 -3.044575l3.86805 1.0812 2.047825 -7.86915 -0.024775 -0.006525c-2.5118 -0.672675 -4.17825 -1.849175 -4.838625 -2.402175 -0.936 -0.783975 -1.347725 -1.328825 -1.752925 -0.5047 -0.357875 0.726875 -0.815975 1.909875 -1.259375 3.565925 -0.960775 3.586125 -1.67885 11.15385 4.260525 12.74625l0.121725 0.027425 0.926875 -3.562975ZM10.0418 9.819475s0.936 -1.455775 2.523525 -1.004575c1.588525 0.451225 1.711525 2.207425 1.711525 2.207425l-4.23505 -1.20285Z" stroke-width="0.25"></path>
+            <path fill="#c04b41" d="m8.37055 14.7683 -0.740275 0.2101c0.174875 0.9859 0.483125 1.93205 0.966975 2.7679 0.0842 -0.0186 0.167725 -0.034575 0.2535 -0.058075 0.2248 -0.06065 0.43325 -0.13575 0.63395 -0.21765 -0.5406 -0.802225 -0.898225 -1.726175 -1.11415 -2.702275Zm-0.289075 -6.9439c-0.3804 1.419825 -0.720725 3.46345 -0.62705 5.51325 0.167675 -0.072775 0.3448 -0.140575 0.54155 -0.1964l0.13705 -0.030625c-0.167075 -2.189525 0.194075 -4.4207 0.600925 -5.93875 0.103125 -0.384025 0.206525 -0.741225 0.3096 -1.07435 -0.166025 0.105675 -0.3448 0.213975 -0.548425 0.32555 -0.137325 0.42385 -0.276 0.887125 -0.41365 1.401325Z" stroke-width="0.25"></path>
+          </svg>
+          <h1>Playwright MCP — Complete Reference</h1>
+        </div>
+        <p>27 tools · Selector hierarchy · Prompt patterns · Assertions · Network mocking · Accessibility · CI/CD · Anti-patterns</p>
+      </div>
+      <div class="flex gap-2 flex-wrap">
+        <span class="badge badge-success"><span class="badge-dot"></span>Workshop</span>
+        <span class="badge badge-in-progress">MCP @latest</span>
+        <span class="badge badge-advanced">@playwright/test v1.49+</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── NAV STRIP ── -->
+  <nav class="nav-strip">
+    <a href="#core" class="nav-pill"><i data-lucide="brain" class="icon"></i>Core Concepts</a>
+    <a href="#tools" class="nav-pill"><i data-lucide="wrench" class="icon"></i>All 27 Tools</a>
+    <a href="#selectors" class="nav-pill"><i data-lucide="target" class="icon"></i>Selectors</a>
+    <a href="#prompting" class="nav-pill"><i data-lucide="message-square" class="icon"></i>Prompting</a>
+    <a href="#assertions" class="nav-pill"><i data-lucide="check-circle-2" class="icon"></i>Assertions</a>
+    <a href="#healing" class="nav-pill"><i data-lucide="wand-2" class="icon"></i>Self-Healing</a>
+    <a href="#reliability" class="nav-pill"><i data-lucide="waves" class="icon"></i>Reliability</a>
+    <a href="#network" class="nav-pill"><i data-lucide="globe" class="icon"></i>Network & API</a>
+    <a href="#a11y" class="nav-pill"><i data-lucide="accessibility" class="icon"></i>Accessibility</a>
+    <a href="#auth" class="nav-pill"><i data-lucide="lock" class="icon"></i>Auth</a>
+    <a href="#ci" class="nav-pill"><i data-lucide="cloud" class="icon"></i>CI/CD</a>
+    <a href="#limits" class="nav-pill"><i data-lucide="ban" class="icon"></i>Limits</a>
+    <a href="#config" class="nav-pill"><i data-lucide="settings-2" class="icon"></i>Config</a>
+  </nav>
+
+  <!-- ══════════════════════════════════════════════════════════ -->
+  <!-- SECTION: CORE CONCEPTS                                     -->
+  <!-- ══════════════════════════════════════════════════════════ -->
+  <div class="section-label" id="core">Core Concepts</div>
+  <div class="cheat-grid grid-1-2">
+
+    <!-- Mental Model -->
+    <div class="section-card blue">
+      <div class="section-card-header">
+        <i data-lucide="brain" class="icon"></i><span class="section-card-title">How Playwright MCP Sees Your App</span>
+      </div>
+      <div class="section-card-body">
+        <div class="flow mb-3">
+          <div class="flow-box b">LLM prompt</div><div class="flow-arrow">→</div>
+          <div class="flow-box b">MCP client</div><div class="flow-arrow">→</div>
+          <div class="flow-box b">browser_navigate</div><div class="flow-arrow">→</div>
+          <div class="flow-box b">browser_snapshot</div><div class="flow-arrow">→</div>
+          <div class="flow-box g">Accessibility tree</div><div class="flow-arrow">→</div>
+          <div class="flow-box g">Test code</div>
+        </div>
+        <div class="split-2">
+          <div>
+            <div class="item-row"><span class="item-icon ok"></span><span><strong>Reads:</strong> accessibility tree — ARIA roles, labels, and states. Exactly what a screen reader sees.</span></div>
+            <div class="item-row"><span class="item-icon no"></span><span><strong>Does NOT read:</strong> raw HTML, CSS class names, generated IDs. That's why tests survive refactors.</span></div>
+            <div class="item-row"><span class="item-icon ok"></span><span><code>browser_snapshot</code> → accessibility tree. Use for all test generation.</span></div>
+            <div class="item-row"><span class="item-icon warn"></span><span><code>browser_screenshot</code> → pixel image. Use only for visual docs — never for test generation.</span></div>
+          </div>
+          <div>
+            <div style="font-size:0.67rem; color:var(--color-text-muted); margin-bottom:var(--space-2); font-weight:600;">Why accessibility tree selectors outlast everything:</div>
+            <div class="item-row"><span class="item-icon ok"></span><span>CSS Module hash changes → test still passes</span></div>
+            <div class="item-row"><span class="item-icon ok"></span><span>Component renamed → test still passes</span></div>
+            <div class="item-row"><span class="item-icon ok"></span><span>UUI library upgrade → test still passes</span></div>
+            <div class="item-row"><span class="item-icon ok"></span><span>HTML structure refactored → test still passes</span></div>
+            <div class="alert alert-info mt-2" style="font-size:0.65rem;">
+              Rename a CSS class, change an element ID, upgrade your component library — none of it breaks tests written from the accessibility tree.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Selector Hierarchy -->
+    <div class="section-card green" id="selectors">
+      <div class="section-card-header">
+        <i data-lucide="target" class="icon"></i><span class="section-card-title">Selector Hierarchy — Tests That Survive</span>
+      </div>
+      <div class="section-card-body">
+        <div class="selector-grid">
+        <div class="sel-level sel-level-1">
+          <span class="sel-rank">1</span>
+          <div class="sel-content">
+            <div class="sel-code">getByRole('tab', { name: 'Class A' })</div>
+            <div class="sel-why">ARIA role + label → most resilient. First choice always.</div>
+          </div>
+        </div>
+        <div class="sel-level sel-level-2">
+          <span class="sel-rank">2</span>
+          <div class="sel-content">
+            <div class="sel-code">getByLabel('Student name')</div>
+            <div class="sel-why">Form label association → survives HTML restructure.</div>
+          </div>
+        </div>
+        <div class="sel-level sel-level-3">
+          <span class="sel-rank">3</span>
+          <div class="sel-content">
+            <div class="sel-code">getByText('Show All', { exact: true })</div>
+            <div class="sel-why">Visible text copy → always add exact:true.</div>
+          </div>
+        </div>
+        <div class="sel-level sel-level-4">
+          <span class="sel-rank">4</span>
+          <div class="sel-content">
+            <div class="sel-code">getByPlaceholder('Search students...')</div>
+            <div class="sel-why">Input placeholder text → good for search inputs.</div>
+          </div>
+        </div>
+        <div class="sel-level sel-level-5">
+          <span class="sel-rank">5</span>
+          <div class="sel-content">
+            <div class="sel-code">getByAltText('Student avatar')</div>
+            <div class="sel-why">Image alt text → use for &lt;img&gt; elements.</div>
+          </div>
+        </div>
+        <div class="sel-level sel-level-6">
+          <span class="sel-rank">6</span>
+          <div class="sel-content">
+            <div class="sel-code">getByTitle('Sort ascending')</div>
+            <div class="sel-why">Title attribute → tooltip-driven UI elements.</div>
+          </div>
+        </div>
+        <div class="sel-level sel-level-7">
+          <span class="sel-rank">7</span>
+          <div class="sel-content">
+            <div class="sel-code">getByTestId('leaderboard-row')</div>
+            <div class="sel-why">data-testid must exist in DOM — never invent.</div>
+          </div>
+        </div>
+        <div class="sel-level sel-level-x">
+          <span class="sel-rank">✕</span>
+          <div class="sel-content">
+            <div class="sel-code">#id · .class__hash · xpath=//div[3]</div>
+            <div class="sel-why">Coupled to impl → breaks on rebuild.</div>
+          </div>
+        </div>
+        </div>
+        <div class="alert alert-success mt-2" style="font-size:0.65rem;">
+          Encode in <code>copilot-instructions.md</code> → Playwright MCP follows it on every <code>tests/e2e/**</code> file automatically.
+        </div>
+      </div>
+    </div>
+
+  </div><!-- end core row -->
+
+  <!-- ══════════════════════════════════════════════════════════ -->
+  <!-- SECTION: MCP TOOL REFERENCE (FULL)                        -->
+  <!-- ══════════════════════════════════════════════════════════ -->
+  <div class="section-label" id="tools">MCP Tool Reference — All 27 Tools</div>
+  <div class="section-card blue mb-4">
+    <div class="section-card-header">
+      <i data-lucide="wrench" class="icon"></i>
+      <span class="section-card-title">Complete @playwright/mcp Tool Inventory</span>
+      <span style="margin-left:auto;font-size:0.68rem;color:var(--color-text-muted);">All tools callable via Copilot chat · navigate first, snapshot before generating</span>
+    </div>
+    <div class="section-card-body no-pad">
+      <div class="split-2" style="gap:0;">
+        <!-- Left column: Navigation + Observation + Control -->
+        <div style="border-right:1px solid var(--color-border-structural);">
+          <table class="table w-full">
+            <thead><tr><th>Tool</th><th>What it does</th><th style="width:90px;">When</th></tr></thead>
+            <tbody>
+              <tr class="cat-header"><td colspan="3">Navigation</td></tr>
+              <tr><td><code>browser_navigate</code></td><td>Go to a URL</td><td style="color:var(--color-error-text);">Always first</td></tr>
+              <tr><td><code>browser_go_back</code></td><td>Browser history back</td><td>After navigation</td></tr>
+              <tr><td><code>browser_go_forward</code></td><td>Browser history forward</td><td>After back</td></tr>
+              <tr><td><code>browser_reload</code></td><td>Reload current page</td><td>Reset app state</td></tr>
+              <tr class="cat-header"><td colspan="3">Observation</td></tr>
+              <tr><td><code>browser_snapshot</code></td><td>Read accessibility tree ⭐</td><td style="color:var(--color-success-text);">Before generating</td></tr>
+              <tr><td><code>browser_screenshot</code></td><td>Capture pixel image</td><td>Visual docs only</td></tr>
+              <tr><td><code>browser_network_requests</code></td><td>Inspect network traffic log</td><td>Debug API calls</td></tr>
+              <tr><td><code>browser_console_messages</code></td><td>Get browser console output</td><td>Debug JS errors</td></tr>
+              <tr class="cat-header"><td colspan="3">Control &amp; Utilities</td></tr>
+              <tr><td><code>browser_wait_for</code></td><td>Wait until condition is true</td><td>Async / loading</td></tr>
+              <tr><td><code>browser_evaluate</code></td><td>Run JavaScript in page context</td><td>Escape hatch — rarely</td></tr>
+              <tr><td><code>browser_resize</code></td><td>Resize the browser window</td><td>Responsive testing</td></tr>
+              <tr><td><code>browser_close</code></td><td>Close the browser instance</td><td>Cleanup / teardown</td></tr>
+              <tr><td><code>browser_pdf_save</code></td><td>Save current page as PDF</td><td>Print/report flows</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <!-- Right column: Interaction + Tabs -->
+        <div>
+          <table class="table w-full">
+            <thead><tr><th>Tool</th><th>What it does</th><th style="width:90px;">When</th></tr></thead>
+            <tbody>
+              <tr class="cat-header"><td colspan="3">Interaction</td></tr>
+              <tr><td><code>browser_click</code></td><td>Click element by selector or role</td><td>Buttons, links, tabs</td></tr>
+              <tr><td><code>browser_type</code></td><td>Type text into an input field</td><td>Form filling</td></tr>
+              <tr><td><code>browser_hover</code></td><td>Hover over an element</td><td>Tooltips, dropdowns</td></tr>
+              <tr><td><code>browser_check</code></td><td>Check or uncheck a checkbox</td><td>Checkbox inputs</td></tr>
+              <tr><td><code>browser_select_option</code></td><td>Select value from &lt;select&gt;</td><td>Native dropdowns</td></tr>
+              <tr><td><code>browser_drag</code></td><td>Drag element to target position</td><td>D&amp;D, sort UIs</td></tr>
+              <tr><td><code>browser_scroll</code></td><td>Scroll page or element</td><td>Lazy-load, tables</td></tr>
+              <tr><td><code>browser_press_key</code></td><td>Send keyboard event to page</td><td>Tab, Enter, Escape</td></tr>
+              <tr><td><code>browser_upload_file</code></td><td>Upload a local file to input</td><td>File upload forms</td></tr>
+              <tr><td><code>browser_handle_dialog</code></td><td>Accept / dismiss alert dialogs</td><td>Confirm, prompt, alert</td></tr>
+              <tr class="cat-header"><td colspan="3">Tab Management</td></tr>
+              <tr><td><code>browser_tab_new</code></td><td>Open a new browser tab</td><td>Multi-tab flows</td></tr>
+              <tr><td><code>browser_tab_list</code></td><td>List all open tabs with URLs</td><td>Multi-tab debug</td></tr>
+              <tr><td><code>browser_tab_select</code></td><td>Switch to tab by index</td><td>Multi-tab flows</td></tr>
+              <tr><td><code>browser_tab_close</code></td><td>Close a specific tab</td><td>Tab cleanup</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="flex gap-3 flex-wrap" style="padding:var(--space-2) var(--space-3); border-top:1px solid var(--color-border-structural); background:var(--color-bg-secondary);">
+        <div class="alert alert-warning" style="flex:1; font-size:0.65rem; margin:0;">
+          <strong>Trigger required:</strong> without "open a browser", "navigate to", or "open localhost" in your prompt, Playwright MCP tools are never called — Copilot writes from memory and invents selectors.
+        </div>
+        <div class="alert alert-info" style="flex:1; font-size:0.65rem; margin:0;">
+          <strong>Snapshot timing:</strong> always tell MCP to wait until feature content is visible before calling <code>browser_snapshot</code> — snapshotting a loading skeleton generates tests against placeholder elements.
+        </div>
+        <div class="alert alert-success" style="flex:1; font-size:0.65rem; margin:0;">
+          <strong>⭐ browser_snapshot</strong> is the heart of the workflow. It returns the accessibility tree that MCP reads to generate selectors — not HTML source.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════════ -->
+  <!-- SECTION: PROMPTING & ASSERTIONS & SELF-HEALING            -->
+  <!-- ══════════════════════════════════════════════════════════ -->
+  <div class="section-label" id="prompting">Prompting, Assertions &amp; Self-Healing</div>
+  <div class="cheat-grid grid-3">
+
+    <!-- Prompt Patterns -->
+    <div class="section-card blue">
+      <div class="section-card-header">
+        <i data-lucide="message-square" class="icon"></i><span class="section-card-title">Prompt Patterns</span>
+      </div>
+      <div class="section-card-body">
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:4px 8px;">
+          <div>
+            <div style="margin-bottom:2px;"><span class="tag tag-blue">/explore-app</span> <span style="font-size:0.6rem; color:var(--color-text-muted);">Opening beat</span></div>
+            <pre>"Navigate to localhost:3000.
+For each feature, describe:
+- What a user can do
+- What changes on interaction
+- Accessible via: [role+label]
+Do NOT write test code yet."</pre>
+          </div>
+          <div>
+            <div style="margin-bottom:2px;"><span class="tag tag-green">/explore-and-generate</span> <span style="font-size:0.6rem; color:var(--color-text-muted);">Generate</span></div>
+            <pre>"Open localhost:3000.
+Wait until [feature] is visible.
+Generate @playwright/test for:
+[feature description].
+Use getByRole / getByText.
+Run it — report pass/fail."</pre>
+          </div>
+          <div>
+            <div style="margin-bottom:2px;"><span class="tag tag-amber">/repair-locators</span> <span style="font-size:0.6rem; color:var(--color-text-muted);">Self-heal</span></div>
+            <pre>"Test failing after UI change.
+Navigate to [url], read the
+accessibility tree, replace
+broken selectors only.
+DO NOT change assertions.
+[paste failing test here]"</pre>
+          </div>
+          <div>
+            <div style="margin-bottom:2px;"><span class="tag tag-purple">/multi-page-flow</span> <span style="font-size:0.6rem; color:var(--color-text-muted);">Cross-page</span></div>
+            <pre>"Navigate to /login.
+Log in as [role].
+Navigate to [page].
+[interaction]. Go to [page 2].
+Verify [assertion].
+Generate test for journey."</pre>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Assertions Reference -->
+    <div class="section-card green" id="assertions">
+      <div class="section-card-header">
+        <i data-lucide="check-circle-2" class="icon"></i><span class="section-card-title">Assertions Quick Reference</span>
+      </div>
+      <div class="section-card-body">
+        <div class="split-2">
+          <div>
+            <div class="assert-group">
+              <div class="assert-group-label">Visibility &amp; State</div>
+              <div class="assert-row"><span class="assert-code">.toBeVisible()</span><span class="assert-desc">in DOM + visible</span></div>
+              <div class="assert-row"><span class="assert-code">.toBeHidden()</span><span class="assert-desc">hidden or absent</span></div>
+              <div class="assert-row"><span class="assert-code">.toBeEnabled()</span><span class="assert-desc">not disabled</span></div>
+              <div class="assert-row"><span class="assert-code">.toBeDisabled()</span><span class="assert-desc">disabled attr set</span></div>
+              <div class="assert-row"><span class="assert-code">.toBeChecked()</span><span class="assert-desc">checkbox/radio on</span></div>
+              <div class="assert-row"><span class="assert-code">.toBeFocused()</span><span class="assert-desc">has focus</span></div>
+              <div class="assert-row"><span class="assert-code">.toBeEditable()</span><span class="assert-desc">not readonly</span></div>
+              <div class="assert-row"><span class="assert-code">.toBeEmpty()</span><span class="assert-desc">no text content</span></div>
+            </div>
+            <div class="assert-group">
+              <div class="assert-group-label">Page</div>
+              <div class="assert-row"><span class="assert-code">.toHaveURL(/re/)</span><span class="assert-desc">URL pattern</span></div>
+              <div class="assert-row"><span class="assert-code">.toHaveTitle('...')</span><span class="assert-desc">document title</span></div>
+            </div>
+          </div>
+          <div>
+            <div class="assert-group">
+              <div class="assert-group-label">Content &amp; Attributes</div>
+              <div class="assert-row"><span class="assert-code">.toHaveText('...')</span><span class="assert-desc">exact text match</span></div>
+              <div class="assert-row"><span class="assert-code">.toContainText('x')</span><span class="assert-desc">substring match</span></div>
+              <div class="assert-row"><span class="assert-code">.toHaveValue('x')</span><span class="assert-desc">input value</span></div>
+              <div class="assert-row"><span class="assert-code">.toHaveAttribute()</span><span class="assert-desc">HTML attribute</span></div>
+              <div class="assert-row"><span class="assert-code">.toHaveClass('x')</span><span class="assert-desc">CSS class present</span></div>
+              <div class="assert-row"><span class="assert-code">.toHaveCount(n)</span><span class="assert-desc">exactly n matches</span></div>
+              <div class="assert-row"><span class="assert-code">.toHaveValues([])</span><span class="assert-desc">multi-select opts</span></div>
+            </div>
+            <div class="assert-group">
+              <div class="assert-group-label">Soft Assertions</div>
+              <pre style="font-size:0.68rem; padding:var(--space-1-5);"><span style="color:var(--color-success-text);">// don't stop on fail</span>
+await expect.soft(el)
+  .toBeVisible();
+expect(test.info()
+  .errors).toHaveLength(0);</pre>
+            </div>
+          </div>
+        </div>
+        <div class="border-top" style="padding-top:3px; margin-top:4px;">
+          <div style="font-size:0.68rem; color:var(--color-text-muted); margin-bottom:4px; font-weight:600;">Prefer semantic assertions — always test what the user would notice:</div>
+          <div class="item-row"><span class="item-icon no"></span><span style="font-size:0.68rem;"><code>expect(count).toBeTruthy()</code> — tells you nothing meaningful</span></div>
+          <div class="item-row"><span class="item-icon ok"></span><span style="font-size:0.68rem;"><code>expect(page.getByRole('row')).toHaveCount(25)</code> — tells you filtering worked</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Self-Healing -->
+    <div class="section-card amber" id="healing">
+      <div class="section-card-header">
+        <i data-lucide="wand-2" class="icon"></i><span class="section-card-title">Self-Healing Workflow</span>
+      </div>
+      <div class="section-card-body">
+        <div class="step-row">
+          <div class="step-num red">1</div>
+          <div class="step-body">
+            <div class="step-title">Test fails after UI change</div>
+            <div class="step-desc">CSS hash changed, ID removed, label reworded. CI goes red.</div>
+          </div>
+        </div>
+        <div class="step-row">
+          <div class="step-num amber">2</div>
+          <div class="step-body">
+            <div class="step-title">Run <code>/repair-locators</code></div>
+            <div class="step-desc">Paste the failing test. MCP navigates the live page, reads the current accessibility tree.</div>
+          </div>
+        </div>
+        <div class="step-row">
+          <div class="step-num">3</div>
+          <div class="step-body">
+            <div class="step-title">MCP returns updated selectors</div>
+            <div class="step-desc">Proposes <code>getByRole</code> / <code>getByText</code> replacements grounded in what actually exists now. Never touches assertions.</div>
+          </div>
+        </div>
+        <div class="step-row" style="margin-bottom:0;">
+          <div class="step-num green">4</div>
+          <div class="step-body">
+            <div class="step-title">Review repair — don't just accept</div>
+            <div class="step-desc">Did the selector change because the element moved, or because the <em>feature</em> changed? Verify the assertion still tests the right thing.</div>
+          </div>
+        </div>
+        <div class="border-top" style="padding-top:3px; margin-top:4px;">
+          <div style="font-size:0.68rem; color:var(--color-warning-text); font-weight:700; margin-bottom:var(--space-1);">3 review gate questions before committing</div>
+          <div class="item-row"><span class="item-icon num">Q1</span><span style="font-size:0.68rem;">Does this test describe what I want to verify?</span></div>
+          <div class="item-row"><span class="item-icon num">Q2</span><span style="font-size:0.68rem;">Does it run against the real app, not mocks?</span></div>
+          <div class="item-row"><span class="item-icon num">Q3</span><span style="font-size:0.68rem;">Would it catch the bug if the feature broke?</span></div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- end prompting row -->
+
+  <!-- ══════════════════════════════════════════════════════════ -->
+  <!-- SECTION: RELIABILITY & DEBUGGING                          -->
+  <!-- ══════════════════════════════════════════════════════════ -->
+  <div class="section-label" id="reliability">Reliability &amp; Debugging</div>
+
+  <!-- Debugging Toolkit — full width -->
+  <div class="section-card mb-3">
+    <div class="section-card-header">
+      <i data-lucide="search" class="icon"></i><span class="section-card-title">Debugging Toolkit</span>
+    </div>
+    <div class="section-card-body">
+      <div class="split-2">
+        <div>
+          <div class="step-row">
+            <div class="step-num">1</div>
+            <div class="step-body">
+              <div class="step-title">Headed + slow-mo — watch it run</div>
+              <pre>npx playwright test my.spec.ts --headed --slowmo 500</pre>
+            </div>
+          </div>
+          <div class="step-row" style="margin-bottom:0;">
+            <div class="step-num">2</div>
+            <div class="step-body">
+              <div class="step-title">Trace Viewer — full timeline</div>
+              <pre><span style="color:var(--color-warning-text);">// playwright.config.ts</span>
+use: { trace: 'on-first-retry', screenshot: 'only-on-failure' }
+<span style="color:var(--color-warning-text);">// open after failure</span>
+npx playwright show-trace test-results/*/trace.zip</pre>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div class="step-row">
+            <div class="step-num">3</div>
+            <div class="step-body">
+              <div class="step-title">Playwright Inspector</div>
+              <pre>PWDEBUG=1 npx playwright test my.spec.ts</pre>
+              <div class="step-desc">Step through actions, pick selectors, inspect accessibility tree live.</div>
+            </div>
+          </div>
+          <div class="step-row" style="margin-bottom:0;">
+            <div class="step-num">4</div>
+            <div class="step-body">
+              <div class="step-title">Codegen — record to generate</div>
+              <pre>npx playwright codegen localhost:3000</pre>
+              <div class="step-desc">Use as a starting point — always review selectors against hierarchy rules.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="border-top" style="padding-top:var(--space-1-5); margin-top:var(--space-2);">
+        <div style="font-size:0.68rem; color:var(--color-error-text); font-weight:700; margin-bottom:4px;">2 most common MCP-generated test failures</div>
+        <div class="split-2">
+          <div class="item-row"><span class="item-icon no"></span><div style="font-size:0.68rem;"><strong>Selector not found:</strong> async content wasn't loaded when MCP snapshotted. Add wait instruction then re-run <code>/repair-locators</code>.</div></div>
+          <div class="item-row"><span class="item-icon warn"></span><div style="font-size:0.68rem;"><strong>Passes but tests wrong thing:</strong> assertion checks presence, not behavior. Apply review gate Q3.</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Flakiness + Test Isolation — side by side -->
+  <div class="cheat-grid grid-2">
+
+    <div class="section-card amber">
+      <div class="section-card-header">
+        <i data-lucide="waves" class="icon"></i><span class="section-card-title">Flakiness Prevention</span>
+      </div>
+      <div class="section-card-body">
+        <div class="item-row"><span class="item-icon no"></span><div>Never use <code>page.waitForTimeout(ms)</code> — hardcoded sleep = flaky test</div></div>
+        <div class="item-row"><span class="item-icon ok"></span><div>Use <code>expect(locator).toBeVisible()</code> — Playwright retries with timeout</div></div>
+        <div class="item-row"><span class="item-icon ok"></span><div>Use <code>browser_wait_for</code> in prompt before snapshotting async content</div></div>
+        <div class="item-row"><span class="item-icon ok"></span><div>Set <code>retries: 2</code> in CI — catches one-off race conditions</div></div>
+        <div class="item-row"><span class="item-icon warn"></span><div>Detect flaky: <code>npx playwright test --repeat-each 5</code></div></div>
+        <div class="item-row"><span class="item-icon ok"></span><div>Isolate state — <code>beforeEach</code> goto + clear storage</div></div>
+        <div class="alert alert-warning" style="margin-top:var(--space-2);">
+          MCP: snapshot before async API resolves → tests target loading skeleton. Tell it: <em>"Wait until [content] is visible before snapshotting."</em>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-card green">
+      <div class="section-card-header">
+        <i data-lucide="flask-conical" class="icon"></i><span class="section-card-title">Test Isolation</span>
+      </div>
+      <div class="section-card-body">
+        <div style="font-size:0.68rem; color:var(--color-text-muted); margin-bottom:var(--space-2);">Each test must start from a known clean state — MCP tests assume the state at snapshot time.</div>
+        <pre style="margin-bottom:var(--space-2);"><span style="color:var(--color-success-text);">// ✅ Navigate + clear storage before every test</span>
+test.beforeEach(async ({ page }) => {
+  await page.goto('/');
+  await page.evaluate(() => {
+    sessionStorage.clear(); localStorage.clear();
+  });
+  await expect(page.getByRole('tablist')).toBeVisible();
+});
+<span style="color:var(--color-success-text);">// ✅ One feature per describe block</span>
+test.describe('ClassFilterTabs', () => { /* group by behaviour */ });</pre>
+        <div class="item-row"><span class="item-icon no"></span><div>Never let Test B depend on Test A having run first</div></div>
+        <div class="item-row"><span class="item-icon ok"></span><div>Set explicit state in each test — never rely on prior side effects</div></div>
+        <div class="alert alert-info mt-2" style="font-size:0.65rem;">
+          <code>fullyParallel: true</code> enforces isolation — if tests share state, parallel runs expose it immediately.
+        </div>
+      </div>
+    </div>
+
+  </div><!-- end reliability row -->
+
+  <!-- ══════════════════════════════════════════════════════════ -->
+  <!-- SECTION: AUTH · NETWORK · ACCESSIBILITY                   -->
+  <!-- ══════════════════════════════════════════════════════════ -->
+  <div class="section-label" id="auth">Auth, Network &amp; Accessibility</div>
+  <div class="cheat-grid grid-3">
+
+    <!-- Auth -->
+    <div class="section-card amber">
+      <div class="section-card-header">
+        <i data-lucide="lock" class="icon"></i><span class="section-card-title">Auth / storageState</span>
+      </div>
+      <div class="section-card-body">
+        <div style="font-size:0.68rem; color:var(--color-text-muted); margin-bottom:var(--space-2);">Log in once in <code>globalSetup</code>, save the browser session, reuse across all tests.</div>
+        <pre style="margin-bottom:3px;"><span style="color:var(--color-warning-text);">// setup.ts — runs once before all tests</span>
+import { chromium } from '@playwright/test';
+export default async function globalSetup() {
+  const browser = await chromium.launch();
+  const page = await browser.newPage();
+  await page.goto('https://app/login');
+  await page.getByLabel('Email').fill('user@company.com');
+  await page.getByLabel('Password').fill(process.env.TEST_PASS!);
+  await page.getByRole('button', { name: 'Sign in' }).click();
+  await page.waitForURL('**/dashboard');
+  await page.context().storageState({ path: 'auth.json' });
+  await browser.close();
+}</pre>
+        <pre style="margin-bottom:3px;"><span style="color:var(--color-warning-text);">// playwright.config.ts</span>
+export default defineConfig({
+  globalSetup: './setup.ts',
+  use: { storageState: 'auth.json' }
+});</pre>
+        <div class="item-row"><span class="item-icon no"></span><div>Never commit <code>auth.json</code> — add to <code>.gitignore</code></div></div>
+        <div class="alert alert-info" style="margin-top:3px;">
+          Tell MCP: <em>"Auth state is saved in auth.json — session is already active."</em>
+        </div>
+      </div>
+    </div>
+
+    <!-- Network & API -->
+    <div class="section-card blue" id="network">
+      <div class="section-card-header">
+        <i data-lucide="globe" class="icon"></i><span class="section-card-title">Network &amp; API Mocking</span>
+      </div>
+      <div class="section-card-body">
+        <div style="font-size:0.68rem; color:var(--color-text-muted); margin-bottom:var(--space-2);">Intercept requests to isolate front-end behavior, test error states, prevent external calls in CI.</div>
+        <pre style="margin-bottom:3px;"><span style="color:var(--color-success-text);">// Mock API response</span>
+await page.route('**/api/students', route =>
+  route.fulfill({ json: mockStudents, status: 200 })
+);
+
+<span style="color:var(--color-success-text);">// Assert real API was called</span>
+const [res] = await Promise.all([
+  page.waitForResponse('**/api/students'),
+  page.getByRole('button', { name: 'Load' }).click()
+]);
+expect(res.status()).toBe(200);</pre>
+        <pre style="margin-bottom:3px;"><span style="color:var(--color-success-text);">// Test error state</span>
+await page.route('**/api/students', route =>
+  route.fulfill({ status: 500, body: 'Server Error' })
+);
+await expect(page.getByRole('alert')).toContainText('Failed to load');
+
+<span style="color:var(--color-success-text);">// Block 3rd-party trackers in CI</span>
+await page.route('**/{analytics,tracking,ads}**', r => r.abort());</pre>
+        <div class="alert alert-info" style="margin-top:3px;">
+          Use <code>browser_network_requests</code> MCP tool to inspect API calls after a user action — no code needed.
+        </div>
+      </div>
+    </div>
+
+    <!-- Accessibility Testing -->
+    <div class="section-card purple" id="a11y">
+      <div class="section-card-header">
+        <i data-lucide="accessibility" class="icon"></i><span class="section-card-title">Accessibility Testing</span>
+      </div>
+      <div class="section-card-body">
+        <div style="font-size:0.68rem; color:var(--color-text-muted); margin-bottom:var(--space-2);">Playwright MCP already reads the accessibility tree. Add axe-core to run WCAG audits as part of your suite.</div>
+        <pre style="margin-bottom:3px;"><span style="color:var(--color-warning-text);">// Install: npm install --save-dev @axe-core/playwright</span>
+import AxeBuilder from '@axe-core/playwright';
+
+test('has no WCAG violations', async ({ page }) => {
+  await page.goto('/dashboard');
+  const results = await new AxeBuilder({ page })
+    .withTags(['wcag2a', 'wcag2aa']).analyze();
+  expect(results.violations).toHaveLength(0);
+});
+
+<span style="color:var(--color-success-text);">// Scope to a component</span>
+const results = await new AxeBuilder({ page })
+  .include('#leaderboard-table').withTags(['wcag2aa']).analyze();</pre>
+        <div class="item-row"><span class="item-icon ok"></span><div style="font-size:0.68rem;">MCP's accessibility-tree selectors are inherently a11y-aware — using <code>getByRole</code> proves ARIA is correct</div></div>
+        <div class="item-row"><span class="item-icon warn"></span><div style="font-size:0.68rem;">Run axe audit on every page as a separate test file — keep it isolated from interaction tests</div></div>
+        <div class="item-row"><span class="item-icon ok"></span><div style="font-size:0.68rem;"><code>browser_snapshot</code> + <code>browser_console_messages</code> MCP tools can reveal missing labels and ARIA errors during exploration</div></div>
+        <div class="border-top" style="padding-top:4px; margin-top:4px;">
+          <div style="font-size:0.67rem; color:var(--color-text-muted); font-weight:600; margin-bottom:4px;">axe-core scoping methods</div>
+          <div class="item-row"><span class="item-icon ok"></span><div style="font-size:0.68rem;"><code>.include('#component-id')</code> — scope audit to one region</div></div>
+          <div class="item-row"><span class="item-icon ok"></span><div style="font-size:0.68rem;"><code>.exclude('#cookie-banner')</code> — skip known 3rd-party widget</div></div>
+          <div class="item-row"><span class="item-icon ok"></span><div style="font-size:0.68rem;"><code>.withTags(['wcag2a','wcag2aa'])</code> — target conformance level</div></div>
+          <div class="item-row"><span class="item-icon warn"></span><div style="font-size:0.68rem;"><code>.disableRules(['color-contrast'])</code> — suppress known issues temporarily</div></div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- end auth/network/a11y row -->
+
+  <!-- ══════════════════════════════════════════════════════════ -->
+  <!-- SECTION: CI/CD                                            -->
+  <!-- ══════════════════════════════════════════════════════════ -->
+  <div class="section-label" id="ci">CI / CD</div>
+  <div class="section-card green mb-4">
+    <div class="section-card-header">
+      <i data-lucide="cloud" class="icon"></i><span class="section-card-title">CI / CD Pipeline Reference</span>
+      <span style="margin-left:auto; font-size:0.65rem; color:var(--color-text-muted);">Azure DevOps &amp; Jenkins — both use the official Playwright Docker image in CI</span>
+    </div>
+    <div class="section-card-body">
+      <div class="split-2" style="gap:0; margin: calc(-1 * var(--space-3)); margin-top:0;">
+        <div style="padding: var(--space-3); border-right:1px solid var(--color-border-structural);">
+          <div style="font-size:0.68rem; font-weight:700; color:var(--color-success-text); margin-bottom:var(--space-2);">Azure DevOps — azure-pipelines.yml</div>
+          <pre><span style="color:var(--color-warning-text);"># azure-pipelines.yml</span>
+trigger:
+  branches:
+    include: [ main, 'feature/*' ]
+
+pool:
+  vmImage: ubuntu-latest
+
+steps:
+  - task: NodeTool@0
+    inputs:
+      versionSpec: '20.x'
+    displayName: 'Install Node 20'
+
+  - script: npm ci
+    displayName: 'Install dependencies'
+
+  - script: npx playwright install \
+      --with-deps chromium
+    displayName: 'Install Playwright'
+
+  - script: npm run test:e2e
+    displayName: 'Run E2E tests'
+    env:
+      TEST_PASS: $(TEST_PASS)  <span style="color:var(--color-warning-text);"># secret var</span>
+      CI: 'true'
+
+  - task: PublishTestResults@2
+    condition: always()
+    inputs:
+      testResultsFiles: >
+        playwright-report/results.xml
+      testRunTitle: 'Playwright E2E'
+
+  - task: PublishBuildArtifacts@1
+    condition: always()
+    inputs:
+      pathToPublish: playwright-report
+      artifactName: playwright-report</pre>
+          <div class="alert alert-info" style="font-size:0.65rem; margin-top:var(--space-2);">
+            Store <code>TEST_PASS</code> as a secret variable, not in YAML. Add <code>condition: always()</code> to publish steps so artifacts save even on failure.
+          </div>
+        </div>
+        <div style="padding: var(--space-3);">
+          <div style="font-size:0.68rem; font-weight:700; color:var(--color-success-text); margin-bottom:var(--space-2);">Jenkins — Declarative Pipeline (Jenkinsfile)</div>
+          <pre><span style="color:var(--color-warning-text);">// Jenkinsfile</span>
+pipeline {
+  agent {
+    docker {
+      <span style="color:var(--color-success-text);">// Official image — browsers pre-installed</span>
+      image 'mcr.microsoft.com/playwright:v1.49.0-jammy'
+      args  '-u root'
+    }
+  }
+
+  environment {
+    TEST_PASS = credentials('app-test-password')
+    CI        = 'true'
+  }
+
+  stages {
+    stage('Install') {
+      steps { sh 'npm ci' }
+    }
+
+    stage('E2E Tests') {
+      steps {
+        sh 'npm run test:e2e'
+      }
+      post {
+        always {
+          publishHTML([
+            reportDir:   'playwright-report',
+            reportFiles: 'index.html',
+            reportName:  'Playwright Report'
+          ])
+          junit 'playwright-report/results.xml'
+        }
+      }
+    }
+  }
+
+  post {
+    failure {
+      archiveArtifacts 'test-results/**'
+    }
+  }
+}</pre>
+          <div class="alert alert-info" style="font-size:0.65rem; margin-top:var(--space-2);">
+            Use <code>mcr.microsoft.com/playwright</code> official Docker image — browsers are pre-installed, no separate install step needed.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div><!-- end CI row -->
+
+  <!-- ══════════════════════════════════════════════════════════ -->
+  <!-- SECTION: LIMITS & ANTI-PATTERNS                          -->
+  <!-- ══════════════════════════════════════════════════════════ -->
+  <div class="section-label" id="limits">Limits &amp; Anti-Patterns</div>
+  <div class="cheat-grid grid-2">
+
+    <!-- Limits -->
+    <div class="section-card red">
+      <div class="section-card-header">
+        <i data-lucide="ban" class="icon"></i><span class="section-card-title">What Playwright MCP Cannot Do</span>
+      </div>
+      <div class="section-card-body">
+        <div class="split-2">
+          <div>
+            <div class="item-row"><span class="item-icon no"></span><div><strong>Mobile native apps</strong> — use Appium for Android/iOS. Playwright is web-browsers only.</div></div>
+            <div class="item-row"><span class="item-icon no"></span><div><strong>Cross-origin iframes</strong> — accessibility tree stops at the iframe boundary.</div></div>
+            <div class="item-row"><span class="item-icon no"></span><div><strong>Native OS file dialogs</strong> — file picker is outside browser sandbox. Use <code>browser_upload_file</code> to set the path directly.</div></div>
+            <div class="item-row"><span class="item-icon no"></span><div><strong>WebSocket live updates</strong> — accessibility tree is point-in-time, not a live stream.</div></div>
+            <div class="item-row"><span class="item-icon no"></span><div><strong>Canvas / WebGL rendering</strong> — visual content has no accessibility tree nodes.</div></div>
+          </div>
+          <div>
+            <div class="item-row"><span class="item-icon no"></span><div><strong>Pages behind SSO/login</strong> — without <code>storageState</code> (see Auth card).</div></div>
+            <div class="item-row"><span class="item-icon no"></span><div><strong>Visual pixel regression</strong> — use Percy / Chromatic. <code>browser_screenshot</code> captures images but cannot diff them.</div></div>
+            <div class="item-row"><span class="item-icon no"></span><div><strong>Performance load testing</strong> — Playwright MCP is functional. Use k6 / Lighthouse for perf.</div></div>
+            <div class="item-row"><span class="item-icon no"></span><div><strong>CAPTCHA challenges</strong> — deliberately resist automation.</div></div>
+            <div class="item-row"><span class="item-icon no"></span><div><strong>Email / SMS verification</strong> — outside browser context. Use Mailosaur or similar.</div></div>
+          </div>
+        </div>
+        <div class="alert alert-info mt-3" style="font-size:0.65rem;">
+          If your scenario hits any of these limits, state it in the prompt. MCP will flag it rather than silently generating broken tests.
+        </div>
+      </div>
+    </div>
+
+    <!-- Anti-Patterns -->
+    <div class="section-card red">
+      <div class="section-card-header">
+        <i data-lucide="x-octagon" class="icon"></i><span class="section-card-title">Anti-Patterns — The 8 Things That Burn Teams</span>
+      </div>
+      <div class="section-card-body">
+        <div class="split-2">
+          <div>
+            <div class="item-row"><span class="item-icon no"></span><div><strong>Committing tests you haven't read.</strong> Green ≠ correct. Read the assertion — not just the selector.</div></div>
+            <div class="item-row"><span class="item-icon no"></span><div><strong>Using <code>waitForTimeout</code>.</strong> Replace every sleep with <code>expect(locator).toBeVisible()</code>.</div></div>
+            <div class="item-row"><span class="item-icon no"></span><div><strong>No browser trigger in the prompt.</strong> Without "open browser" / "navigate to", MCP writes from memory → phantom selectors.</div></div>
+            <div class="item-row"><span class="item-icon no"></span><div><strong>One prompt for the entire app.</strong> Context overload. One feature → one prompt → one test file.</div></div>
+          </div>
+          <div>
+            <div class="item-row"><span class="item-icon no"></span><div><strong>Inventing <code>data-testid</code> values.</strong> If the attribute doesn't exist in the DOM, the test silently fails.</div></div>
+            <div class="item-row"><span class="item-icon no"></span><div><strong>Testing mock data only.</strong> Run against <code>localhost:3000</code> — real render, real data flow.</div></div>
+            <div class="item-row"><span class="item-icon no"></span><div><strong>Snapshotting before page loads.</strong> Always add a wait instruction before <code>browser_snapshot</code> for async content.</div></div>
+            <div class="item-row"><span class="item-icon no"></span><div><strong>Test order dependencies.</strong> Test B assumes Test A ran first. Set explicit state in every <code>beforeEach</code>.</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- end limits row -->
+
+  <!-- ══════════════════════════════════════════════════════════ -->
+  <!-- SECTION: QUICK CONFIG REFERENCE                           -->
+  <!-- ══════════════════════════════════════════════════════════ -->
+  <div class="section-label" id="config">Quick Config Reference</div>
+
+  <!-- Config Template — full width -->
+  <div class="section-card mb-3">
+    <div class="section-card-header">
+      <i data-lucide="settings-2" class="icon"></i><span class="section-card-title">playwright.config.ts — Production-Ready Template</span>
+    </div>
+    <div class="section-card-body">
+      <pre>import { defineConfig, devices } from '@playwright/test';
+
+export default defineConfig({
+  testDir: './tests/e2e',
+  fullyParallel: true,
+  retries:  process.env.CI ? 2 : 0,
+  workers:  process.env.CI ? 2 : undefined,
+  reporter: [
+    ['html'],
+    ['junit', {
+      outputFile: 'playwright-report/results.xml'
+    }]
+  ],
+
+  use: {
+    baseURL:          'http://localhost:3000',
+    headless:         !!process.env.CI,
+    trace:            'on-first-retry',
+    screenshot:       'only-on-failure',
+    video:            'retain-on-failure',
+    actionTimeout:    10_000,
+    navigationTimeout: 30_000,
+    storageState:     'auth.json', <span style="color:var(--color-warning-text);">// remove if no auth</span>
+  },
+
+  projects: [
+    {
+      name: 'chromium',
+      use: { ...devices['Desktop Chrome'] },
+    },
+    <span style="color:var(--color-warning-text);">// { name: 'firefox', use: { ...devices['Desktop Firefox'] } },</span>
+    <span style="color:var(--color-warning-text);">// { name: 'webkit',  use: { ...devices['Desktop Safari'] } },</span>
+    <span style="color:var(--color-warning-text);">// { name: 'mobile',  use: { ...devices['iPhone 14'] } },</span>
+  ],
+
+  webServer: {
+    command:             'npm start',
+    url:                 'http://localhost:3000',
+    reuseExistingServer: !process.env.CI,
+    timeout:             60_000,
+  },
+
+  globalSetup: './setup.ts', <span style="color:var(--color-warning-text);">// remove if no auth</span>
+});</pre>
+      </div>
+    </div>
+
+  <!-- MCP Wiring + Parallelization — side by side -->
+  <div class="cheat-grid grid-2">
+
+    <!-- MCP wiring -->
+    <div class="section-card">
+      <div class="section-card-header">
+        <i data-lucide="plug" class="icon"></i><span class="section-card-title">.vscode/mcp.json — Playwright MCP Wiring</span>
+        <span class="badge badge-success" style="margin-left:auto;"><span class="badge-dot"></span>Commit to repo</span>
+      </div>
+      <div class="section-card-body">
+        <div class="split-2">
+          <pre><span style="color:var(--color-warning-text);">// .vscode/mcp.json</span>
+{
+  "servers": {
+    "playwright": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@playwright/mcp@latest"
+      ],
+      "type": "stdio"
+    }
+  }
+}</pre>
+          <div>
+            <div class="item-row"><span class="item-icon ok"></span><div>No API token needed — local stdio process</div></div>
+            <div class="item-row"><span class="item-icon ok"></span><div>Commit to Bitbucket — whole team inherits automatically</div></div>
+            <div class="item-row"><span class="item-icon warn"></span><div>MCP defaults to <strong>headed</strong> browser — right for demos and dev</div></div>
+            <div class="item-row"><span class="item-icon ok"></span><div>Requires Node 18+ — verify: <code>node --version</code></div></div>
+            <div class="alert alert-info mt-2" style="font-size:0.65rem;">Trigger: <em>"Open a browser at localhost:3000"</em> or <em>"Navigate to…"</em></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Parallelization -->
+    <div class="section-card blue">
+      <div class="section-card-header">
+        <i data-lucide="zap" class="icon"></i><span class="section-card-title">Parallelization &amp; Workers</span>
+      </div>
+      <div class="section-card-body">
+        <div class="split-2">
+          <div>
+            <pre><span style="color:var(--color-warning-text);">// suite-level serial (avoid)</span>
+test.describe.configure({
+  mode: 'serial'
+});
+
+<span style="color:var(--color-success-text);">// suite-level parallel (default)</span>
+test.describe.configure({
+  mode: 'parallel'
+});</pre>
+          </div>
+          <div>
+            <div class="item-row"><span class="item-icon ok"></span><div><code>fullyParallel: true</code> — each test gets own browser context</div></div>
+            <div class="item-row"><span class="item-icon warn"></span><div>Set <code>workers: 1</code> for debugging — easier trace following</div></div>
+            <div class="item-row"><span class="item-icon ok"></span><div>Each worker gets own <code>storageState</code> copy — auth works in parallel</div></div>
+            <div class="item-row"><span class="item-icon no"></span><div>Never write to shared DB state in parallel tests without seeding isolation</div></div>
+            <div class="item-row"><span class="item-icon ok"></span><div>CI: <code>workers: 2</code> conservative; local: <code>undefined</code> = auto (cores ÷ 2)</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- end config row -->
+
+  <!-- ── FOOTER ── -->
+  <div class="cheat-footer">
+    <div class="flex gap-2 flex-wrap">
+      <span class="tag">@playwright/mcp@latest</span>
+      <span class="tag">@playwright/test v1.49+</span>
+      <span class="tag">@axe-core/playwright</span>
+      <span class="tag">Node 18+</span>
+      <span class="tag">VS Code 1.95+</span>
+      <span class="tag">Hackathon 2026</span>
+    </div>
+    <div style="font-size:0.68rem; color:var(--color-text-muted); text-align:right;">
+      Selector rule: <strong style="color:var(--color-text-secondary);">getByRole → getByLabel → getByText → getByPlaceholder → getByAltText → getByTitle → getByTestId → never CSS/XPath</strong>
+    </div>
+  </div>
+
+</div><!-- /container -->
+<script>lucide.createIcons();</script>
+</body>
+</html>

@@ -19,6 +19,8 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
@@ -41,6 +43,7 @@
   },
   "devDependencies": {
     "@epam/uui-test-utils": "^6.1.4",
+    "@playwright/test": "^1.49.0",
     "@testing-library/jest-dom": "^5.17.0",
     "@types/history": "^4.7.11",
     "@types/jest": "^27.5.2",
