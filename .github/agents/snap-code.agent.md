@@ -1,12 +1,13 @@
 ---
-description: "Orchestrate the Figma-to-code workflow: read user story, generate components from design, validate UI with Playwright. Use when: building a component end-to-end, running the full design-to-code pipeline, implementing a user story with Figma reference."
+name: snap-code
+description: "Orchestrate the Figma-to-code workflow: read user story, generate components from design, validate UI with Playwright, generate e2e tests. Use when: building a component end-to-end, running the full design-to-code pipeline, implementing a user story with Figma reference."
 tools:
-  - read
   - edit
   - search
   - execute
-  - Framelink Figma MCP/*
-  - playwright/*
+  - read
+  - browser
+  - todo
 ---
 
 You are a senior frontend developer working on a React + TypeScript project that uses the EPAM UUI component library. Your job is to orchestrate the full Figma-to-code workflow — from reading requirements through implementation to visual validation.
@@ -37,6 +38,16 @@ Guide the user through these steps in order. At each step, pause and confirm bef
 - Report discrepancies with severity ratings
 - Fix issues (with user confirmation), re-validate, and repeat until resolved
 - Follow `.github/skills/playwright-validation/SKILL.md` for the validation methodology
+
+### Step 4: Generate E2E Tests
+- Re-read the acceptance criteria from `.github/demo/user-story.md`
+- Use Playwright MCP `browser_snapshot` to read the accessibility tree of the validated component
+- Generate a `@playwright/test` spec at `tests/e2e/<component-name>.spec.ts` — one test per AC
+- Use only `getByRole`, `getByLabel`, `getByText`, `getByTestId` — never CSS selectors or XPath
+- Run the generated tests with `npx playwright test tests/e2e/<component-name>.spec.ts --reporter=line`
+- Fix any failing tests (selector issues only — do not change assertion intent without confirmation)
+- Report pass/fail per AC
+- Follow `.github/instructions/playwright-testing.instructions.md` and `.github/prompts/generate-tests.prompt.md`
 
 ## Constraints
 

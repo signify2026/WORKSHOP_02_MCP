@@ -1,0 +1,881 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Build Your Own MCP — Workshop 2 Companion</title>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0d1117; --bg-card: #161b22; --bg-elevated: #1c2128;
+      --bg-code: #0d1117; --border: #30363d;
+      --text: #e6edf3; --text-muted: #8b949e; --text-dim: #484f58;
+      --blue: #388bfd; --blue-light: #58a6ff; --blue-bg: #0d2040; --blue-border: #1f4068;
+      --green: #3fb950; --green-bg: #0d2818; --green-border: #1e4a2a;
+      --amber: #d29922; --amber-bg: #2a1e06; --amber-border: #4a360c;
+      --red: #f85149; --red-bg: #2a0d0d; --red-border: #4a1a1a;
+      --purple: #bc8cff; --purple-bg: #1e1035; --purple-border: #3d2060;
+      --nav-h: 52px; --r: 8px; --rl: 12px;
+    }
+    [data-theme="light"] {
+      --bg: #f5f7fa; --bg-card: #fff; --bg-elevated: #eef1f5; --bg-code: #f0f2f5;
+      --border: #d0d7de;
+      --text: #1c2128; --text-muted: #57606a; --text-dim: #8c959f;
+      --blue: #2155a0; --blue-light: #3a6ec8; --blue-bg: #dbeeff; --blue-border: #b0c8ee;
+      --green: #1a6e38; --green-bg: #ddf4e6; --green-border: #a2d2b2;
+      --amber: #8a5c00; --amber-bg: #fdf5e4; --amber-border: #e8d09a;
+      --red: #b52a2a; --red-bg: #fde8e8; --red-border: #e8b0b0;
+      --purple: #5a3ea0; --purple-bg: #f0eefb; --purple-border: #c8b8ee;
+    }
+
+    html, body { height: 100%; overflow: hidden; font-family: 'Inter', -apple-system, sans-serif; background: var(--bg); color: var(--text); -webkit-font-smoothing: antialiased; }
+
+    /* ── Navbar ── */
+    #top-nav { position: fixed; top: 0; left: 0; right: 0; z-index: 200; height: var(--nav-h); background: var(--bg-card); border-bottom: 1px solid var(--border); display: flex; align-items: center; padding: 0 20px; gap: 0; }
+    .nav-logo { display: flex; align-items: center; gap: 9px; padding-right: 18px; border-right: 1px solid var(--border); flex-shrink: 0; }
+    .nav-logo-icon { width: 28px; height: 28px; border-radius: 7px; background: linear-gradient(135deg, var(--purple) 0%, var(--blue-light) 100%); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .nav-logo-icon svg { width: 14px; height: 14px; stroke: #fff; stroke-width: 2.5; }
+    .nav-logo-text { font-size: 0.85rem; font-weight: 700; white-space: nowrap; }
+    .nav-badge { font-size: 0.65rem; font-weight: 700; padding: 2px 8px; border-radius: 10px; background: var(--purple-bg); color: var(--purple); border: 1px solid var(--purple-border); margin-left: 7px; }
+    .nav-sections { display: flex; align-items: center; gap: 3px; padding: 0 14px; flex: 1; overflow-x: auto; scrollbar-width: none; }
+    .nav-sections::-webkit-scrollbar { display: none; }
+    .nav-sec-btn { display: flex; align-items: center; gap: 5px; padding: 5px 11px; border-radius: 18px; border: 1px solid transparent; background: none; cursor: pointer; font-size: 0.75rem; font-weight: 500; color: var(--text-muted); white-space: nowrap; transition: all 0.12s; }
+    .nav-sec-btn svg { width: 11px; height: 11px; stroke: currentColor; }
+    .nav-sec-btn:hover { color: var(--text); background: var(--bg-elevated); }
+    .nav-sec-btn.active { color: var(--purple); background: var(--purple-bg); border-color: var(--purple-border); font-weight: 600; }
+    .nav-controls { display: flex; align-items: center; gap: 8px; padding-left: 14px; border-left: 1px solid var(--border); flex-shrink: 0; }
+    #theme-toggle { display: flex; align-items: center; background: var(--bg-elevated); border: 1px solid var(--border); border-radius: 18px; padding: 2px; gap: 1px; }
+    #theme-toggle button { background: none; border: none; cursor: pointer; width: 28px; height: 26px; border-radius: 13px; display: flex; align-items: center; justify-content: center; color: var(--text-muted); transition: all 0.12s; }
+    #theme-toggle button svg { width: 13px; height: 13px; stroke: currentColor; }
+    #theme-toggle button.active { background: var(--purple-bg); color: var(--purple); outline: 1px solid var(--purple-border); }
+    .ctrl-btn { background: var(--bg-elevated); border: 1px solid var(--border); border-radius: var(--r); padding: 5px 11px; cursor: pointer; color: var(--text-muted); font-size: 0.73rem; font-weight: 600; display: flex; align-items: center; gap: 4px; }
+    .ctrl-btn svg { width: 12px; height: 12px; stroke: currentColor; }
+    .ctrl-btn:hover { color: var(--purple); border-color: var(--purple-border); }
+
+    /* ── Deck ── */
+    #deck { position: fixed; top: var(--nav-h); left: 0; right: 0; bottom: 32px; }
+    .slide { position: absolute; inset: 0; display: none; flex-direction: column; justify-content: flex-start; align-items: center; padding: 32px 100px 28px; background: var(--bg); opacity: 0; transition: opacity 0.18s ease; overflow: hidden; }
+    .slide.active  { display: flex; }
+    .slide.visible { opacity: 1; }
+    .slide.overflow { overflow-y: auto; }
+    .slide-content { width: 100%; max-width: 1440px; margin: 0 auto; display: flex; flex-direction: column; }
+
+    /* ── Typography ── */
+    h2 { font-size: 1.75rem; font-weight: 700; color: var(--blue-light); margin-bottom: 18px; letter-spacing: -0.02em; display: flex; align-items: center; gap: 11px; }
+    h3 { font-size: 1rem; font-weight: 600; color: var(--text); margin-bottom: 6px; }
+    p  { font-size: 0.93rem; color: var(--text-muted); line-height: 1.65; }
+    li { font-size: 0.9rem; color: var(--text-muted); line-height: 1.75; }
+
+    .h2-icon { width: 30px; height: 30px; border-radius: 7px; background: var(--purple-bg); border: 1px solid var(--purple-border); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .h2-icon svg { width: 15px; height: 15px; stroke: var(--purple); }
+
+    .section-label { font-size: 0.76rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-dim); margin-bottom: 9px; }
+    .section-label.red    { color: var(--red); }
+    .section-label.green  { color: var(--green); }
+    .section-label.amber  { color: var(--amber); }
+    .section-label.purple { color: var(--purple); }
+
+    .phase-tag { display: inline-flex; align-items: center; gap: 5px; background: var(--purple-bg); color: var(--purple); border: 1px solid var(--purple-border); border-radius: 5px; padding: 3px 10px; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; margin-bottom: 10px; }
+    .phase-tag svg { width: 10px; height: 10px; stroke: currentColor; }
+    .phase-tag.red    { background: var(--red-bg);    color: var(--red);    border-color: var(--red-border); }
+    .phase-tag.green  { background: var(--green-bg);  color: var(--green);  border-color: var(--green-border); }
+    .phase-tag.amber  { background: var(--amber-bg);  color: var(--amber);  border-color: var(--amber-border); }
+    .phase-tag.blue   { background: var(--blue-bg);   color: var(--blue-light); border-color: var(--blue-border); }
+
+    /* ── Grid ── */
+    .cols   { display: grid; gap: 22px; width: 100%; }
+    .cols-2 { grid-template-columns: 1fr 1fr; }
+    .cols-3 { grid-template-columns: 1fr 1fr 1fr; }
+
+    /* ── Cards ── */
+    .card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--rl); padding: 20px 22px; }
+    .card.blue   { border-color: var(--blue-border);   background: var(--blue-bg); }
+    .card.green  { border-color: var(--green-border);  background: var(--green-bg); }
+    .card.amber  { border-color: var(--amber-border);  background: var(--amber-bg); }
+    .card.red    { border-color: var(--red-border);    background: var(--red-bg); }
+    .card.purple { border-color: var(--purple-border); background: var(--purple-bg); }
+    .ch { display: flex; align-items: center; gap: 9px; margin-bottom: 10px; }
+    .ch svg { width: 15px; height: 15px; stroke: currentColor; flex-shrink: 0; }
+    .ch h3 { margin: 0; }
+
+    /* ── Code ── */
+    pre { background: var(--bg-code); border: 1px solid var(--border); border-radius: var(--r); padding: 16px 20px; font-family: 'JetBrains Mono', monospace; font-size: 0.83rem; line-height: 1.7; overflow-x: auto; width: 100%; color: var(--text); }
+    code.inline { background: var(--bg-elevated); border: 1px solid var(--border); border-radius: 4px; padding: 2px 6px; font-family: 'JetBrains Mono', monospace; font-size: 0.85em; color: var(--blue-light); }
+    .k { color: #ff7b72; } .s { color: #a5d6ff; } .c { color: #8b949e; font-style: italic; }
+    .n { color: #79c0ff; } .hi { color: #ffa657; font-weight: 600; }
+
+    /* ── Callout ── */
+    .callout { display: flex; gap: 10px; align-items: flex-start; background: var(--blue-bg); border-left: 3px solid var(--blue); border-radius: 0 var(--r) var(--r) 0; padding: 13px 16px; margin: 10px 0; }
+    .callout p { font-size: 0.9rem; }
+    .callout.green  { background: var(--green-bg);  border-color: var(--green); }
+    .callout.amber  { background: var(--amber-bg);  border-color: var(--amber); }
+    .callout.red    { background: var(--red-bg);    border-color: var(--red); }
+    .callout.purple { background: var(--purple-bg); border-color: var(--purple); }
+
+    /* ── Badge ── */
+    .badge { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 0.7rem; font-weight: 700; border: 1px solid; }
+    .badge.red   { background: var(--red-bg);    color: var(--red);        border-color: var(--red-border); }
+    .badge.green { background: var(--green-bg);  color: var(--green);      border-color: var(--green-border); }
+    .badge.blue  { background: var(--blue-bg);   color: var(--blue-light); border-color: var(--blue-border); }
+
+    /* ── Step pill ── */
+    .step-pill { display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; border-radius: 50%; background: var(--purple-bg); border: 1px solid var(--purple-border); font-size: 0.75rem; font-weight: 800; color: var(--purple); flex-shrink: 0; }
+
+    /* ── Flow diagram ── */
+    .flow-row { display: flex; align-items: center; gap: 10px; flex-wrap: nowrap; }
+    .flow-node { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--r); padding: 11px 18px; font-size: 0.88rem; font-weight: 500; white-space: nowrap; line-height: 1.4; text-align: center; }
+    .flow-node small { display: block; font-size: 0.74rem; color: var(--text-muted); margin-top: 2px; font-weight: 400; }
+    .flow-node.purple { background: var(--purple-bg); border-color: var(--purple-border); color: var(--purple); }
+    .flow-node.blue   { background: var(--blue-bg);   border-color: var(--blue-border);   color: var(--blue-light); }
+    .flow-node.green  { background: var(--green-bg);  border-color: var(--green-border);  color: var(--green); }
+    .flow-node.amber  { background: var(--amber-bg);  border-color: var(--amber-border);  color: var(--amber); }
+    .flow-arr { color: var(--text-muted); font-size: 1.3rem; flex-shrink: 0; }
+    .flow-note { font-size: 0.76rem; color: var(--text-dim); font-style: italic; align-self: center; }
+
+    /* ── Problem list ── */
+    .prob-item { display: flex; gap: 10px; align-items: flex-start; font-size: 0.88rem; color: var(--text-muted); padding: 6px 0; border-bottom: 1px solid var(--border-soft, var(--border)); }
+    .prob-item:last-child { border-bottom: none; }
+    .prob-dot { font-weight: 800; flex-shrink: 0; margin-top: 1px; }
+
+    /* ── Tag pill ── */
+    .tool-tag { display: inline-flex; align-items: center; gap: 5px; border: 1px solid; border-radius: 5px; padding: 3px 9px; font-size: 0.74rem; font-weight: 700; white-space: nowrap; }
+    .tool-tag.purple { background: var(--purple-bg); color: var(--purple); border-color: var(--purple-border); }
+    .tool-tag.blue   { background: var(--blue-bg);   color: var(--blue-light); border-color: var(--blue-border); }
+    .tool-tag.green  { background: var(--green-bg);  color: var(--green);      border-color: var(--green-border); }
+
+    /* ── Bottom bar ── */
+    #bottom-bar { position: fixed; bottom: 0; left: 0; right: 0; height: 32px; display: flex; align-items: center; background: var(--bg-card); border-top: 1px solid var(--border); padding: 0 18px; z-index: 200; }
+    #progress-track { flex: 1; height: 3px; background: var(--border); border-radius: 2px; margin-right: 14px; overflow: hidden; }
+    #progress-fill { height: 100%; background: var(--purple); border-radius: 2px; transition: width 0.3s; width: 0%; }
+    #counter { font-size: 0.7rem; color: var(--text-dim); font-weight: 600; white-space: nowrap; min-width: 46px; text-align: right; }
+    #hint { font-size: 0.65rem; color: var(--text-dim); margin-right: 14px; white-space: nowrap; }
+
+    /* ── Nav arrows ── */
+    .nav-btn { position: fixed; top: calc(50% + var(--nav-h)/2); transform: translateY(-50%); background: var(--bg-card); border: 1px solid var(--border); color: var(--text-muted); width: 36px; height: 60px; border-radius: var(--r); cursor: pointer; font-size: 1.3rem; display: flex; align-items: center; justify-content: center; z-index: 100; transition: all 0.12s; }
+    .nav-btn:hover { color: var(--purple); border-color: var(--purple-border); background: var(--purple-bg); }
+    #btn-prev { left: 8px; } #btn-next { right: 8px; }
+
+    /* ── Speaker notes ── */
+    #notes { display: none; position: fixed; bottom: 40px; left: 50%; transform: translateX(-50%); width: 780px; max-width: 92vw; background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--rl); padding: 16px 20px; z-index: 300; max-height: 36vh; overflow-y: auto; box-shadow: 0 8px 32px rgba(0,0,0,0.5); }
+    #notes.visible { display: block; }
+    #notes h4 { color: var(--purple); font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 8px; }
+    #notes p { font-size: 0.85rem; color: var(--text-muted); line-height: 1.65; }
+
+    @media (max-width: 1100px) {
+      .slide { padding: 28px 40px 22px; }
+      .cols-2, .cols-3 { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 700px) {
+      #btn-prev, #btn-next { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ══════════════ NAVBAR ══════════════ -->
+<nav id="top-nav">
+  <div class="nav-logo">
+    <div class="nav-logo-icon"><i data-lucide="blocks"></i></div>
+    <div class="nav-logo-text">Custom MCP <span class="nav-badge">WORKSHOP 2 ADD-ON</span></div>
+  </div>
+  <div class="nav-sections" id="nav-sections">
+    <button class="nav-sec-btn active" data-slides="0" onclick="goToSlide(0)"><i data-lucide="flame"></i>The Pain</button>
+    <button class="nav-sec-btn" data-slides="1" onclick="goToSlide(1)"><i data-lucide="arrow-right-left"></i>Before / After</button>
+    <button class="nav-sec-btn" data-slides="2" onclick="goToSlide(2)"><i data-lucide="workflow"></i>How It Works</button>
+    <button class="nav-sec-btn" data-slides="3" onclick="goToSlide(3)"><i data-lucide="hammer"></i>Build It — 4 Steps</button>
+    <button class="nav-sec-btn" data-slides="4" onclick="goToSlide(4)"><i data-lucide="bot"></i>Build with Copilot</button>
+    <button class="nav-sec-btn" data-slides="5" onclick="goToSlide(5)"><i data-lucide="shield-check"></i>2 Rules</button>
+    <button class="nav-sec-btn" data-slides="6" onclick="goToSlide(6)"><i data-lucide="zap"></i>Full Power</button>
+  </div>
+  <div class="nav-controls">
+    <div id="theme-toggle">
+      <button id="th-dark" class="active" onclick="setTheme('dark')"><i data-lucide="moon"></i></button>
+      <button id="th-light" onclick="setTheme('light')"><i data-lucide="sun"></i></button>
+    </div>
+  </div>
+</nav>
+
+<!-- ══════════════ SLIDES ══════════════ -->
+<div id="deck">
+
+<!-- ─────────────────────────────────
+     SLIDE 0 — THE PAIN
+─────────────────────────────────── -->
+<div class="slide active"
+     data-notes="Let code sit 10s. Ask: 'How many of you have 30+ lines in a beforeEach?' | 320 duplicated lines across 8 spec files | Token rotates monthly — breaks silently | afterEach failure poisons next CI run | LLM cannot see your staging API → it can't help."
+     data-section="0">
+  <div class="slide-content">
+    <div class="phase-tag red"><i data-lucide="flame"></i>The Pain</div>
+    <h2><span class="h2-icon"><i data-lucide="flame"></i></span>How Test Setup Looks Today</h2>
+
+    <div class="cols cols-2" style="align-items: stretch;">
+
+      <div style="display:flex; flex-direction:column; gap:10px;">
+        <div class="section-label red">class-filter-tabs.spec.ts — setup block every tester hand-writes</div>
+        <pre style="flex:1; font-size:0.78rem; line-height:1.6; overflow-y:auto; max-height:calc(100vh - 260px);"><span class="c">// ~40 lines before a single expect() — in every spec file</span>
+<span class="k">let</span> classId: <span class="n">string</span>;
+
+test.beforeEach(<span class="k">async</span> ({ page }) =&gt; {
+  <span class="c">// ① Auth — rotated monthly, breaks tests silently</span>
+  <span class="k">const</span> token = <span class="k">await</span> fetch(<span class="s">'https://staging.signify/auth/token'</span>, {
+    method: <span class="s">'POST'</span>, body: JSON.stringify({ user: <span class="s">'test_admin'</span>, pass: <span class="hi">process.env.TEST_PASS</span> })
+  }).then(r =&gt; r.json()).then(d =&gt; d.token);
+
+  <span class="c">// ② Create class — raw fetch, duplicated across 8 spec files</span>
+  classId = <span class="k">await</span> fetch(<span class="s">'https://staging.signify/api/classes'</span>, {
+    method: <span class="s">'POST'</span>, headers: { Authorization: <span class="s">`Bearer ${token}`</span> },
+    body: JSON.stringify({ name: <span class="s">'Class A'</span> })
+  }).then(r =&gt; r.json()).then(d =&gt; d.id);
+
+  <span class="c">// ③ Add students — 5 separate HTTP calls</span>
+  <span class="k">for</span> (<span class="k">let</span> i = <span class="n">0</span>; i &lt; <span class="n">5</span>; i++)
+    <span class="k">await</span> fetch(<span class="s">`https://staging.signify/api/classes/${classId}/students`</span>,
+      { method: <span class="s">'POST'</span>, headers: { Authorization: <span class="s">`Bearer ${token}`</span> },
+        body: JSON.stringify({ name: <span class="s">`Learner ${i}`</span> }) });
+
+  <span class="k">await</span> page.goto(<span class="s">`http://localhost:3000/classes?id=${classId}`</span>);
+  <span class="k">await</span> page.waitForSelector(<span class="s">'[data-loaded="true"]'</span>);
+});
+
+test.afterEach(<span class="k">async</span> () =&gt; { <span class="c">// ← skip this = next run is poisoned</span>
+  <span class="k">await</span> fetch(<span class="s">`https://staging.signify/api/classes/${classId}`</span>, { method: <span class="s">'DELETE'</span> });
+});</pre>
+      </div>
+
+      <div style="display:flex; flex-direction:column; gap:16px;">
+        <div class="card red" style="flex:1;">
+          <div class="ch" style="color:var(--red);"><i data-lucide="x-circle"></i><h3 style="color:var(--red);">What's wrong with this</h3></div>
+          <div style="display:flex; flex-direction:column; gap:0;">
+            <div class="prob-item"><span class="prob-dot" style="color:var(--red);">↑</span><span>~40 lines of setup before a single assertion — <em>in every spec file</em></span></div>
+            <div class="prob-item"><span class="prob-dot" style="color:var(--red);">↑</span><span>Auth logic duplicated across every spec — breaks when passwords rotate</span></div>
+            <div class="prob-item"><span class="prob-dot" style="color:var(--red);">↑</span><span>Brittle raw API calls — any endpoint change breaks every test at once</span></div>
+            <div class="prob-item"><span class="prob-dot" style="color:var(--red);">↑</span><span>If <code class="inline">afterEach</code> fails, the next CI run is polluted with stale data</span></div>
+            <div class="prob-item"><span class="prob-dot" style="color:var(--red);">↑</span><span>The LLM can't see your staging API — it can't help generate or fix this</span></div>
+          </div>
+        </div>
+
+        <div class="callout purple" style="margin:0;">
+          <p><strong>This is your team's test-data knowledge locked inside every spec file.</strong> A custom MCP turns it into one callable tool — the LLM uses it the same way it uses Playwright.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ─────────────────────────────────
+     SLIDE 1 — BEFORE / AFTER
+─────────────────────────────────── -->
+<div class="slide overflow"
+     data-notes="Left = 40-line setup condensed. Right = one prompt sentence replaces it. | Ask: 'Where did the auth logic go?' → Into the handler, written once. | 320 duplicated lines across 8 files → zero."
+     data-section="1">
+  <div class="slide-content">
+    <div class="phase-tag"><i data-lucide="arrow-right-left"></i>Before / After</div>
+    <h2><span class="h2-icon"><i data-lucide="arrow-right-left"></i></span>Same Test — With a Custom MCP</h2>
+
+    <div class="cols cols-2" style="align-items:stretch;">
+
+      <div style="display:flex; flex-direction:column; gap:14px;">
+        <div class="section-label red">Before — without custom MCP</div>
+
+        <div class="card red">
+          <div class="ch" style="color:var(--red);"><i data-lucide="file-x"></i><h3 style="color:var(--red);">beforeEach — 40 lines of raw API calls</h3></div>
+          <pre style="margin:0; font-size:0.8rem; background: transparent; border:none; padding:0; border-top: 1px solid var(--red-border); padding-top:12px;"><span class="c">// Auth → create class → add 5 students
+// → navigate → wait → cleanup in afterEach
+// Duplicated in EVERY spec file</span>
+<span class="k">const</span> token = <span class="k">await</span> fetch(<span class="s">'.../auth/token'</span>, { ... });
+classId = <span class="k">await</span> fetch(<span class="s">'.../api/classes'</span>, { ... });
+<span class="k">for</span> (i = <span class="n">0</span>; i &lt; <span class="n">5</span>; i++) <span class="k">await</span> fetch(<span class="s">'.../students'</span>, { ... });
+<span class="k">await</span> page.goto(<span class="s">`localhost:3000/classes?id=${classId}`</span>);</pre>
+        </div>
+
+        <div class="card" style="flex:1;">
+          <div class="ch"><i data-lucide="file-check" style="color:var(--text-muted);"></i><h3>The actual test — just 5 lines</h3></div>
+          <pre style="margin:0; font-size:0.82rem;"><span class="k">test</span>(<span class="s">'Class A tab shows 5 students'</span>, <span class="k">async</span> ({ page }) =&gt; {
+  <span class="k">await</span> page.getByRole(<span class="s">'tab'</span>, { name: <span class="s">'Class A'</span> }).click();
+  <span class="k">await</span> expect(page.getByRole(<span class="s">'row'</span>))
+    .toHaveCount(<span class="n">5</span>);
+});</pre>
+        </div>
+      </div>
+
+      <div style="display:flex; flex-direction:column; gap:14px;">
+        <div class="section-label green">After — with test-data-factory MCP</div>
+
+        <div class="card green">
+          <div class="ch" style="color:var(--green);"><i data-lucide="message-square"></i><h3 style="color:var(--green);">What you type in Copilot Agent Mode</h3></div>
+          <pre style="margin:0; font-size:0.82rem; background:transparent; border:none; padding:0; border-top:1px solid var(--green-border); padding-top:12px;"><span class="s">"Seed a class called 'Class A' with 5 students,
+ then generate a Playwright test that verifies
+ the Class A tab shows those 5 students."</span>
+
+<span class="c">// One line replaces 40 lines of setup</span></pre>
+        </div>
+
+        <div class="card" style="flex:1;">
+          <div class="ch"><i data-lucide="terminal" style="color:var(--blue-light);"></i><h3>What the LLM does — tool call + result</h3></div>
+          <pre style="margin:0; font-size:0.82rem;"><span class="c">// LLM calls your MCP tool automatically:</span>
+seed_class({
+  className:    <span class="s">"Class A"</span>,
+  studentCount: <span class="n">5</span>
+})
+
+<span class="c">// MCP server handles auth + API calls internally</span>
+<span class="c">// Returns:</span>
+→ <span class="hi">classId: "42"</span>, status: <span class="s">"seeded"</span>
+
+<span class="c">// LLM wires classId into the test URL</span></pre>
+        </div>
+
+        <div class="callout green" style="margin:0;">
+          <p><strong>Auth, API calls, teardown</strong> — all moved to the MCP server. Written once, used by every test. The 320 duplicated setup lines across 8 spec files become <strong>zero</strong>.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ─────────────────────────────────
+     SLIDE 2 — HOW IT WORKS
+─────────────────────────────────── -->
+<div class="slide overflow"
+     data-notes="Walk top row left → right. Key: LLM never talks to your server directly — VS Code sends structured JSON, not the raw sentence. | Zod validates at the boundary before handler runs. | stdio = one node command, VS Code manages the process."
+     data-section="2">
+  <div class="slide-content">
+    <div class="phase-tag blue"><i data-lucide="workflow"></i>How It Works</div>
+    <h2><span class="h2-icon"><i data-lucide="workflow"></i></span>What Happens When You Send a Prompt</h2>
+
+    <div class="card" style="padding:24px 28px; margin-bottom:22px;">
+      <div class="section-label" style="margin-bottom:16px;">Full flow — from your prompt to your test data</div>
+
+      <div class="flow-row" style="justify-content:space-between; margin-bottom:6px;">
+        <div class="flow-node purple">You type a prompt<small>in Copilot Agent Mode</small></div>
+        <div class="flow-arr">→</div>
+        <div class="flow-node blue">LLM reads tool list<small>from your MCP server</small></div>
+        <div class="flow-arr">→</div>
+        <div class="flow-node blue">LLM decides:<small>"I need seed_class"</small></div>
+        <div class="flow-arr">→</div>
+        <div class="flow-node amber">VS Code sends<small>structured tool call</small></div>
+      </div>
+
+      <div style="display:flex; justify-content:space-between; align-items:center; padding:6px 0 6px 0; border-top:1px dashed var(--border); margin:10px 0;">
+        <span class="flow-note">The LLM constructs typed JSON arguments — your handler never receives free-form text</span>
+        <div class="flow-arr" style="font-size:1.5rem; color:var(--amber);">↕</div>
+      </div>
+
+      <div class="flow-row" style="justify-content:space-between; flex-direction:row-reverse;">
+        <div class="flow-node purple">LLM uses result<small>writes it into the test</small></div>
+        <div class="flow-arr">←</div>
+        <div class="flow-node green">Your server returns<small><code style="font-size:0.78rem;">classId: "42"</code></small></div>
+        <div class="flow-arr">←</div>
+        <div class="flow-node green">Handler runs<small>auth → API → seed data</small></div>
+        <div class="flow-arr">←</div>
+        <div class="flow-node amber">MCP server<small>receives typed call</small></div>
+      </div>
+    </div>
+
+    <div class="cols cols-3" style="gap:18px;">
+      <div class="card">
+        <div class="ch"><i data-lucide="list" style="color:var(--blue-light);"></i><h3>Tool list</h3></div>
+        <p>When VS Code starts your server it calls <code class="inline">tools/list</code>. The LLM sees tool names, descriptions, and input schemas — that's how it knows <code class="inline">seed_class</code> exists and what arguments it accepts.</p>
+      </div>
+      <div class="card">
+        <div class="ch"><i data-lucide="braces" style="color:var(--green);"></i><h3>Typed call — not a prompt</h3></div>
+        <p>Your handler receives structured JSON — <code class="inline">&#123; className: "Class A", studentCount: 5 &#125;</code> — never the user's raw sentence. Zod validates every argument at the boundary before your handler runs.</p>
+      </div>
+      <div class="card">
+        <div class="ch"><i data-lucide="cable" style="color:var(--amber);"></i><h3>stdio transport</h3></div>
+        <p>VS Code spawns your server as a local child process via <code class="inline">node</code> or <code class="inline">npx</code>. One entry in <code class="inline">mcp.json</code>. No port, no auth ceremony, no deploy step needed for local development.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─────────────────────────────────
+     SLIDE 3 — BUILD IT IN 4 STEPS
+─────────────────────────────────── -->
+<div class="slide overflow"
+     data-notes="Step 2: walk annotations — ① container, ② name LLM calls, ③ description LLM reads, ④ Zod schema LLM must satisfy, ⑤ handler, ⑥ connect. | Step 4 (Inspector): 10 seconds, always run before wiring in VS Code. | @modelcontextprotocol/sdk is official Anthropic, not third-party."
+     data-section="3">
+  <div class="slide-content">
+    <div class="phase-tag green"><i data-lucide="hammer"></i>Build It</div>
+    <h2><span class="h2-icon"><i data-lucide="hammer"></i></span>Build test-data-factory in 4 Steps</h2>
+
+    <div class="cols cols-2" style="align-items:stretch; gap:22px;">
+
+      <div style="display:flex; flex-direction:column; gap:16px;">
+
+        <div class="card">
+          <div style="display:flex; align-items:center; gap:11px; margin-bottom:12px;">
+            <div class="step-pill">1</div>
+            <h3>Install — two packages</h3>
+          </div>
+          <pre style="margin:0;">mkdir mcp-servers/test-data-factory
+cd    mcp-servers/test-data-factory
+npm init -y
+npm install <span class="hi">@modelcontextprotocol/sdk</span> zod
+<span class="c"># official Anthropic SDK — not a third-party package</span></pre>
+        </div>
+
+        <div class="card">
+          <div style="display:flex; align-items:center; gap:11px; margin-bottom:12px;">
+            <div class="step-pill">3</div>
+            <h3>Wire it — one block in mcp.json</h3>
+          </div>
+          <pre style="margin:0;"><span class="c">// .vscode/mcp.json — add alongside playwright</span>
+{
+  <span class="s">"servers"</span>: {
+    <span class="s">"playwright"</span>: { <span class="c">/* existing */</span> },
+    <span class="s">"<span class="hi">test-data-factory</span>"</span>: {
+      <span class="s">"command"</span>: <span class="s">"node"</span>,
+      <span class="s">"args"</span>: [<span class="s">"./mcp-servers/test-data-factory/server.js"</span>],
+      <span class="s">"type"</span>: <span class="s">"stdio"</span>
+    }
+  }
+}</pre>
+        </div>
+
+        <div class="card" style="flex:1;">
+          <div style="display:flex; align-items:center; gap:11px; margin-bottom:12px;">
+            <div class="step-pill">4</div>
+            <h3>Verify — MCP Inspector before VS Code</h3>
+          </div>
+          <pre style="margin:0;">npx @modelcontextprotocol/inspector \
+  node server.js</pre>
+          <p style="margin-top:10px;">Opens a browser UI → click <strong>Tools</strong> → <code class="inline">seed_class</code> must appear with its schema. If it shows here, it will work in VS Code. Run this before every commit — it takes 10 seconds.</p>
+        </div>
+
+      </div>
+
+      <div class="card" style="padding:22px 24px;">
+        <div style="display:flex; align-items:center; gap:11px; margin-bottom:14px;">
+          <div class="step-pill">2</div>
+          <h3>Write the server — annotated line by line</h3>
+        </div>
+        <pre><span class="k">import</span> { McpServer }         <span class="k">from</span> <span class="s">'@modelcontextprotocol/sdk/server/mcp.js'</span>;
+<span class="k">import</span> { StdioServerTransport } <span class="k">from</span> <span class="s">'@modelcontextprotocol/sdk/server/stdio.js'</span>;
+<span class="k">import</span> { z }                 <span class="k">from</span> <span class="s">'zod'</span>;
+
+<span class="c">// ① Container — name and version appear in tools/list</span>
+<span class="k">const</span> server = <span class="k">new</span> McpServer({
+  name:    <span class="s">'test-data-factory'</span>,
+  version: <span class="s">'1.0.0'</span>
+});
+
+<span class="c">// ② Register a tool — 4 arguments</span>
+server.tool(
+
+  <span class="hi">'seed_class'</span>,                       <span class="c">// ② name — what the LLM calls</span>
+
+  <span class="s">'Seed a class with N test learners'</span>,  <span class="c">// ③ description — LLM reads this</span>
+
+  {                                     <span class="c">// ④ Zod schema — LLM must satisfy</span>
+    className:    z.string().describe(<span class="s">'Tab label e.g. "Class A"'</span>),
+    studentCount: z.number().min(<span class="n">1</span>).max(<span class="n">50</span>)
+  },
+
+  <span class="k">async</span> ({ className, studentCount }) =&gt; {  <span class="c">// ⑤ your handler</span>
+    <span class="k">const</span> token    = <span class="k">await</span> getToken();   <span class="c">// auth once — not in every spec</span>
+    <span class="k">const</span> { classId } = <span class="k">await</span> createClass(className, studentCount, token);
+    <span class="k">return</span> {
+      content: [{ type: <span class="s">'text'</span>, text: <span class="s">`classId=${classId}`</span> }]
+    };
+  }
+);
+
+<span class="c">// ⑥ Connect — stdio pipe, VS Code manages the process</span>
+<span class="k">await</span> server.connect(<span class="k">new</span> StdioServerTransport());</pre>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ─────────────────────────────────
+     SLIDE 4 — BUILD WITH COPILOT
+─────────────────────────────────── -->
+<div class="slide overflow"
+     data-notes="Wrong: 'create an MCP for test data' (too vague). Right: 5-line spec — tool name, input types + constraints, exact endpoint URL, return value, 'one sentence description'. | Big watch-out: Copilot writes verbose descriptions — they bloat LLM context. Trim to one sentence each. | Copilot can't know your API shape — you must provide it."
+     data-section="4">
+  <div class="slide-content">
+    <div class="phase-tag blue"><i data-lucide="bot"></i>Build with Copilot</div>
+    <h2><span class="h2-icon"><i data-lucide="bot"></i></span>Let Copilot Write the Boilerplate — You Write the Spec</h2>
+
+    <div class="cols cols-2" style="align-items:stretch; gap:22px;">
+
+      <!-- LEFT: prompt pattern + what Copilot generates -->
+      <div style="display:flex; flex-direction:column; gap:14px;">
+
+        <div class="card" style="padding:18px 20px;">
+          <div class="ch"><i data-lucide="file-text" style="color:var(--blue-light);"></i><h3>Give Copilot a spec, not a vague request</h3></div>
+          <p style="margin-bottom:10px; font-size:0.87rem;">Write 5 lines before opening chat. Copilot generates accurately when it has: tool name, inputs with types/ranges, what API it calls, and what it returns.</p>
+          <pre style="margin:0; font-size:0.78rem; line-height:1.6;"><span class="c">// Paste this into Copilot Agent Mode chat:</span>
+<span class="s">"Create a TypeScript MCP server called test-data-factory.
+ One tool:
+
+   Name:    seed_class
+   Input:   className (string), studentCount (number, 1–50)
+   Calls:   POST https://staging.signify/api/test-data/seed
+   Returns: classId as plain text
+
+ Use @modelcontextprotocol/sdk + Zod.
+ Add a startup check for TEST_DATA_API_KEY env var.
+ Keep the tool description to one sentence."</span></pre>
+        </div>
+
+        <div class="card" style="padding:18px 20px; flex:1;">
+          <div class="ch"><i data-lucide="sparkles" style="color:var(--purple);"></i><h3>What Copilot generates for you</h3></div>
+          <div style="display:flex; flex-direction:column; gap:8px; font-size:0.88rem; color:var(--text-muted);">
+            <div style="display:flex; gap:10px; align-items:center; padding:7px 10px; background:var(--bg-elevated); border-radius:6px; border:1px solid var(--border);">
+              <i data-lucide="check" style="width:13px;height:13px;stroke:var(--green);stroke-width:2.5;flex-shrink:0;"></i>
+              <span><code class="inline">McpServer</code> + <code class="inline">StdioServerTransport</code> setup and imports</span>
+            </div>
+            <div style="display:flex; gap:10px; align-items:center; padding:7px 10px; background:var(--bg-elevated); border-radius:6px; border:1px solid var(--border);">
+              <i data-lucide="check" style="width:13px;height:13px;stroke:var(--green);stroke-width:2.5;flex-shrink:0;"></i>
+              <span>Zod schema with <code class="inline">.min(1).max(50)</code> and <code class="inline">.describe()</code> on each field</span>
+            </div>
+            <div style="display:flex; gap:10px; align-items:center; padding:7px 10px; background:var(--bg-elevated); border-radius:6px; border:1px solid var(--border);">
+              <i data-lucide="check" style="width:13px;height:13px;stroke:var(--green);stroke-width:2.5;flex-shrink:0;"></i>
+              <span>Handler with <code class="inline">fetch</code>, JSON body, error handling, and <code class="inline">return &#123; content &#125;</code></span>
+            </div>
+            <div style="display:flex; gap:10px; align-items:center; padding:7px 10px; background:var(--bg-elevated); border-radius:6px; border:1px solid var(--border);">
+              <i data-lucide="check" style="width:13px;height:13px;stroke:var(--green);stroke-width:2.5;flex-shrink:0;"></i>
+              <span>Env var check — throws at startup if <code class="inline">TEST_DATA_API_KEY</code> is missing</span>
+            </div>
+            <div style="display:flex; gap:10px; align-items:center; padding:7px 10px; background:var(--bg-elevated); border-radius:6px; border:1px solid var(--border);">
+              <i data-lucide="check" style="width:13px;height:13px;stroke:var(--green);stroke-width:2.5;flex-shrink:0;"></i>
+              <span>Then iterate: <em>"Add a <code class="inline">reset_state</code> tool"</em> · <em>"Use <code class="inline">z.enum</code> for env names"</em></span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- RIGHT: pros, cons, references -->
+      <div style="display:flex; flex-direction:column; gap:14px;">
+
+        <div class="cols cols-2" style="gap:14px;">
+          <div class="card green" style="padding:16px 18px;">
+            <div class="ch" style="color:var(--green);"><i data-lucide="thumbs-up"></i><h3 style="color:var(--green);">Copilot is great at</h3></div>
+            <div style="display:flex; flex-direction:column; gap:5px; font-size:0.85rem; color:var(--text-muted);">
+              <div>✓ All SDK boilerplate in seconds</div>
+              <div>✓ Zod schemas from plain English</div>
+              <div>✓ Error handling you'd skip</div>
+              <div>✓ Adding tools via follow-up prompts</div>
+              <div>✓ Writing handler unit tests on request</div>
+            </div>
+          </div>
+          <div class="card amber" style="padding:16px 18px;">
+            <div class="ch" style="color:var(--amber);"><i data-lucide="triangle-alert"></i><h3 style="color:var(--amber);">Watch out for</h3></div>
+            <div style="display:flex; flex-direction:column; gap:5px; font-size:0.85rem; color:var(--text-muted);">
+              <div>⚠ Verbose tool descriptions — trim them</div>
+              <div>⚠ Hallucinated API shapes — provide your actual endpoint spec</div>
+              <div>⚠ HTTP transport when you need stdio</div>
+              <div>⚠ It can't run the Inspector for you</div>
+              <div>⚠ Generic env var names — rename them</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card" style="padding:18px 20px; flex:1;">
+          <div class="ch"><i data-lucide="book-open" style="color:var(--purple);"></i><h3>What to read next</h3></div>
+          <div style="display:flex; flex-direction:column; gap:9px;">
+            <div style="display:flex; gap:10px; align-items:flex-start; font-size:0.87rem;">
+              <span style="color:var(--blue-light); font-weight:700; flex-shrink:0; min-width:110px;">Spec + Docs</span>
+              <span style="color:var(--text-muted);"><code class="inline">modelcontextprotocol.io</code> — official MCP spec, tool schema reference</span>
+            </div>
+            <div style="display:flex; gap:10px; align-items:flex-start; font-size:0.87rem;">
+              <span style="color:var(--blue-light); font-weight:700; flex-shrink:0; min-width:110px;">SDK</span>
+              <span style="color:var(--text-muted);"><code class="inline">npm: @modelcontextprotocol/sdk</code> — McpServer, tool(), transports</span>
+            </div>
+            <div style="display:flex; gap:10px; align-items:flex-start; font-size:0.87rem;">
+              <span style="color:var(--blue-light); font-weight:700; flex-shrink:0; min-width:110px;">VS Code</span>
+              <span style="color:var(--text-muted);"><code class="inline">aka.ms/vscode-mcp</code> — mcp.json format, agent mode, tool discovery</span>
+            </div>
+            <div style="display:flex; gap:10px; align-items:flex-start; font-size:0.87rem;">
+              <span style="color:var(--blue-light); font-weight:700; flex-shrink:0; min-width:110px;">Inspector</span>
+              <span style="color:var(--text-muted);"><code class="inline">github.com/modelcontextprotocol/inspector</code> — verify tools before wiring</span>
+            </div>
+            <div style="display:flex; gap:10px; align-items:flex-start; font-size:0.87rem;">
+              <span style="color:var(--blue-light); font-weight:700; flex-shrink:0; min-width:110px;">Input validation</span>
+              <span style="color:var(--text-muted);"><code class="inline">zod.dev</code> — enum, min/max, describe() — make the LLM call you correctly</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="callout purple" style="margin:0;">
+          <p><strong>The pattern:</strong> write a 5-line spec → paste into Copilot → review descriptions (trim to one sentence each) → run Inspector → wire in mcp.json. Copilot writes the code; you own the spec and the verification.</p>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ─────────────────────────────────
+     SLIDE 5 — 2 RULES THAT MATTER
+─────────────────────────────────── -->
+<div class="slide overflow"
+     data-notes="Rule 1: descriptions go into LLM context on every prompt — no secrets, no URLs. process.env + startup check. | Rule 2: z.string() for env name → LLM sends 'production' instead of 'prod' → URL breaks silently, 30min debug. z.enum() fixes it. | Just these two. Everything else is advanced."
+     data-section="5">
+  <div class="slide-content">
+    <div class="phase-tag amber"><i data-lucide="shield-check"></i>2 Rules</div>
+    <h2><span class="h2-icon"><i data-lucide="shield-check"></i></span>Two Rules That Prevent Silent Failures</h2>
+
+    <div class="cols cols-2" style="align-items:stretch; gap:22px;">
+
+      <div style="display:flex; flex-direction:column; gap:16px;">
+        <div class="section-label amber">Rule 1 — Tool descriptions are LLM context. Keep them clean.</div>
+
+        <div class="card red" style="flex:1;">
+          <div class="ch" style="color:var(--red);"><i data-lucide="x-circle"></i><h3 style="color:var(--red);">Wrong — secret in the description string</h3></div>
+          <pre style="font-size:0.81rem;"><span class="c">// description goes into EVERY prompt the LLM sees</span>
+server.tool(
+  <span class="s">'seed_class'</span>,
+  <span class="s">'Calls https://staging.signify/api
+   with key sk-a8f7d2b1... for seeding'</span>,
+  schema, handler
+);
+<span class="c">// ↑ Token + internal URL now live in LLM context</span></pre>
+        </div>
+
+        <div class="card green" style="flex:1;">
+          <div class="ch" style="color:var(--green);"><i data-lucide="check-circle-2"></i><h3 style="color:var(--green);">Right — env vars, checked at startup</h3></div>
+          <pre style="font-size:0.81rem;"><span class="c">// Description: only what the tool does</span>
+server.tool(
+  <span class="s">'seed_class'</span>,
+  <span class="s">'Seed a class with N test learners in staging'</span>,
+  schema, handler
+);
+
+<span class="c">// Credentials: env vars, fail fast if missing</span>
+<span class="k">const</span> API_KEY = <span class="hi">process.env.TEST_DATA_API_KEY</span>;
+<span class="k">if</span> (!API_KEY) <span class="k">throw new</span> Error(<span class="s">'TEST_DATA_API_KEY not set'</span>);</pre>
+        </div>
+      </div>
+
+      <div style="display:flex; flex-direction:column; gap:16px;">
+        <div class="section-label amber">Rule 2 — Never accept a free-form string for a known set of values.</div>
+
+        <div class="card red" style="flex:1;">
+          <div class="ch" style="color:var(--red);"><i data-lucide="x-circle"></i><h3 style="color:var(--red);">Wrong — free string for env name</h3></div>
+          <pre style="font-size:0.81rem;"><span class="c">// LLM sends "production" — URL breaks silently</span>
+{
+  env: z.string()
+  <span class="c">// "prod"? "production"? "PROD"? LLM guesses</span>
+}
+
+<span class="c">// In the handler:</span>
+<span class="s">`https://${env}.signify/api/...`</span>
+<span class="c">// → https://production.signify/api — 404
+// No error in chat. 30 minutes debugging.</span></pre>
+        </div>
+
+        <div class="card green" style="flex:1;">
+          <div class="ch" style="color:var(--green);"><i data-lucide="check-circle-2"></i><h3 style="color:var(--green);">Right — enum constrains LLM choices</h3></div>
+          <pre style="font-size:0.81rem;"><span class="c">// LLM sees the valid options — picks correctly</span>
+{
+  env: z.<span class="hi">enum</span>([<span class="s">'staging'</span>, <span class="s">'qa'</span>, <span class="s">'uat'</span>])
+}
+
+<span class="c">// In the handler — guaranteed to be one of three</span>
+<span class="s">`https://${env}.signify/api/...`</span>
+<span class="c">// → https://staging.signify/api — always correct</span></pre>
+        </div>
+
+        <div class="callout" style="margin:0;">
+          <p>The other rules — read-only by default, no destructive ops without scoping, audit logs for writes — are real but come later. These two prevent the failures you'll hit on day one.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ─────────────────────────────────
+     SLIDE 5 — FULL POWER
+─────────────────────────────────── -->
+<div class="slide overflow"
+     data-notes="Two servers, one mcp.json, one prompt — LLM reasons tool order without being told. | Generated test has classId already wired in — data and selectors coherent. | Close: 'Your next step is mkdir + npm install. Code is on slide 4.'"
+     data-section="6">
+  <div class="slide-content">
+    <div class="phase-tag purple"><i data-lucide="zap"></i>Full Power</div>
+    <h2><span class="h2-icon"><i data-lucide="zap"></i></span>Two MCPs · One Prompt · One Coherent Test</h2>
+
+    <div class="cols cols-2" style="align-items:stretch; gap:22px;">
+
+      <div style="display:flex; flex-direction:column; gap:16px;">
+        <div class="section-label">mcp.json — both servers side by side</div>
+        <pre>{ <span class="s">"servers"</span>: {
+    <span class="s">"<span class="hi">playwright</span>"</span>: {
+      <span class="s">"command"</span>: <span class="s">"npx"</span>,
+      <span class="s">"args"</span>: [<span class="s">"-y"</span>, <span class="s">"@playwright/mcp@latest"</span>]
+    },
+    <span class="s">"<span class="hi">test-data-factory</span>"</span>: {
+      <span class="s">"command"</span>: <span class="s">"node"</span>,
+      <span class="s">"args"</span>: [<span class="s">"./mcp-servers/test-data-factory/server.js"</span>]
+    }
+  }
+}</pre>
+
+        <div class="section-label purple">One prompt — LLM reasons about tool order</div>
+        <div class="card purple" style="flex:1;">
+          <pre style="margin:0; background:transparent; border:none; padding:0; color:var(--text-muted);"><span class="s">"Seed a class called 'Class A' with 5 students.
+ Then open the app, navigate to that class,
+ and generate a Playwright test verifying the
+ Class A tab shows 5 students. Use the seeded
+ classId in the navigation URL."</span></pre>
+        </div>
+
+        <div class="section-label" style="margin-bottom:8px;">What the LLM does — without being told the order</div>
+        <div style="display:flex; flex-direction:column; gap:8px;">
+          <div style="display:flex; gap:10px; align-items:center;">
+            <span class="tool-tag purple"><i data-lucide="database" style="width:10px;height:10px;stroke:currentColor;"></i>test-data-factory</span>
+            <span style="font-size:0.87rem; color:var(--text-muted);">calls <code class="inline">seed_class("Class A", 5)</code> → gets <code class="inline">classId: "42"</code></span>
+          </div>
+          <div style="display:flex; gap:10px; align-items:center;">
+            <span class="tool-tag blue"><i data-lucide="globe" style="width:10px;height:10px;stroke:currentColor;"></i>playwright</span>
+            <span style="font-size:0.87rem; color:var(--text-muted);">calls <code class="inline">browser_navigate</code> with classId in the URL</span>
+          </div>
+          <div style="display:flex; gap:10px; align-items:center;">
+            <span class="tool-tag blue"><i data-lucide="scan" style="width:10px;height:10px;stroke:currentColor;"></i>playwright</span>
+            <span style="font-size:0.87rem; color:var(--text-muted);">calls <code class="inline">browser_snapshot</code> → reads the accessibility tree</span>
+          </div>
+          <div style="display:flex; gap:10px; align-items:center;">
+            <span class="tool-tag green"><i data-lucide="file-code" style="width:10px;height:10px;stroke:currentColor;"></i>output</span>
+            <span style="font-size:0.87rem; color:var(--text-muted);">writes test file with <code class="inline">classId</code> wired in correctly</span>
+          </div>
+        </div>
+      </div>
+
+      <div style="display:flex; flex-direction:column; gap:14px;">
+        <div class="section-label green">The generated test — data and selectors aligned</div>
+        <pre style="flex:1; overflow-y:auto; max-height:calc(100vh - 260px);"><span class="k">import</span> { test, expect } <span class="k">from</span> <span class="s">'@playwright/test'</span>;
+
+test.describe(<span class="s">'ClassFilterTabs'</span>, () =&gt; {
+
+  test.beforeEach(<span class="k">async</span> ({ page }) =&gt; {
+    <span class="c">// classId came from seed_class — no manual wiring</span>
+    <span class="k">await</span> page.goto(
+      <span class="s">'http://localhost:3000/classes?id=<span class="hi">42</span>'</span>
+    );
+  });
+
+  test(<span class="s">'Class A tab shows 5 students'</span>, <span class="k">async</span> ({ page }) =&gt; {
+    <span class="k">await</span> page
+      .getByRole(<span class="s">'tab'</span>, { name: <span class="s">'Class A'</span> })
+      .click();
+    <span class="k">await</span> expect(page.getByRole(<span class="s">'row'</span>))
+      .toHaveCount(<span class="n">5</span>);
+  });
+
+  test(<span class="s">'switching to All tab restores all students'</span>, <span class="k">async</span> ({ page }) =&gt; {
+    <span class="k">await</span> page
+      .getByRole(<span class="s">'tab'</span>, { name: <span class="s">'All'</span> })
+      .click();
+    <span class="k">await</span> expect(
+      page.getByRole(<span class="s">'tab'</span>, { name: <span class="s">'All'</span> })
+    ).toHaveAttribute(<span class="s">'aria-selected'</span>, <span class="s">'true'</span>);
+  });
+
+});</pre>
+
+        <div class="callout green" style="margin:0;">
+          <p><strong>Your next step:</strong> <code class="inline">mkdir mcp-servers/test-data-factory && npm init -y && npm install @modelcontextprotocol/sdk zod</code> — the full server code is on the previous slide.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+</div><!-- /deck -->
+
+<!-- ══════════════ BOTTOM BAR ══════════════ -->
+<div id="bottom-bar">
+  <div id="progress-track"><div id="progress-fill"></div></div>
+  <span id="hint">← → Space · F fullscreen</span>
+  <span id="counter">1 / 6</span>
+</div>
+<button class="nav-btn" id="btn-prev" onclick="prevSlide()" aria-label="Previous">‹</button>
+<button class="nav-btn" id="btn-next" onclick="nextSlide()" aria-label="Next">›</button>
+
+<div id="notes">
+  <h4><i data-lucide="message-circle" style="display:inline-block;width:12px;height:12px;stroke:currentColor;vertical-align:middle;margin-right:4px;"></i>Speaker Notes</h4>
+  <p id="notes-text"></p>
+</div>
+
+<script>
+  lucide.createIcons();
+  const slides = document.querySelectorAll('.slide');
+  const total   = slides.length;
+  let   current = 0;
+  let   notesVisible = false;
+  const sectionBtns = document.querySelectorAll('.nav-sec-btn');
+
+  function updateNav() {
+    sectionBtns.forEach(btn => {
+      const nums = (btn.dataset.slides || '').split(',').map(Number);
+      btn.classList.toggle('active', nums.includes(current));
+    });
+  }
+
+  function showSlide(idx) {
+    const prev = current;
+    slides[prev].classList.remove('visible');
+    setTimeout(() => slides[prev].classList.remove('active'), 200);
+    current = ((idx % total) + total) % total;
+    slides[current].classList.add('active');
+    requestAnimationFrame(() => requestAnimationFrame(() => slides[current].classList.add('visible')));
+    const pct = total > 1 ? (current / (total - 1)) * 100 : 100;
+    document.getElementById('progress-fill').style.width = pct + '%';
+    document.getElementById('counter').textContent = (current + 1) + ' / ' + total;
+    document.getElementById('notes-text').textContent = slides[current].dataset.notes || '';
+    updateNav();
+  }
+
+  function nextSlide() { showSlide(current + 1); }
+  function prevSlide() { showSlide(current - 1); }
+  function goToSlide(idx) { showSlide(idx); }
+
+  slides[0].classList.add('visible');
+  document.getElementById('counter').textContent = '1 / ' + total;
+
+  document.getElementById('notes-text').textContent = slides[0].dataset.notes || '';
+
+  document.addEventListener('keydown', e => {
+    if (['ArrowRight', ' ', 'PageDown'].includes(e.key)) { e.preventDefault(); nextSlide(); }
+    if (['ArrowLeft', 'PageUp'].includes(e.key))          { e.preventDefault(); prevSlide(); }
+    if (e.key === 'n' || e.key === 'N') toggleNotes();
+    if (e.key === 'f' || e.key === 'F') {
+      if (!document.fullscreenElement) document.documentElement.requestFullscreen?.();
+      else document.exitFullscreen?.();
+    }
+    if (e.key === 'Home') goToSlide(0);
+    if (e.key === 'End')  goToSlide(total - 1);
+  });
+
+  let touchX = 0;
+  document.addEventListener('touchstart', e => { touchX = e.touches[0].clientX; });
+  document.addEventListener('touchend', e => {
+    const dx = e.changedTouches[0].clientX - touchX;
+    if (Math.abs(dx) > 50) dx < 0 ? nextSlide() : prevSlide();
+  });
+
+  function setTheme(t) {
+    document.documentElement.setAttribute('data-theme', t);
+    document.getElementById('th-dark').classList.toggle('active', t === 'dark');
+    document.getElementById('th-light').classList.toggle('active', t === 'light');
+  }
+  function toggleNotes() {
+    notesVisible = !notesVisible;
+    document.getElementById('notes').classList.toggle('visible', notesVisible);
+  }
+</script>
+</body>
+</html>
