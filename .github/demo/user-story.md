@@ -5,7 +5,7 @@
 | Field         | Value                                              |
 |---------------|----------------------------------------------------|
 | **ID**        | US-4821                                            |
-| **Type**      | User Story                                         |
+| **Type**      | Story                                              |
 | **Title**     | Implement Class Filter Tabs for Learning Dashboard |
 | **Status**    | In Progress                                        |
 | **Priority**  | 2 - High                                           |

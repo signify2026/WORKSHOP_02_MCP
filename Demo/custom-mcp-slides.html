@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Build Your Own MCP — Workshop 2 Companion</title>
+  <title>Build a Custom Signify Atlassian MCP — Workshop 2 Companion</title>
   <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
@@ -180,7 +180,7 @@
 <nav id="top-nav">
   <div class="nav-logo">
     <div class="nav-logo-icon"><i data-lucide="blocks"></i></div>
-    <div class="nav-logo-text">Custom MCP <span class="nav-badge">WORKSHOP 2 ADD-ON</span></div>
+    <div class="nav-logo-text">Custom Signify Atlassian MCP <span class="nav-badge">WORKSHOP 2 ADD-ON</span></div>
   </div>
   <div class="nav-sections" id="nav-sections">
     <button class="nav-sec-btn active" data-slides="0" onclick="goToSlide(0)"><i data-lucide="flame"></i>The Pain</button>
@@ -206,63 +206,55 @@
      SLIDE 0 — THE PAIN
 ─────────────────────────────────── -->
 <div class="slide active"
-     data-notes="Let code sit 10s. Ask: 'How many of you have 30+ lines in a beforeEach?' | 320 duplicated lines across 8 spec files | Token rotates monthly — breaks silently | afterEach failure poisons next CI run | LLM cannot see your staging API → it can't help."
+     data-notes="Open with the official-vs-custom distinction. Official Atlassian Rovo MCP is for Atlassian Cloud. Enterprise Data Center/self-hosted Jira and Confluence need a local bridge. Make the pain concrete: copy-paste from Jira, manual Confluence pages, no tool access from Copilot."
      data-section="0">
   <div class="slide-content">
     <div class="phase-tag red"><i data-lucide="flame"></i>The Pain</div>
-    <h2><span class="h2-icon"><i data-lucide="flame"></i></span>How Test Setup Looks Today</h2>
+    <h2><span class="h2-icon"><i data-lucide="flame"></i></span>Why Build a Custom Signify Atlassian MCP?</h2>
 
     <div class="cols cols-2" style="align-items: stretch;">
-
       <div style="display:flex; flex-direction:column; gap:10px;">
-        <div class="section-label red">class-filter-tabs.spec.ts — setup block every tester hand-writes</div>
-        <pre style="flex:1; font-size:0.78rem; line-height:1.6; overflow-y:auto; max-height:calc(100vh - 260px);"><span class="c">// ~40 lines before a single expect() — in every spec file</span>
-<span class="k">let</span> classId: <span class="n">string</span>;
+        <div class="section-label red">Current workflow — Jira and Confluence outside Copilot</div>
+        <pre style="flex:1; font-size:0.78rem; line-height:1.6; overflow-y:auto; max-height:calc(100vh - 260px);"><span class="c">// Manual script or browser copy-paste before implementation</span>
+<span class="k">const</span> token = <span class="hi">process.env.ATLASSIAN_PAT</span>;
 
-test.beforeEach(<span class="k">async</span> ({ page }) =&gt; {
-  <span class="c">// ① Auth — rotated monthly, breaks tests silently</span>
-  <span class="k">const</span> token = <span class="k">await</span> fetch(<span class="s">'https://staging.signify/auth/token'</span>, {
-    method: <span class="s">'POST'</span>, body: JSON.stringify({ user: <span class="s">'test_admin'</span>, pass: <span class="hi">process.env.TEST_PASS</span> })
-  }).then(r =&gt; r.json()).then(d =&gt; d.token);
+<span class="c">// ① Fetch Jira story by hand</span>
+<span class="k">const</span> issue = <span class="k">await</span> fetch(
+  <span class="s">'https://jira.signify.com/rest/api/2/issue/US-4821'</span>,
+  { headers: { Authorization: <span class="s">`Bearer ${token}`</span> } }
+).then(r =&gt; r.json());
 
-  <span class="c">// ② Create class — raw fetch, duplicated across 8 spec files</span>
-  classId = <span class="k">await</span> fetch(<span class="s">'https://staging.signify/api/classes'</span>, {
-    method: <span class="s">'POST'</span>, headers: { Authorization: <span class="s">`Bearer ${token}`</span> },
-    body: JSON.stringify({ name: <span class="s">'Class A'</span> })
-  }).then(r =&gt; r.json()).then(d =&gt; d.id);
+<span class="c">// ② Copy acceptance criteria into Copilot manually</span>
+<span class="k">const</span> acs = issue.fields.description;
 
-  <span class="c">// ③ Add students — 5 separate HTTP calls</span>
-  <span class="k">for</span> (<span class="k">let</span> i = <span class="n">0</span>; i &lt; <span class="n">5</span>; i++)
-    <span class="k">await</span> fetch(<span class="s">`https://staging.signify/api/classes/${classId}/students`</span>,
-      { method: <span class="s">'POST'</span>, headers: { Authorization: <span class="s">`Bearer ${token}`</span> },
-        body: JSON.stringify({ name: <span class="s">`Learner ${i}`</span> }) });
-
-  <span class="k">await</span> page.goto(<span class="s">`http://localhost:3000/classes?id=${classId}`</span>);
-  <span class="k">await</span> page.waitForSelector(<span class="s">'[data-loaded="true"]'</span>);
-});
-
-test.afterEach(<span class="k">async</span> () =&gt; { <span class="c">// ← skip this = next run is poisoned</span>
-  <span class="k">await</span> fetch(<span class="s">`https://staging.signify/api/classes/${classId}`</span>, { method: <span class="s">'DELETE'</span> });
+<span class="c">// ③ Create Confluence page manually after testing</span>
+<span class="k">await</span> fetch(<span class="s">'https://confluence.signify.com/rest/api/content'</span>, {
+  method: <span class="s">'POST'</span>,
+  headers: { Authorization: <span class="s">`Bearer ${token}`</span> },
+  body: JSON.stringify({
+    type: <span class="s">'page'</span>, title: <span class="s">'US-4821 Test Plan'</span>,
+    space: { key: <span class="s">'QA'</span> },
+    body: { storage: { value: acs, representation: <span class="s">'storage'</span> } }
+  })
 });</pre>
       </div>
 
       <div style="display:flex; flex-direction:column; gap:16px;">
         <div class="card red" style="flex:1;">
-          <div class="ch" style="color:var(--red);"><i data-lucide="x-circle"></i><h3 style="color:var(--red);">What's wrong with this</h3></div>
+          <div class="ch" style="color:var(--red);"><i data-lucide="x-circle"></i><h3 style="color:var(--red);">Why official MCP may not be enough</h3></div>
           <div style="display:flex; flex-direction:column; gap:0;">
-            <div class="prob-item"><span class="prob-dot" style="color:var(--red);">↑</span><span>~40 lines of setup before a single assertion — <em>in every spec file</em></span></div>
-            <div class="prob-item"><span class="prob-dot" style="color:var(--red);">↑</span><span>Auth logic duplicated across every spec — breaks when passwords rotate</span></div>
-            <div class="prob-item"><span class="prob-dot" style="color:var(--red);">↑</span><span>Brittle raw API calls — any endpoint change breaks every test at once</span></div>
-            <div class="prob-item"><span class="prob-dot" style="color:var(--red);">↑</span><span>If <code class="inline">afterEach</code> fails, the next CI run is polluted with stale data</span></div>
-            <div class="prob-item"><span class="prob-dot" style="color:var(--red);">↑</span><span>The LLM can't see your staging API — it can't help generate or fix this</span></div>
+            <div class="prob-item"><span class="prob-dot" style="color:var(--red);">↑</span><span>Atlassian's official Rovo MCP is designed for Atlassian Cloud</span></div>
+            <div class="prob-item"><span class="prob-dot" style="color:var(--red);">↑</span><span>Enterprise Jira/Confluence Data Center often sits behind internal network rules</span></div>
+            <div class="prob-item"><span class="prob-dot" style="color:var(--red);">↑</span><span>Copilot cannot read self-hosted Jira unless we expose a local tool</span></div>
+            <div class="prob-item"><span class="prob-dot" style="color:var(--red);">↑</span><span>Requirements get copy-pasted into prompts and drift from the source of truth</span></div>
+            <div class="prob-item"><span class="prob-dot" style="color:var(--red);">↑</span><span>Confluence test plans are written manually after the test work is done</span></div>
           </div>
         </div>
 
         <div class="callout purple" style="margin:0;">
-          <p><strong>This is your team's test-data knowledge locked inside every spec file.</strong> A custom MCP turns it into one callable tool — the LLM uses it the same way it uses Playwright.</p>
+          <p><strong>This is the clean reason to build a custom MCP:</strong> not because the official one is bad, but because self-hosted Atlassian needs an internal, least-privilege bridge that Copilot can call.</p>
         </div>
       </div>
-
     </div>
   </div>
 </div>
@@ -271,70 +263,62 @@ test.afterEach(<span class="k">async</span> () =&gt; { <span class="c">// ← sk
      SLIDE 1 — BEFORE / AFTER
 ─────────────────────────────────── -->
 <div class="slide overflow"
-     data-notes="Left = 40-line setup condensed. Right = one prompt sentence replaces it. | Ask: 'Where did the auth logic go?' → Into the handler, written once. | 320 duplicated lines across 8 files → zero."
+     data-notes="Left side is the current manual flow. Right side is the demo target: one prompt, two Atlassian tools. Emphasize: the LLM is not scraping a browser. It receives typed JSON from get_issue and create_page."
      data-section="1">
   <div class="slide-content">
     <div class="phase-tag"><i data-lucide="arrow-right-left"></i>Before / After</div>
-    <h2><span class="h2-icon"><i data-lucide="arrow-right-left"></i></span>Same Test — With a Custom MCP</h2>
+    <h2><span class="h2-icon"><i data-lucide="arrow-right-left"></i></span>Same Workflow — With a Custom Signify Atlassian MCP</h2>
 
     <div class="cols cols-2" style="align-items:stretch;">
-
       <div style="display:flex; flex-direction:column; gap:14px;">
-        <div class="section-label red">Before — without custom MCP</div>
-
+        <div class="section-label red">Before — manual Atlassian work</div>
         <div class="card red">
-          <div class="ch" style="color:var(--red);"><i data-lucide="file-x"></i><h3 style="color:var(--red);">beforeEach — 40 lines of raw API calls</h3></div>
-          <pre style="margin:0; font-size:0.8rem; background: transparent; border:none; padding:0; border-top: 1px solid var(--red-border); padding-top:12px;"><span class="c">// Auth → create class → add 5 students
-// → navigate → wait → cleanup in afterEach
-// Duplicated in EVERY spec file</span>
-<span class="k">const</span> token = <span class="k">await</span> fetch(<span class="s">'.../auth/token'</span>, { ... });
-classId = <span class="k">await</span> fetch(<span class="s">'.../api/classes'</span>, { ... });
-<span class="k">for</span> (i = <span class="n">0</span>; i &lt; <span class="n">5</span>; i++) <span class="k">await</span> fetch(<span class="s">'.../students'</span>, { ... });
-<span class="k">await</span> page.goto(<span class="s">`localhost:3000/classes?id=${classId}`</span>);</pre>
-        </div>
+          <div class="ch" style="color:var(--red);"><i data-lucide="file-x"></i><h3 style="color:var(--red);">Copy from Jira → paste into prompt → paste into Confluence</h3></div>
+          <pre style="margin:0; font-size:0.8rem; background: transparent; border:none; padding:0; border-top:1px solid var(--red-border); padding-top:12px;"><span class="c">// Human does all context transfer</span>
+1. Open Jira ticket US-4821
+2. Copy summary + ACs into Copilot
+3. Generate tests
+4. Open Confluence
+5. Paste test plan and results
 
+<span class="c">// Problems: stale copy, missed comments, no audit trail</span></pre>
+        </div>
         <div class="card" style="flex:1;">
-          <div class="ch"><i data-lucide="file-check" style="color:var(--text-muted);"></i><h3>The actual test — just 5 lines</h3></div>
-          <pre style="margin:0; font-size:0.82rem;"><span class="k">test</span>(<span class="s">'Class A tab shows 5 students'</span>, <span class="k">async</span> ({ page }) =&gt; {
-  <span class="k">await</span> page.getByRole(<span class="s">'tab'</span>, { name: <span class="s">'Class A'</span> }).click();
-  <span class="k">await</span> expect(page.getByRole(<span class="s">'row'</span>))
-    .toHaveCount(<span class="n">5</span>);
-});</pre>
+          <div class="ch"><i data-lucide="alert-triangle" style="color:var(--amber);"></i><h3>What goes wrong</h3></div>
+          <div class="prob-item"><span class="prob-dot" style="color:var(--red);">↑</span><span>Jira comments and updated acceptance criteria are easy to miss</span></div>
+          <div class="prob-item"><span class="prob-dot" style="color:var(--red);">↑</span><span>Every engineer writes their own prompt context differently</span></div>
+          <div class="prob-item"><span class="prob-dot" style="color:var(--red);">↑</span><span>Confluence pages become an afterthought, not part of the workflow</span></div>
         </div>
       </div>
 
       <div style="display:flex; flex-direction:column; gap:14px;">
-        <div class="section-label green">After — with test-data-factory MCP</div>
-
+        <div class="section-label green">After — with signify-atlassian MCP</div>
         <div class="card green">
           <div class="ch" style="color:var(--green);"><i data-lucide="message-square"></i><h3 style="color:var(--green);">What you type in Copilot Agent Mode</h3></div>
-          <pre style="margin:0; font-size:0.82rem; background:transparent; border:none; padding:0; border-top:1px solid var(--green-border); padding-top:12px;"><span class="s">"Seed a class called 'Class A' with 5 students,
- then generate a Playwright test that verifies
- the Class A tab shows those 5 students."</span>
-
-<span class="c">// One line replaces 40 lines of setup</span></pre>
+          <pre style="margin:0; font-size:0.82rem; background:transparent; border:none; padding:0; border-top:1px solid var(--green-border); padding-top:12px;"><span class="s">"Fetch Jira issue US-4821, summarize the ACs,
+ draft a Playwright test plan, and create a
+ Confluence page in the QA space."</span></pre>
         </div>
 
         <div class="card" style="flex:1;">
-          <div class="ch"><i data-lucide="terminal" style="color:var(--blue-light);"></i><h3>What the LLM does — tool call + result</h3></div>
-          <pre style="margin:0; font-size:0.82rem;"><span class="c">// LLM calls your MCP tool automatically:</span>
-seed_class({
-  className:    <span class="s">"Class A"</span>,
-  studentCount: <span class="n">5</span>
-})
+          <div class="ch"><i data-lucide="terminal" style="color:var(--blue-light);"></i><h3>What the LLM does — two tool calls</h3></div>
+          <pre style="margin:0; font-size:0.82rem;"><span class="c">// LLM calls your MCP tools automatically:</span>
+get_issue({ issueKey: <span class="s">"US-4821"</span> })
 
-<span class="c">// MCP server handles auth + API calls internally</span>
-<span class="c">// Returns:</span>
-→ <span class="hi">classId: "42"</span>, status: <span class="s">"seeded"</span>
+<span class="c">// Returns Jira summary + ACs + URL</span>
+→ <span class="hi">status: "In Progress"</span>, assignee: <span class="s">"Priya"</span>
 
-<span class="c">// LLM wires classId into the test URL</span></pre>
+create_page({
+  spaceKey: <span class="s">"QA"</span>,
+  title: <span class="s">"US-4821 Test Plan"</span>,
+  body: <span class="s">"&lt;h1&gt;...&lt;/h1&gt;"</span>
+})</pre>
         </div>
 
         <div class="callout green" style="margin:0;">
-          <p><strong>Auth, API calls, teardown</strong> — all moved to the MCP server. Written once, used by every test. The 320 duplicated setup lines across 8 spec files become <strong>zero</strong>.</p>
+          <p><strong>Jira stays the source of truth.</strong> Copilot gets typed issue data, generates work from it, and writes the final test plan back to Confluence.</p>
         </div>
       </div>
-
     </div>
   </div>
 </div>
@@ -343,54 +327,57 @@ seed_class({
      SLIDE 2 — HOW IT WORKS
 ─────────────────────────────────── -->
 <div class="slide overflow"
-     data-notes="Walk top row left → right. Key: LLM never talks to your server directly — VS Code sends structured JSON, not the raw sentence. | Zod validates at the boundary before handler runs. | stdio = one node command, VS Code manages the process."
+     data-notes="Walk top row left to right. Key: the LLM never talks to Jira directly. VS Code sends structured JSON to the local MCP server, and the server calls Jira/Confluence REST APIs with PAT auth. Say clearly: MCP is not TypeScript-only; we use Node.js because it is fastest for the workshop."
      data-section="2">
   <div class="slide-content">
     <div class="phase-tag blue"><i data-lucide="workflow"></i>How It Works</div>
     <h2><span class="h2-icon"><i data-lucide="workflow"></i></span>What Happens When You Send a Prompt</h2>
 
     <div class="card" style="padding:24px 28px; margin-bottom:22px;">
-      <div class="section-label" style="margin-bottom:16px;">Full flow — from your prompt to your test data</div>
-
+      <div class="section-label" style="margin-bottom:16px;">Full flow — from your prompt to self-hosted Atlassian</div>
       <div class="flow-row" style="justify-content:space-between; margin-bottom:6px;">
         <div class="flow-node purple">You type a prompt<small>in Copilot Agent Mode</small></div>
         <div class="flow-arr">→</div>
-        <div class="flow-node blue">LLM reads tool list<small>from your MCP server</small></div>
+        <div class="flow-node blue">LLM reads tool list<small>get_issue, search_issues, create_page</small></div>
         <div class="flow-arr">→</div>
-        <div class="flow-node blue">LLM decides:<small>"I need seed_class"</small></div>
+        <div class="flow-node blue">LLM decides:<small>"I need get_issue"</small></div>
         <div class="flow-arr">→</div>
         <div class="flow-node amber">VS Code sends<small>structured tool call</small></div>
       </div>
 
-      <div style="display:flex; justify-content:space-between; align-items:center; padding:6px 0 6px 0; border-top:1px dashed var(--border); margin:10px 0;">
-        <span class="flow-note">The LLM constructs typed JSON arguments — your handler never receives free-form text</span>
+      <div style="display:flex; justify-content:space-between; align-items:center; padding:6px 0; border-top:1px dashed var(--border); margin:10px 0;">
+        <span class="flow-note">Your handler receives typed JSON, not the raw sentence. Zod validates before any REST call runs.</span>
         <div class="flow-arr" style="font-size:1.5rem; color:var(--amber);">↕</div>
       </div>
 
       <div class="flow-row" style="justify-content:space-between; flex-direction:row-reverse;">
-        <div class="flow-node purple">LLM uses result<small>writes it into the test</small></div>
+        <div class="flow-node purple">LLM uses result<small>drafts tests or docs</small></div>
         <div class="flow-arr">←</div>
-        <div class="flow-node green">Your server returns<small><code style="font-size:0.78rem;">classId: "42"</code></small></div>
+        <div class="flow-node green">Your server returns<small>issue JSON or page URL</small></div>
         <div class="flow-arr">←</div>
-        <div class="flow-node green">Handler runs<small>auth → API → seed data</small></div>
+        <div class="flow-node green">Handler runs<small>PAT auth → REST API</small></div>
         <div class="flow-arr">←</div>
-        <div class="flow-node amber">MCP server<small>receives typed call</small></div>
+        <div class="flow-node amber">signify-atlassian MCP<small>local Node.js process</small></div>
       </div>
     </div>
 
     <div class="cols cols-3" style="gap:18px;">
       <div class="card">
         <div class="ch"><i data-lucide="list" style="color:var(--blue-light);"></i><h3>Tool list</h3></div>
-        <p>When VS Code starts your server it calls <code class="inline">tools/list</code>. The LLM sees tool names, descriptions, and input schemas — that's how it knows <code class="inline">seed_class</code> exists and what arguments it accepts.</p>
+        <p>When VS Code starts the server it calls <code class="inline">tools/list</code>. The LLM sees <code class="inline">get_issue</code>, <code class="inline">search_issues</code>, and <code class="inline">create_page</code> with descriptions and schemas.</p>
       </div>
       <div class="card">
         <div class="ch"><i data-lucide="braces" style="color:var(--green);"></i><h3>Typed call — not a prompt</h3></div>
-        <p>Your handler receives structured JSON — <code class="inline">&#123; className: "Class A", studentCount: 5 &#125;</code> — never the user's raw sentence. Zod validates every argument at the boundary before your handler runs.</p>
+        <p>Your handler receives structured JSON — <code class="inline">&#123; issueKey: "US-4821" &#125;</code> — never the user's raw sentence. Zod rejects bad arguments before Jira is touched.</p>
       </div>
       <div class="card">
         <div class="ch"><i data-lucide="cable" style="color:var(--amber);"></i><h3>stdio transport</h3></div>
-        <p>VS Code spawns your server as a local child process via <code class="inline">node</code> or <code class="inline">npx</code>. One entry in <code class="inline">mcp.json</code>. No port, no auth ceremony, no deploy step needed for local development.</p>
+        <p>VS Code spawns your server with <code class="inline">node</code>. No port, no deploy step, no Cloud-only OAuth flow. Perfect for a workshop and for internal Data Center APIs.</p>
       </div>
+    </div>
+
+    <div class="callout purple" style="margin-top:18px;">
+      <p><strong>MCP is language-neutral.</strong> We use Node.js here because the workshop is fast to follow, but the same tool contract can be implemented in Python, Java, Go, or C#. Discover tools by asking: what repeated work do engineers do, what inputs are needed, what should be returned, and is it read-only or write-capable?</p>
     </div>
   </div>
 </div>
@@ -399,98 +386,78 @@ seed_class({
      SLIDE 3 — BUILD IT IN 4 STEPS
 ─────────────────────────────────── -->
 <div class="slide overflow"
-     data-notes="Step 2: walk annotations — ① container, ② name LLM calls, ③ description LLM reads, ④ Zod schema LLM must satisfy, ⑤ handler, ⑥ connect. | Step 4 (Inspector): 10 seconds, always run before wiring in VS Code. | @modelcontextprotocol/sdk is official Anthropic, not third-party."
+     data-notes="Step 2 is the key. This code is JavaScript ESM, not TypeScript. TypeScript is optional. Walk the annotations: env check, server container, tool name, description, Zod schema, handler, REST call, stdio connect."
      data-section="3">
   <div class="slide-content">
     <div class="phase-tag green"><i data-lucide="hammer"></i>Build It</div>
-    <h2><span class="h2-icon"><i data-lucide="hammer"></i></span>Build test-data-factory in 4 Steps</h2>
+    <h2><span class="h2-icon"><i data-lucide="hammer"></i></span>Build signify-atlassian MCP in 4 Steps</h2>
 
     <div class="cols cols-2" style="align-items:stretch; gap:22px;">
-
       <div style="display:flex; flex-direction:column; gap:16px;">
-
         <div class="card">
-          <div style="display:flex; align-items:center; gap:11px; margin-bottom:12px;">
-            <div class="step-pill">1</div>
-            <h3>Install — two packages</h3>
-          </div>
-          <pre style="margin:0;">mkdir mcp-servers/test-data-factory
-cd    mcp-servers/test-data-factory
+          <div style="display:flex; align-items:center; gap:11px; margin-bottom:12px;"><div class="step-pill">1</div><h3>Install — two packages</h3></div>
+          <pre style="margin:0;">mkdir mcp-servers/signify-atlassian
+cd    mcp-servers/signify-atlassian
 npm init -y
-npm install <span class="hi">@modelcontextprotocol/sdk</span> zod
-<span class="c"># official Anthropic SDK — not a third-party package</span></pre>
+npm install <span class="hi">@modelcontextprotocol/sdk</span> zod</pre>
         </div>
-
         <div class="card">
-          <div style="display:flex; align-items:center; gap:11px; margin-bottom:12px;">
-            <div class="step-pill">3</div>
-            <h3>Wire it — one block in mcp.json</h3>
-          </div>
+          <div style="display:flex; align-items:center; gap:11px; margin-bottom:12px;"><div class="step-pill">3</div><h3>Wire it — one block in mcp.json</h3></div>
           <pre style="margin:0;"><span class="c">// .vscode/mcp.json — add alongside playwright</span>
 {
   <span class="s">"servers"</span>: {
     <span class="s">"playwright"</span>: { <span class="c">/* existing */</span> },
-    <span class="s">"<span class="hi">test-data-factory</span>"</span>: {
+    <span class="s">"<span class="hi">signify-atlassian</span>"</span>: {
       <span class="s">"command"</span>: <span class="s">"node"</span>,
-      <span class="s">"args"</span>: [<span class="s">"./mcp-servers/test-data-factory/server.js"</span>],
-      <span class="s">"type"</span>: <span class="s">"stdio"</span>
+      <span class="s">"args"</span>: [<span class="s">"./mcp-servers/signify-atlassian/server.js"</span>],
+      <span class="s">"env"</span>: { <span class="s">"ATLASSIAN_PAT"</span>: <span class="s">"${input:atlassian-pat}"</span> }
     }
   }
 }</pre>
         </div>
-
         <div class="card" style="flex:1;">
-          <div style="display:flex; align-items:center; gap:11px; margin-bottom:12px;">
-            <div class="step-pill">4</div>
-            <h3>Verify — MCP Inspector before VS Code</h3>
-          </div>
-          <pre style="margin:0;">npx @modelcontextprotocol/inspector \
-  node server.js</pre>
-          <p style="margin-top:10px;">Opens a browser UI → click <strong>Tools</strong> → <code class="inline">seed_class</code> must appear with its schema. If it shows here, it will work in VS Code. Run this before every commit — it takes 10 seconds.</p>
+          <div style="display:flex; align-items:center; gap:11px; margin-bottom:12px;"><div class="step-pill">4</div><h3>Verify — MCP Inspector before VS Code</h3></div>
+          <pre style="margin:0;">ATLASSIAN_BASE_URL=https://jira.signify.com \
+ATLASSIAN_PAT=*** \
+npx @modelcontextprotocol/inspector node server.js</pre>
+          <p style="margin-top:10px;">Click <strong>Tools</strong>. You should see <code class="inline">get_issue</code>, <code class="inline">search_issues</code>, and <code class="inline">create_page</code>. If Inspector works, VS Code will work.</p>
         </div>
-
       </div>
 
       <div class="card" style="padding:22px 24px;">
-        <div style="display:flex; align-items:center; gap:11px; margin-bottom:14px;">
-          <div class="step-pill">2</div>
-          <h3>Write the server — annotated line by line</h3>
-        </div>
-        <pre><span class="k">import</span> { McpServer }         <span class="k">from</span> <span class="s">'@modelcontextprotocol/sdk/server/mcp.js'</span>;
+        <div style="display:flex; align-items:center; gap:11px; margin-bottom:14px;"><div class="step-pill">2</div><h3>Write the server — JavaScript example</h3></div>
+        <pre style="font-size:0.76rem; line-height:1.58;"><span class="k">import</span> { McpServer } <span class="k">from</span> <span class="s">'@modelcontextprotocol/sdk/server/mcp.js'</span>;
 <span class="k">import</span> { StdioServerTransport } <span class="k">from</span> <span class="s">'@modelcontextprotocol/sdk/server/stdio.js'</span>;
-<span class="k">import</span> { z }                 <span class="k">from</span> <span class="s">'zod'</span>;
+<span class="k">import</span> { z } <span class="k">from</span> <span class="s">'zod'</span>;
 
-<span class="c">// ① Container — name and version appear in tools/list</span>
-<span class="k">const</span> server = <span class="k">new</span> McpServer({
-  name:    <span class="s">'test-data-factory'</span>,
-  version: <span class="s">'1.0.0'</span>
-});
+<span class="k">const</span> baseUrl = process.env.ATLASSIAN_BASE_URL;
+<span class="k">const</span> pat = process.env.ATLASSIAN_PAT;
+<span class="k">if</span> (!baseUrl || !pat) <span class="k">throw new</span> Error(<span class="s">'Atlassian env vars missing'</span>);
 
-<span class="c">// ② Register a tool — 4 arguments</span>
+<span class="k">const</span> server = <span class="k">new</span> McpServer({ name: <span class="s">'signify-atlassian'</span>, version: <span class="s">'1.0.0'</span> });
+
 server.tool(
+  <span class="hi">'get_issue'</span>,
+  <span class="s">'Fetch one Jira issue by key from a self-hosted Atlassian instance.'</span>,
+  { issueKey: z.string().describe(<span class="s">'Jira key e.g. US-4821'</span>) },
+  <span class="k">async</span> ({ issueKey }) =&gt; {
+    <span class="k">const</span> issue = <span class="k">await</span> fetch(
+      <span class="s">`${baseUrl}/rest/api/2/issue/${issueKey}`</span>,
+      { headers: { Authorization: <span class="s">`Bearer ${pat}`</span> } }
+    ).then(r =&gt; r.json());
 
-  <span class="hi">'seed_class'</span>,                       <span class="c">// ② name — what the LLM calls</span>
-
-  <span class="s">'Seed a class with N test learners'</span>,  <span class="c">// ③ description — LLM reads this</span>
-
-  {                                     <span class="c">// ④ Zod schema — LLM must satisfy</span>
-    className:    z.string().describe(<span class="s">'Tab label e.g. "Class A"'</span>),
-    studentCount: z.number().min(<span class="n">1</span>).max(<span class="n">50</span>)
-  },
-
-  <span class="k">async</span> ({ className, studentCount }) =&gt; {  <span class="c">// ⑤ your handler</span>
-    <span class="k">const</span> token    = <span class="k">await</span> getToken();   <span class="c">// auth once — not in every spec</span>
-    <span class="k">const</span> { classId } = <span class="k">await</span> createClass(className, studentCount, token);
-    <span class="k">return</span> {
-      content: [{ type: <span class="s">'text'</span>, text: <span class="s">`classId=${classId}`</span> }]
-    };
+    <span class="k">return</span> { content: [{ type: <span class="s">'text'</span>, text: JSON.stringify({
+      key: issue.key,
+      summary: issue.fields.summary,
+      status: issue.fields.status.name,
+      description: issue.fields.description
+    }, null, <span class="n">2</span>) }] };
   }
 );
 
-<span class="c">// ⑥ Connect — stdio pipe, VS Code manages the process</span>
+<span class="c">// search_issues and create_page follow the same pattern</span>
 <span class="k">await</span> server.connect(<span class="k">new</span> StdioServerTransport());</pre>
       </div>
-
     </div>
   </div>
 </div>
@@ -499,120 +466,75 @@ server.tool(
      SLIDE 4 — BUILD WITH COPILOT
 ─────────────────────────────────── -->
 <div class="slide overflow"
-     data-notes="Wrong: 'create an MCP for test data' (too vague). Right: 5-line spec — tool name, input types + constraints, exact endpoint URL, return value, 'one sentence description'. | Big watch-out: Copilot writes verbose descriptions — they bloat LLM context. Trim to one sentence each. | Copilot can't know your API shape — you must provide it."
+     data-notes="Wrong prompt is vague. Right prompt gives tool names, inputs, endpoints, return shape, env vars, and one-sentence descriptions. The audience should leave knowing they can ask Copilot to write boilerplate, but they own the tool contract and tool discovery."
      data-section="4">
   <div class="slide-content">
     <div class="phase-tag blue"><i data-lucide="bot"></i>Build with Copilot</div>
     <h2><span class="h2-icon"><i data-lucide="bot"></i></span>Let Copilot Write the Boilerplate — You Write the Spec</h2>
 
     <div class="cols cols-2" style="align-items:stretch; gap:22px;">
-
-      <!-- LEFT: prompt pattern + what Copilot generates -->
       <div style="display:flex; flex-direction:column; gap:14px;">
-
         <div class="card" style="padding:18px 20px;">
           <div class="ch"><i data-lucide="file-text" style="color:var(--blue-light);"></i><h3>Give Copilot a spec, not a vague request</h3></div>
-          <p style="margin-bottom:10px; font-size:0.87rem;">Write 5 lines before opening chat. Copilot generates accurately when it has: tool name, inputs with types/ranges, what API it calls, and what it returns.</p>
-          <pre style="margin:0; font-size:0.78rem; line-height:1.6;"><span class="c">// Paste this into Copilot Agent Mode chat:</span>
-<span class="s">"Create a TypeScript MCP server called test-data-factory.
- One tool:
+          <p style="margin-bottom:10px; font-size:0.87rem;">Copilot is excellent at SDK boilerplate. It is not excellent at guessing your internal Jira URL, auth method, or Confluence payload shape. TypeScript is optional; the contract is what matters.</p>
+          <pre style="margin:0; font-size:0.78rem; line-height:1.6;"><span class="s">"Create a Node.js MCP server called signify-atlassian.
+ Tools:
+ 1. get_issue(issueKey: string) → GET /rest/api/2/issue/{key}
+ 2. search_issues(jql: string, maxResults: 1-50)
+ 3. create_page(spaceKey, title, body) → POST /rest/api/content
 
-   Name:    seed_class
-   Input:   className (string), studentCount (number, 1–50)
-   Calls:   POST https://staging.signify/api/test-data/seed
-   Returns: classId as plain text
-
+ Use ATLASSIAN_BASE_URL, CONFLUENCE_BASE_URL, ATLASSIAN_PAT.
  Use @modelcontextprotocol/sdk + Zod.
- Add a startup check for TEST_DATA_API_KEY env var.
- Keep the tool description to one sentence."</span></pre>
+ Keep each tool description to one sentence."</span></pre>
         </div>
-
         <div class="card" style="padding:18px 20px; flex:1;">
           <div class="ch"><i data-lucide="sparkles" style="color:var(--purple);"></i><h3>What Copilot generates for you</h3></div>
           <div style="display:flex; flex-direction:column; gap:8px; font-size:0.88rem; color:var(--text-muted);">
-            <div style="display:flex; gap:10px; align-items:center; padding:7px 10px; background:var(--bg-elevated); border-radius:6px; border:1px solid var(--border);">
-              <i data-lucide="check" style="width:13px;height:13px;stroke:var(--green);stroke-width:2.5;flex-shrink:0;"></i>
-              <span><code class="inline">McpServer</code> + <code class="inline">StdioServerTransport</code> setup and imports</span>
-            </div>
-            <div style="display:flex; gap:10px; align-items:center; padding:7px 10px; background:var(--bg-elevated); border-radius:6px; border:1px solid var(--border);">
-              <i data-lucide="check" style="width:13px;height:13px;stroke:var(--green);stroke-width:2.5;flex-shrink:0;"></i>
-              <span>Zod schema with <code class="inline">.min(1).max(50)</code> and <code class="inline">.describe()</code> on each field</span>
-            </div>
-            <div style="display:flex; gap:10px; align-items:center; padding:7px 10px; background:var(--bg-elevated); border-radius:6px; border:1px solid var(--border);">
-              <i data-lucide="check" style="width:13px;height:13px;stroke:var(--green);stroke-width:2.5;flex-shrink:0;"></i>
-              <span>Handler with <code class="inline">fetch</code>, JSON body, error handling, and <code class="inline">return &#123; content &#125;</code></span>
-            </div>
-            <div style="display:flex; gap:10px; align-items:center; padding:7px 10px; background:var(--bg-elevated); border-radius:6px; border:1px solid var(--border);">
-              <i data-lucide="check" style="width:13px;height:13px;stroke:var(--green);stroke-width:2.5;flex-shrink:0;"></i>
-              <span>Env var check — throws at startup if <code class="inline">TEST_DATA_API_KEY</code> is missing</span>
-            </div>
-            <div style="display:flex; gap:10px; align-items:center; padding:7px 10px; background:var(--bg-elevated); border-radius:6px; border:1px solid var(--border);">
-              <i data-lucide="check" style="width:13px;height:13px;stroke:var(--green);stroke-width:2.5;flex-shrink:0;"></i>
-              <span>Then iterate: <em>"Add a <code class="inline">reset_state</code> tool"</em> · <em>"Use <code class="inline">z.enum</code> for env names"</em></span>
-            </div>
+            <div>✓ <code class="inline">McpServer</code> + <code class="inline">StdioServerTransport</code> setup</div>
+            <div>✓ Zod schemas with min/max constraints and useful <code class="inline">describe()</code> text</div>
+            <div>✓ Jira and Confluence fetch helpers with Bearer token auth</div>
+            <div>✓ Clear JSON return shapes for the LLM to reuse in later steps</div>
+            <div>✓ Startup env-var checks so failure happens before the demo starts</div>
           </div>
         </div>
-
       </div>
 
-      <!-- RIGHT: pros, cons, references -->
       <div style="display:flex; flex-direction:column; gap:14px;">
-
         <div class="cols cols-2" style="gap:14px;">
           <div class="card green" style="padding:16px 18px;">
             <div class="ch" style="color:var(--green);"><i data-lucide="thumbs-up"></i><h3 style="color:var(--green);">Copilot is great at</h3></div>
             <div style="display:flex; flex-direction:column; gap:5px; font-size:0.85rem; color:var(--text-muted);">
-              <div>✓ All SDK boilerplate in seconds</div>
+              <div>✓ SDK boilerplate in seconds</div>
               <div>✓ Zod schemas from plain English</div>
-              <div>✓ Error handling you'd skip</div>
+              <div>✓ Shared REST helper functions</div>
               <div>✓ Adding tools via follow-up prompts</div>
-              <div>✓ Writing handler unit tests on request</div>
+              <div>✓ Inspector-ready examples</div>
             </div>
           </div>
           <div class="card amber" style="padding:16px 18px;">
             <div class="ch" style="color:var(--amber);"><i data-lucide="triangle-alert"></i><h3 style="color:var(--amber);">Watch out for</h3></div>
             <div style="display:flex; flex-direction:column; gap:5px; font-size:0.85rem; color:var(--text-muted);">
-              <div>⚠ Verbose tool descriptions — trim them</div>
-              <div>⚠ Hallucinated API shapes — provide your actual endpoint spec</div>
-              <div>⚠ HTTP transport when you need stdio</div>
-              <div>⚠ It can't run the Inspector for you</div>
-              <div>⚠ Generic env var names — rename them</div>
+              <div>⚠ Cloud endpoints when you need Data Center</div>
+              <div>⚠ Verbose tool descriptions</div>
+              <div>⚠ Hallucinated custom fields</div>
+              <div>⚠ Missing confirmation before writes</div>
+              <div>⚠ Secrets inside code or descriptions</div>
             </div>
           </div>
         </div>
-
         <div class="card" style="padding:18px 20px; flex:1;">
-          <div class="ch"><i data-lucide="book-open" style="color:var(--purple);"></i><h3>What to read next</h3></div>
-          <div style="display:flex; flex-direction:column; gap:9px;">
-            <div style="display:flex; gap:10px; align-items:flex-start; font-size:0.87rem;">
-              <span style="color:var(--blue-light); font-weight:700; flex-shrink:0; min-width:110px;">Spec + Docs</span>
-              <span style="color:var(--text-muted);"><code class="inline">modelcontextprotocol.io</code> — official MCP spec, tool schema reference</span>
-            </div>
-            <div style="display:flex; gap:10px; align-items:flex-start; font-size:0.87rem;">
-              <span style="color:var(--blue-light); font-weight:700; flex-shrink:0; min-width:110px;">SDK</span>
-              <span style="color:var(--text-muted);"><code class="inline">npm: @modelcontextprotocol/sdk</code> — McpServer, tool(), transports</span>
-            </div>
-            <div style="display:flex; gap:10px; align-items:flex-start; font-size:0.87rem;">
-              <span style="color:var(--blue-light); font-weight:700; flex-shrink:0; min-width:110px;">VS Code</span>
-              <span style="color:var(--text-muted);"><code class="inline">aka.ms/vscode-mcp</code> — mcp.json format, agent mode, tool discovery</span>
-            </div>
-            <div style="display:flex; gap:10px; align-items:flex-start; font-size:0.87rem;">
-              <span style="color:var(--blue-light); font-weight:700; flex-shrink:0; min-width:110px;">Inspector</span>
-              <span style="color:var(--text-muted);"><code class="inline">github.com/modelcontextprotocol/inspector</code> — verify tools before wiring</span>
-            </div>
-            <div style="display:flex; gap:10px; align-items:flex-start; font-size:0.87rem;">
-              <span style="color:var(--blue-light); font-weight:700; flex-shrink:0; min-width:110px;">Input validation</span>
-              <span style="color:var(--text-muted);"><code class="inline">zod.dev</code> — enum, min/max, describe() — make the LLM call you correctly</span>
-            </div>
+          <div class="ch"><i data-lucide="lightbulb" style="color:var(--purple);"></i><h3>How to discover useful tools</h3></div>
+          <div style="display:flex; flex-direction:column; gap:9px; font-size:0.87rem; color:var(--text-muted);">
+            <div><strong style="color:var(--green);">Read-only:</strong> <code class="inline">get_issue</code>, <code class="inline">search_issues</code>, <code class="inline">get_page</code>, <code class="inline">search_pages</code>, <code class="inline">get_sprint_issues</code></div>
+            <div><strong style="color:var(--amber);">Write:</strong> <code class="inline">create_issue</code>, <code class="inline">add_issue_comment</code>, <code class="inline">transition_issue</code>, <code class="inline">create_page</code></div>
+            <div><strong style="color:var(--blue-light);">Workflow:</strong> <code class="inline">create_test_plan_from_issue</code>, <code class="inline">create_release_notes_from_jql</code>, <code class="inline">create_bug_from_failed_test</code></div>
+            <div><strong style="color:var(--purple);">Rule:</strong> start with read-only tools. Add write tools only with confirmation, auditability, and tight input schemas.</div>
           </div>
         </div>
-
         <div class="callout purple" style="margin:0;">
-          <p><strong>The pattern:</strong> write a 5-line spec → paste into Copilot → review descriptions (trim to one sentence each) → run Inspector → wire in mcp.json. Copilot writes the code; you own the spec and the verification.</p>
+          <p><strong>The pattern:</strong> write a 5-line tool contract → ask Copilot for boilerplate → trim descriptions → run Inspector → wire in <code class="inline">mcp.json</code>.</p>
         </div>
-
       </div>
-
     </div>
   </div>
 </div>
@@ -621,94 +543,78 @@ server.tool(
      SLIDE 5 — 2 RULES THAT MATTER
 ─────────────────────────────────── -->
 <div class="slide overflow"
-     data-notes="Rule 1: descriptions go into LLM context on every prompt — no secrets, no URLs. process.env + startup check. | Rule 2: z.string() for env name → LLM sends 'production' instead of 'prod' → URL breaks silently, 30min debug. z.enum() fixes it. | Just these two. Everything else is advanced."
+     data-notes="Rule 1 is about secrets and context leakage: descriptions are visible to the LLM. Rule 2 is about constraining known choices: Jira vs Confluence should be an enum, not a free string. Mention read-only by default as the next maturity step."
      data-section="5">
   <div class="slide-content">
     <div class="phase-tag amber"><i data-lucide="shield-check"></i>2 Rules</div>
     <h2><span class="h2-icon"><i data-lucide="shield-check"></i></span>Two Rules That Prevent Silent Failures</h2>
 
     <div class="cols cols-2" style="align-items:stretch; gap:22px;">
-
       <div style="display:flex; flex-direction:column; gap:16px;">
         <div class="section-label amber">Rule 1 — Tool descriptions are LLM context. Keep them clean.</div>
-
         <div class="card red" style="flex:1;">
-          <div class="ch" style="color:var(--red);"><i data-lucide="x-circle"></i><h3 style="color:var(--red);">Wrong — secret in the description string</h3></div>
-          <pre style="font-size:0.81rem;"><span class="c">// description goes into EVERY prompt the LLM sees</span>
+          <div class="ch" style="color:var(--red);"><i data-lucide="x-circle"></i><h3 style="color:var(--red);">Wrong — secret or internal URL in description</h3></div>
+          <pre style="font-size:0.81rem;"><span class="c">// description goes into the model context</span>
 server.tool(
-  <span class="s">'seed_class'</span>,
-  <span class="s">'Calls https://staging.signify/api
-   with key sk-a8f7d2b1... for seeding'</span>,
+  <span class="s">'get_issue'</span>,
+  <span class="s">'Calls https://jira.signify.com with PAT abc123...'</span>,
   schema, handler
-);
-<span class="c">// ↑ Token + internal URL now live in LLM context</span></pre>
+);</pre>
         </div>
-
         <div class="card green" style="flex:1;">
           <div class="ch" style="color:var(--green);"><i data-lucide="check-circle-2"></i><h3 style="color:var(--green);">Right — env vars, checked at startup</h3></div>
-          <pre style="font-size:0.81rem;"><span class="c">// Description: only what the tool does</span>
-server.tool(
-  <span class="s">'seed_class'</span>,
-  <span class="s">'Seed a class with N test learners in staging'</span>,
+          <pre style="font-size:0.81rem;">server.tool(
+  <span class="s">'get_issue'</span>,
+  <span class="s">'Fetch one Jira issue by key.'</span>,
   schema, handler
 );
 
-<span class="c">// Credentials: env vars, fail fast if missing</span>
-<span class="k">const</span> API_KEY = <span class="hi">process.env.TEST_DATA_API_KEY</span>;
-<span class="k">if</span> (!API_KEY) <span class="k">throw new</span> Error(<span class="s">'TEST_DATA_API_KEY not set'</span>);</pre>
+<span class="k">const</span> PAT = <span class="hi">process.env.ATLASSIAN_PAT</span>;
+<span class="k">if</span> (!PAT) <span class="k">throw new</span> Error(<span class="s">'ATLASSIAN_PAT not set'</span>);</pre>
         </div>
       </div>
 
       <div style="display:flex; flex-direction:column; gap:16px;">
         <div class="section-label amber">Rule 2 — Never accept a free-form string for a known set of values.</div>
-
         <div class="card red" style="flex:1;">
-          <div class="ch" style="color:var(--red);"><i data-lucide="x-circle"></i><h3 style="color:var(--red);">Wrong — free string for env name</h3></div>
-          <pre style="font-size:0.81rem;"><span class="c">// LLM sends "production" — URL breaks silently</span>
+          <div class="ch" style="color:var(--red);"><i data-lucide="x-circle"></i><h3 style="color:var(--red);">Wrong — free string for target system</h3></div>
+          <pre style="font-size:0.81rem;"><span class="c">// LLM sends "wiki" or "confluence-page"</span>
 {
-  env: z.string()
-  <span class="c">// "prod"? "production"? "PROD"? LLM guesses</span>
+  target: z.string()
 }
 
-<span class="c">// In the handler:</span>
-<span class="s">`https://${env}.signify/api/...`</span>
-<span class="c">// → https://production.signify/api — 404
-// No error in chat. 30 minutes debugging.</span></pre>
+<span class="k">const</span> url = target === <span class="s">'confluence'</span>
+  ? CONFLUENCE_URL
+  : JIRA_URL;</pre>
         </div>
-
         <div class="card green" style="flex:1;">
           <div class="ch" style="color:var(--green);"><i data-lucide="check-circle-2"></i><h3 style="color:var(--green);">Right — enum constrains LLM choices</h3></div>
-          <pre style="font-size:0.81rem;"><span class="c">// LLM sees the valid options — picks correctly</span>
+          <pre style="font-size:0.81rem;"><span class="c">// LLM sees valid options and must choose one</span>
 {
-  env: z.<span class="hi">enum</span>([<span class="s">'staging'</span>, <span class="s">'qa'</span>, <span class="s">'uat'</span>])
+  target: z.<span class="hi">enum</span>([<span class="s">'jira'</span>, <span class="s">'confluence'</span>])
 }
 
-<span class="c">// In the handler — guaranteed to be one of three</span>
-<span class="s">`https://${env}.signify/api/...`</span>
-<span class="c">// → https://staging.signify/api — always correct</span></pre>
+<span class="c">// No ambiguous strings, no silent route mistakes</span></pre>
         </div>
-
         <div class="callout" style="margin:0;">
-          <p>The other rules — read-only by default, no destructive ops without scoping, audit logs for writes — are real but come later. These two prevent the failures you'll hit on day one.</p>
+          <p>The next rules are governance: read-only tools by default, confirmation before writes, and audit logs for <code class="inline">create_page</code> or <code class="inline">create_issue</code>. These two are day-one essentials.</p>
         </div>
       </div>
-
     </div>
   </div>
 </div>
 
 <!-- ─────────────────────────────────
-     SLIDE 5 — FULL POWER
+     SLIDE 6 — FULL POWER
 ─────────────────────────────────── -->
 <div class="slide overflow"
-     data-notes="Two servers, one mcp.json, one prompt — LLM reasons tool order without being told. | Generated test has classId already wired in — data and selectors coherent. | Close: 'Your next step is mkdir + npm install. Code is on slide 4.'"
+     data-notes="This is the money slide: Atlassian MCP plus Playwright MCP. The LLM can fetch the Jira story, use Playwright to inspect the live app, generate tests, and publish the test plan back to Confluence. It reasons about order from tool descriptions."
      data-section="6">
   <div class="slide-content">
     <div class="phase-tag purple"><i data-lucide="zap"></i>Full Power</div>
-    <h2><span class="h2-icon"><i data-lucide="zap"></i></span>Two MCPs · One Prompt · One Coherent Test</h2>
+    <h2><span class="h2-icon"><i data-lucide="zap"></i></span>Atlassian MCP + Playwright MCP in One Flow</h2>
 
     <div class="cols cols-2" style="align-items:stretch; gap:22px;">
-
       <div style="display:flex; flex-direction:column; gap:16px;">
         <div class="section-label">mcp.json — both servers side by side</div>
         <pre>{ <span class="s">"servers"</span>: {
@@ -716,80 +622,57 @@ server.tool(
       <span class="s">"command"</span>: <span class="s">"npx"</span>,
       <span class="s">"args"</span>: [<span class="s">"-y"</span>, <span class="s">"@playwright/mcp@latest"</span>]
     },
-    <span class="s">"<span class="hi">test-data-factory</span>"</span>: {
+    <span class="s">"<span class="hi">signify-atlassian</span>"</span>: {
       <span class="s">"command"</span>: <span class="s">"node"</span>,
-      <span class="s">"args"</span>: [<span class="s">"./mcp-servers/test-data-factory/server.js"</span>]
+      <span class="s">"args"</span>: [<span class="s">"./mcp-servers/signify-atlassian/server.js"</span>]
     }
   }
 }</pre>
 
         <div class="section-label purple">One prompt — LLM reasons about tool order</div>
         <div class="card purple" style="flex:1;">
-          <pre style="margin:0; background:transparent; border:none; padding:0; color:var(--text-muted);"><span class="s">"Seed a class called 'Class A' with 5 students.
- Then open the app, navigate to that class,
- and generate a Playwright test verifying the
- Class A tab shows 5 students. Use the seeded
- classId in the navigation URL."</span></pre>
+          <pre style="margin:0; background:transparent; border:none; padding:0; color:var(--text-muted);"><span class="s">"Fetch US-4821 from Jira. Generate one
+ Playwright test per acceptance criterion.
+ Then create a Confluence test-plan page
+ with the generated test coverage summary."</span></pre>
         </div>
 
         <div class="section-label" style="margin-bottom:8px;">What the LLM does — without being told the order</div>
         <div style="display:flex; flex-direction:column; gap:8px;">
-          <div style="display:flex; gap:10px; align-items:center;">
-            <span class="tool-tag purple"><i data-lucide="database" style="width:10px;height:10px;stroke:currentColor;"></i>test-data-factory</span>
-            <span style="font-size:0.87rem; color:var(--text-muted);">calls <code class="inline">seed_class("Class A", 5)</code> → gets <code class="inline">classId: "42"</code></span>
-          </div>
-          <div style="display:flex; gap:10px; align-items:center;">
-            <span class="tool-tag blue"><i data-lucide="globe" style="width:10px;height:10px;stroke:currentColor;"></i>playwright</span>
-            <span style="font-size:0.87rem; color:var(--text-muted);">calls <code class="inline">browser_navigate</code> with classId in the URL</span>
-          </div>
-          <div style="display:flex; gap:10px; align-items:center;">
-            <span class="tool-tag blue"><i data-lucide="scan" style="width:10px;height:10px;stroke:currentColor;"></i>playwright</span>
-            <span style="font-size:0.87rem; color:var(--text-muted);">calls <code class="inline">browser_snapshot</code> → reads the accessibility tree</span>
-          </div>
-          <div style="display:flex; gap:10px; align-items:center;">
-            <span class="tool-tag green"><i data-lucide="file-code" style="width:10px;height:10px;stroke:currentColor;"></i>output</span>
-            <span style="font-size:0.87rem; color:var(--text-muted);">writes test file with <code class="inline">classId</code> wired in correctly</span>
-          </div>
+          <div style="display:flex; gap:10px; align-items:center;"><span class="tool-tag purple"><i data-lucide="ticket" style="width:10px;height:10px;stroke:currentColor;"></i>signify-atlassian</span><span style="font-size:0.87rem; color:var(--text-muted);">calls <code class="inline">get_issue("US-4821")</code> → gets ACs</span></div>
+          <div style="display:flex; gap:10px; align-items:center;"><span class="tool-tag blue"><i data-lucide="globe" style="width:10px;height:10px;stroke:currentColor;"></i>playwright</span><span style="font-size:0.87rem; color:var(--text-muted);">calls <code class="inline">browser_navigate</code> → opens the implemented feature</span></div>
+          <div style="display:flex; gap:10px; align-items:center;"><span class="tool-tag blue"><i data-lucide="scan" style="width:10px;height:10px;stroke:currentColor;"></i>playwright</span><span style="font-size:0.87rem; color:var(--text-muted);">calls <code class="inline">browser_snapshot</code> → reads the accessibility tree</span></div>
+          <div style="display:flex; gap:10px; align-items:center;"><span class="tool-tag green"><i data-lucide="file-text" style="width:10px;height:10px;stroke:currentColor;"></i>signify-atlassian</span><span style="font-size:0.87rem; color:var(--text-muted);">calls <code class="inline">create_page</code> → publishes the test plan</span></div>
         </div>
       </div>
 
       <div style="display:flex; flex-direction:column; gap:14px;">
-        <div class="section-label green">The generated test — data and selectors aligned</div>
-        <pre style="flex:1; overflow-y:auto; max-height:calc(100vh - 260px);"><span class="k">import</span> { test, expect } <span class="k">from</span> <span class="s">'@playwright/test'</span>;
+        <div class="section-label green">Generated Confluence page — created from Jira + Playwright results</div>
+        <pre style="flex:1; overflow-y:auto; max-height:calc(100vh - 260px);"><span class="c">// create_page body generated by Copilot</span>
+&lt;h1&gt;US-4821 Test Plan&lt;/h1&gt;
 
-test.describe(<span class="s">'ClassFilterTabs'</span>, () =&gt; {
+&lt;h2&gt;Source&lt;/h2&gt;
+&lt;p&gt;Jira: US-4821 — Class Filter Tabs&lt;/p&gt;
 
-  test.beforeEach(<span class="k">async</span> ({ page }) =&gt; {
-    <span class="c">// classId came from seed_class — no manual wiring</span>
-    <span class="k">await</span> page.goto(
-      <span class="s">'http://localhost:3000/classes?id=<span class="hi">42</span>'</span>
-    );
-  });
+&lt;h2&gt;Acceptance Criteria Coverage&lt;/h2&gt;
+&lt;ul&gt;
+  &lt;li&gt;AC-1: renders All, Current, Upcoming, Past tabs&lt;/li&gt;
+  &lt;li&gt;AC-2: All tab is selected by default&lt;/li&gt;
+  &lt;li&gt;AC-3: clicking Current updates active state&lt;/li&gt;
+  &lt;li&gt;AC-4: UUI TabButton layout validated separately&lt;/li&gt;
+&lt;/ul&gt;
 
-  test(<span class="s">'Class A tab shows 5 students'</span>, <span class="k">async</span> ({ page }) =&gt; {
-    <span class="k">await</span> page
-      .getByRole(<span class="s">'tab'</span>, { name: <span class="s">'Class A'</span> })
-      .click();
-    <span class="k">await</span> expect(page.getByRole(<span class="s">'row'</span>))
-      .toHaveCount(<span class="n">5</span>);
-  });
+&lt;h2&gt;Generated Tests&lt;/h2&gt;
+&lt;ul&gt;
+  &lt;li&gt;tests/e2e/class-filter-tabs.spec.ts&lt;/li&gt;
+&lt;/ul&gt;
 
-  test(<span class="s">'switching to All tab restores all students'</span>, <span class="k">async</span> ({ page }) =&gt; {
-    <span class="k">await</span> page
-      .getByRole(<span class="s">'tab'</span>, { name: <span class="s">'All'</span> })
-      .click();
-    <span class="k">await</span> expect(
-      page.getByRole(<span class="s">'tab'</span>, { name: <span class="s">'All'</span> })
-    ).toHaveAttribute(<span class="s">'aria-selected'</span>, <span class="s">'true'</span>);
-  });
-
-});</pre>
-
+&lt;h2&gt;Result&lt;/h2&gt;
+&lt;p&gt;All generated Playwright tests passed locally.&lt;/p&gt;</pre>
         <div class="callout green" style="margin:0;">
-          <p><strong>Your next step:</strong> <code class="inline">mkdir mcp-servers/test-data-factory && npm init -y && npm install @modelcontextprotocol/sdk zod</code> — the full server code is on the previous slide.</p>
+          <p><strong>Your next step:</strong> run <code class="inline">/signify-atlassian-demo US-4821 QA</code>. It fetches Jira, previews a Confluence test-plan page, asks for confirmation, then creates the page.</p>
         </div>
       </div>
-
     </div>
   </div>
 </div>
@@ -800,7 +683,7 @@ test.describe(<span class="s">'ClassFilterTabs'</span>, () =&gt; {
 <div id="bottom-bar">
   <div id="progress-track"><div id="progress-fill"></div></div>
   <span id="hint">← → Space · F fullscreen</span>
-  <span id="counter">1 / 6</span>
+  <span id="counter">1 / 7</span>
 </div>
 <button class="nav-btn" id="btn-prev" onclick="prevSlide()" aria-label="Previous">‹</button>
 <button class="nav-btn" id="btn-next" onclick="nextSlide()" aria-label="Next">›</button>

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Tag } from '@epam/uui';
+import { TabButton } from '@epam/uui';
 import { TabData } from '../../utils/dataUtils';
 import css from './ClassFilterTabs.module.scss';
 
@@ -25,14 +25,13 @@ export const ClassFilterTabs: React.FC<ClassFilterTabsProps> = ({
   return (
     <div className={`${css.tabsContainer} ${className || ''}`} role="tablist">
       {tabs.map((tab) => (
-        <Tag
+        <TabButton
           key={tab.id}
           caption={tab.label}
           count={tab.count}
+          isLinkActive={tab.isActive}
           onClick={() => handleTabClick(tab.id)}
-          color= {tab.isActive ? "info" : "neutral"}
           size="36"
-          fill={tab.isActive ? "solid" : "outline"}
           cx={css.filterTab}
           rawProps={{
             role: "tab",

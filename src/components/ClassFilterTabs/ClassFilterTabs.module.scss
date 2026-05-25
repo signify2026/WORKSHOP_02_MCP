@@ -8,13 +8,5 @@
   width: fit-content;
 }
 
-// Individual Filter Tab Styling - Minimal overrides for C-UI Tag component
-.filterTab {
-  /* C-UI Tag component handles most styling including colors and states */
-  transition: all 0.2s ease-in-out;
-  
-  &:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  }
-}
+// Individual filter tab — TabButton handles active/hover state natively
+.filterTab {}
