@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Workshop 2: Working with MCP — Signify Hackathon 2026</title>
+  <title>Workshop 2: Working with MCP</title>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -412,39 +412,45 @@
      SLIDE 2 — AGENDA
 ═══════════════════════════════════════════════════════════ -->
 <div class="slide overflow"
-     data-notes="Walk through the agenda. The first half is foundational — what MCP is, the landscape, and how VS Code wires it. The second half is applied — real use cases, governance rules, best practices, and the hackathon brief. No building from scratch today. We use what exists, understand how it works, and make smart decisions about what to adopt.">
+     data-notes="Walk through the four phases. Theory first — what MCP is, the ecosystem, VS Code wiring, tokens, prompt craft and composition. Then Build Your Own — when to build a custom server and a practical Jira MCP server example. Then applied use cases showing the Jira-to-code flow. Finally governance: fallbacks, OWASP rules, and best practices. By the end, developers will understand MCP as both consumers and builders.">
   <div class="slide-content">
     <div class="phase-tag">Overview</div>
     <h2>90 Minutes at a Glance</h2>
-    <div class="cols cols-3" style="gap:12px; margin-bottom:14px;">
+    <div class="cols cols-4" style="gap:10px; margin-bottom:12px;">
       <div class="card blue">
-        <h3 class="blue">🧠 Theory Foundation <span style="font-weight:400; font-size:0.82rem; margin-left:4px;">0–40 min</span></h3>
-        <ul class="arrow" style="font-size:0.85rem; margin-top:10px;">
+        <h3 class="blue">🧠 Theory <span style="font-weight:400; font-size:0.82rem; margin-left:4px;">0–30 min</span></h3>
+        <ul class="arrow" style="font-size:0.82rem; margin-top:10px;">
           <li>Why MCP? What Copilot can't do alone</li>
           <li>MCP concepts, ecosystem &amp; VS Code wiring</li>
-          <li>Generating tokens for authentication</li>
-          <li>Prompt craft for Figma, Atlassian &amp; Playwright MCPs</li>
-          <li>Composition, SubAgents &amp; Skills</li>
+          <li>Tokens for authentication</li>
+          <li>Prompt craft &amp; composition</li>
+        </ul>
+      </div>
+      <div class="card purple">
+        <h3 class="purple">🔨 Build Your Own <span style="font-weight:400; font-size:0.82rem; margin-left:4px;">30–55 min</span></h3>
+        <ul class="arrow" style="font-size:0.82rem; margin-top:10px;">
+          <li>When to build a custom server</li>
+          <li>Use Case A: Build a Jira MCP server</li>
         </ul>
       </div>
       <div class="card green">
-        <h3 class="green">🔧 Use Cases <span style="font-weight:400; font-size:0.82rem; margin-left:4px;">40–70 min</span></h3>
-        <ul class="arrow" style="font-size:0.85rem; margin-top:10px;">
-          <li>Use Case A: Jira story → Figma → Code (Steps 1+2)</li>
-          <li>Use Case B: Playwright tests → Branch + PR (Steps 3+4)</li>
+        <h3 class="green">🔧 Use Cases <span style="font-weight:400; font-size:0.82rem; margin-left:4px;">55–75 min</span></h3>
+        <ul class="arrow" style="font-size:0.82rem; margin-top:10px;">
+          <li>Use Case B: Jira → Figma → Code</li>
+          <li>Use Case C: Generate &amp; Run Tests</li>
         </ul>
       </div>
       <div class="card amber">
-        <h3 class="amber">🛡 Governance &amp; Best Practices <span style="font-weight:400; font-size:0.82rem; margin-left:4px;">70–90 min</span></h3>
-        <ul class="arrow" style="font-size:0.85rem; margin-top:10px;">
-          <li>Context fallbacks when MCP isn't available</li>
-          <li>OWASP MCP Top 10 — as a user</li>
+        <h3 class="amber">🛡 Governance <span style="font-weight:400; font-size:0.82rem; margin-left:4px;">75–90 min</span></h3>
+        <ul class="arrow" style="font-size:0.82rem; margin-top:10px;">
+          <li>Fallbacks &amp; alternatives</li>
+          <li>OWASP MCP Top 10</li>
           <li>Best practices &amp; recap</li>
         </ul>
       </div>
     </div>
     <div class="callout" style="margin-top:0;">
-      <p>📋 <strong>Today's focus:</strong> We are <em>consumers</em> of MCP, not authors. Every demo uses first-party vendor servers. No custom code required to follow along.</p>
+      <p>📋 <strong>Today's session:</strong> Understand MCP concepts → build a custom server → apply in real use cases → governance. From consumer to builder.</p>
     </div>
   </div>
 </div>
@@ -608,10 +614,10 @@
      SLIDE 5 — THE MCP ECOSYSTEM
 ═══════════════════════════════════════════════════════════ -->
 <div class="slide overflow"
-     data-notes="Walk through the two sections. The green section is what teams can use today — both approved by Signify Cloud CoE. The amber section is pending approval: Atlassian MCP unlocks Jira, Confluence and Bitbucket in one bundle. Context7 is low-risk, read-only, and the easiest to get approved. DBHub needs a data-access security review. Rule throughout: vendor-official servers only — never install from mcp.so or Smithery without an internal security review.">
+     data-notes="Walk through the two sections. The green section is what teams can use today. The amber section lists additional recommended servers: Atlassian MCP unlocks Jira, Confluence and Bitbucket in one bundle. Context7 provides live, version-accurate library docs. Rule throughout: prefer vendor-official servers — never install from community registries without an internal security review.">
   <div class="slide-content">
     <div class="phase-tag">Phase 2 — The Ecosystem</div>
-    <h2>MCP Servers — What You Can Use at Signify</h2>
+    <h2>Available MCP Servers</h2>
 
     <div style="border-left: 4px solid var(--green); padding-left: 12px; margin-bottom: 14px;">
       <div style="font-size:0.8rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; color:var(--green); margin-bottom:10px;">✅ Use Today</div>
@@ -621,7 +627,7 @@
           <p style="font-size:0.82rem; color:var(--text-muted); margin:6px 0 8px;">Design-to-code, token extraction, component metadata. Remote via <code class="inline">https://mcp.figma.com/mcp</code>.</p>
           <ul class="arrow" style="font-size:0.82rem;">
             <li><em>"Generate a React Native button from this Figma frame"</em></li>
-            <li><em>"Export all colour tokens from the Signify design system"</em></li>
+            <li><em>"Export all colour tokens from the design system"</em></li>
             <li><em>"Check if this component matches its Figma spec"</em></li>
           </ul>
         </div>
@@ -644,9 +650,9 @@
           <h3 style="font-size:0.88rem;">🔗 Atlassian MCP</h3>
           <p style="font-size:0.75rem; color:var(--text-dim); margin:4px 0 8px;">Atlassian (official) — one bundle: Jira + Confluence + Bitbucket</p>
           <ul class="arrow" style="font-size:0.79rem;">
-            <li><em>"Get ACs and Figma link from Jira story HUEAPP-1234"</em></li>
+            <li><em>"Get ACs and Figma link from Jira story PROJ-1234"</em></li>
             <li><em>"Push this code to a new branch and create a PR on my behalf"</em></li>
-            <li><em>"Find the runbook for HueApp in Confluence"</em></li>
+            <li><em>"Find the runbook for MyApp in Confluence"</em></li>
           </ul>
         </div>
         <div class="card" style="border-top: 3px solid var(--amber); padding:14px;">
@@ -716,7 +722,7 @@
       <span class="k">"type"</span>: <span class="s">"stdio"</span>,
       <span class="k">"command"</span>: <span class="s">"npx"</span>,
       <span class="k">"args"</span>: [<span class="s">"@playwright/mcp@latest"</span>,
-               <span class="s">"--allowed-origins=https://*.signify.com"</span>]
+               <span class="s">"--allowed-origins=https://*.your-domain.com"</span>]
     },
 
     <span class="c">// Atlassian MCP</span>
@@ -738,7 +744,7 @@
      SLIDE 7 — GENERATING TOKENS FOR MCP AUTHENTICATION
 ═══════════════════════════════════════════════════════════ -->
 <div class="slide overflow"
-     data-notes="Most MCP servers need a personal access token to authenticate. Figma PAT is what you need immediately — Figma MCP is already approved. Playwright runs locally as a stdio process — no token at all. Atlassian API token is for when Rovo MCP clears Cloud CoE approval. The golden rule: never paste tokens directly into mcp.json. Use the VS Code input variable syntax — on first call VS Code prompts you, then stores the value securely in the OS keychain. The committed file contains no secrets.">
+     data-notes="Most MCP servers need a personal access token to authenticate. Figma PAT is required for Figma MCP. Playwright runs locally as a stdio process — no token at all. Atlassian API token covers Jira, Confluence and Bitbucket. The golden rule: never paste tokens directly into mcp.json. Use the VS Code input variable syntax — on first call VS Code prompts you, then stores the value securely in the OS keychain. The committed file contains no secrets.">
   <div class="slide-content">
     <div class="phase-tag">Phase 2 — Configuration</div>
     <h2>Generating Tokens for MCP Authentication</h2>
@@ -759,7 +765,7 @@
         <ol style="font-size:0.85rem; padding-left:18px; margin-top:10px; line-height:2.1;">
           <li>Go to <strong>id.atlassian.com → Security → API tokens</strong></li>
           <li>Click <strong>Create API token</strong></li>
-          <li>Label: <em>signify-mcp-atlassian</em></li>
+          <li>Label: <em>mcp-atlassian</em></li>
           <li>Copy token immediately — shown once</li>
           <li>Reference in <code class="inline">mcp.json</code> as <code class="inline">${input:atlassian-token}</code></li>
         </ol>
@@ -790,7 +796,7 @@
       <div class="card blue" style="padding:14px 16px;">
         <h3 class="blue" style="font-size:0.88rem; margin-bottom:8px;">🎨 Figma MCP</h3>
         <ul class="arrow" style="font-size:0.8rem;">
-          <li><em>"Get colour tokens <strong>from the Signify design system in Figma</strong>"</em></li>
+          <li><em>"Get colour tokens <strong>from the design system in Figma</strong>"</em></li>
           <li><em>"Generate a React Native button <strong>from this Figma frame: [URL]</strong>"</em></li>
           <li><em>"Export <strong>only colour tokens</strong> — not all variables"</em></li>
         </ul>
@@ -799,7 +805,7 @@
       <div class="card amber" style="padding:14px 16px;">
         <h3 class="amber" style="font-size:0.88rem; margin-bottom:8px;">📋 Atlassian MCP — Jira</h3>
         <ul class="arrow" style="font-size:0.8rem;">
-          <li><em>"Get the ACs <strong>from Jira story HUEAPP-1234</strong>"</em></li>
+          <li><em>"Get the ACs <strong>from Jira story PROJ-1234</strong>"</em></li>
           <li><em>"List all open stories <strong>in the current sprint</strong>"</em></li>
           <li><em>"Find the Figma link attached <strong>to this Jira ticket</strong>"</em></li>
         </ul>
@@ -808,7 +814,7 @@
       <div class="card green" style="padding:14px 16px;">
         <h3 class="green" style="font-size:0.88rem; margin-bottom:8px;">🎭 Playwright MCP</h3>
         <ul class="arrow" style="font-size:0.8rem;">
-          <li><em>"<strong>Navigate to</strong> the HueApp login page and find the submit button selector"</em></li>
+          <li><em>"<strong>Navigate to</strong> the app login page and find the submit button selector"</em></li>
           <li><em>"<strong>Open a browser</strong> and generate a Playwright test for the signup flow"</em></li>
           <li><em>"Update broken locators <strong>by opening the live page</strong>"</em></li>
         </ul>
@@ -817,9 +823,9 @@
       <div class="card amber" style="padding:14px 16px;">
         <h3 class="amber" style="font-size:0.88rem; margin-bottom:8px;">🔀 Atlassian MCP — Bitbucket</h3>
         <ul class="arrow" style="font-size:0.8rem;">
-          <li><em>"<strong>Push this code to a new branch</strong> named feat/HUEAPP-1234"</em></li>
-          <li><em>"<strong>Create a PR</strong> from feat/HUEAPP-1234 to main with this description"</em></li>
-          <li><em>"<strong>Get the diff for PR #42</strong> in the HueApp repo"</em></li>
+          <li><em>"<strong>Push this code to a new branch</strong> named feat/PROJ-1234"</em></li>
+          <li><em>"<strong>Create a PR</strong> from feat/PROJ-1234 to main with this description"</em></li>
+          <li><em>"<strong>Get the diff for PR #42</strong> in the app repo"</em></li>
         </ul>
         <p style="font-size:0.75rem; color:var(--text-dim); margin-top:8px;">Key: name the repo, branch, and PR number explicitly.</p>
       </div>
@@ -830,7 +836,7 @@
         <table style="font-size:0.83rem; margin-top:8px;">
           <tr><th>Say this</th><th>Invokes</th></tr>
           <tr><td>"from Figma" / "from this Figma frame: [URL]"</td><td>Figma MCP</td></tr>
-          <tr><td>"from Jira" / "Jira story HUEAPP-XXXX"</td><td>Atlassian MCP (Jira)</td></tr>
+          <tr><td>"from Jira" / "Jira story PROJ-XXXX"</td><td>Atlassian MCP (Jira)</td></tr>
           <tr><td>"navigate to" / "open a browser"</td><td>Playwright MCP</td></tr>
           <tr><td>"create a PR" / "push to a branch"</td><td>Atlassian MCP (Bitbucket)</td></tr>
         </table>
@@ -845,7 +851,7 @@
           </div>
           <div class="card green" style="padding:10px 12px;">
             <p style="font-size:0.8rem; color:var(--green); font-weight:600; margin-bottom:4px;">✓ Scoped</p>
-            <p style="font-size:0.79rem;">"Export <strong>only colour tokens</strong> from the Signify brand page"</p>
+            <p style="font-size:0.79rem;">"Export <strong>only colour tokens</strong> from the brand library page"</p>
             <p style="font-size:0.75rem; color:var(--text-dim); margin-top:4px;">Fast → only what the next step needs</p>
           </div>
         </div>
@@ -960,23 +966,145 @@
 </div>
 
 <!-- ═══════════════════════════════════════════════════════════
-     SLIDE 10 — USE CASE A: FROM JIRA STORY TO CODE
+     SLIDE 10 — BUILDING YOUR OWN MCP SERVER
 ═══════════════════════════════════════════════════════════ -->
 <div class="slide overflow"
-     data-notes="Step 1 uses Atlassian MCP to fetch the Jira story — Copilot reads the acceptance criteria AND extracts the Figma frame link attached to the ticket. Step 2 uses Figma MCP to read the exact design and generate the component, applying copilot-instructions.md conventions. No manual copying or description pasting — Copilot gets the real AC and the real design. The workshop runs jira-to-code.prompt.md as a slash command so participants reproduce this with one command. Somnath Roy demos Steps 1+2 live.">
+     data-notes="Intro to the Build Your Own section. An MCP server is a program that exposes tools, resources, and prompts to AI agents via JSON-RPC 2.0 — making any internal API or private service callable by Copilot. Key decision: build custom when no vendor server covers your use case or when you need self-hosted or fine-grained control over what the model can access. Two transport options: stdio for local tools VS Code spawns as a subprocess, and Streamable HTTP for shared remote services. The next slides cover a practical example: a custom Jira MCP server.">
+  <div class="slide-content">
+    <div class="phase-tag purple">Build Your Own</div>
+    <h2>Building Your Own MCP Server</h2>
+    <p style="margin-bottom:16px; font-size:1rem; color:var(--text);">An MCP server exposes <strong>tools</strong>, <strong>resources</strong>, and <strong>prompts</strong> to AI agents via a standard JSON-RPC 2.0 protocol — making any internal API or private service directly accessible to Copilot.</p>
+    <div class="cols cols-2" style="margin-bottom:16px;">
+      <div class="card purple">
+        <h3 class="purple">🔨 When to build custom</h3>
+        <ul class="check" style="font-size:0.85rem; margin-top:8px;">
+          <li>No vendor server covers your internal tool or private API</li>
+          <li>Self-hosted or on-premise tools not accessible publicly</li>
+          <li>Custom business logic or scoping before returning context</li>
+          <li>Team needs a purpose-built integration with fine-grained control</li>
+        </ul>
+      </div>
+      <div class="card blue">
+        <h3 class="blue">✅ When to use existing servers</h3>
+        <ul class="check" style="font-size:0.85rem; margin-top:8px;">
+          <li><strong>Figma MCP</strong> — official first-party server, prefer it</li>
+          <li><strong>Playwright MCP</strong> — first-party, use for browser automation</li>
+          <li><strong>Atlassian MCP</strong> — official vendor server for Jira &amp; Confluence</li>
+          <li>Always prefer a well-maintained first-party server for public SaaS tools</li>
+        </ul>
+      </div>
+    </div>
+    <div style="margin-bottom:12px;">
+      <div style="font-size:0.75rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; color:var(--text-dim); margin-bottom:8px;">Three server primitives</div>
+      <div style="display:flex; gap:10px; flex-wrap:wrap;">
+        <div class="card" style="padding:12px 16px; flex:1; min-width:160px;">
+          <span style="font-size:0.88rem; font-weight:600;">⚡ Tools</span>
+          <span style="font-size:0.76rem; color:var(--text-muted); display:block; margin-top:3px;">Callable functions — model-controlled</span>
+        </div>
+        <div class="card" style="padding:12px 16px; flex:1; min-width:160px;">
+          <span style="font-size:0.88rem; font-weight:600;">📂 Resources</span>
+          <span style="font-size:0.76rem; color:var(--text-muted); display:block; margin-top:3px;">Read-only context — app-controlled</span>
+        </div>
+        <div class="card" style="padding:12px 16px; flex:1; min-width:160px;">
+          <span style="font-size:0.88rem; font-weight:600;">💬 Prompts</span>
+          <span style="font-size:0.76rem; color:var(--text-muted); display:block; margin-top:3px;">Reusable templates — user-controlled</span>
+        </div>
+      </div>
+    </div>
+    <div style="display:flex; gap:10px; flex-wrap:wrap;">
+      <div class="card" style="padding:10px 16px; flex:1; display:flex; align-items:center; gap:8px;">
+        <span>🖥</span>
+        <div><span style="font-weight:600; font-size:0.84rem;">stdio</span><span style="font-size:0.79rem; color:var(--text-muted);"> — local subprocess, no network overhead, single client</span></div>
+      </div>
+      <div class="card" style="padding:10px 16px; flex:1; display:flex; align-items:center; gap:8px;">
+        <span>🌐</span>
+        <div><span style="font-weight:600; font-size:0.84rem;">Streamable HTTP</span><span style="font-size:0.79rem; color:var(--text-muted);"> — remote HTTPS, multiple clients, OAuth 2.1</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════
+     SLIDE 11 — USE CASE A: CUSTOM JIRA MCP SERVER
+═══════════════════════════════════════════════════════════ -->
+<div class="slide overflow"
+     data-notes="A read-only Jira MCP server wrapping the Jira REST API is a practical starting point. The tool description is critical: the LLM reads it to decide when to invoke the tool. Write descriptions that match natural language task framing — 'Fetch a Jira issue by key; use when the user references a ticket like PROJ-1234'. The mcp.json wires the server using ${input:jira-api-token} so VS Code prompts the user on first call and stores the credential in the OS keychain — no secrets in the committed file. For Jira Cloud REST API v3, use Basic auth with base64-encoded email:api_token. For self-hosted or on-premise Jira instances, consult your instance configuration — Bearer token auth is commonly supported. The isError: true flag in the error return path is important: it tells Copilot the tool ran but the operation failed, allowing it to retry or explain. A thrown exception would be a JSON-RPC protocol error, which is different.">
+  <div class="slide-content">
+    <div class="phase-tag purple">Build Your Own</div>
+    <h2>Use Case A: Custom Jira MCP Server</h2>
+    <div class="cols cols-2" style="gap:16px; margin-bottom:12px;">
+      <div>
+        <div class="card" style="padding:14px 16px; margin-bottom:10px;">
+          <h3 style="font-size:0.88rem; margin-bottom:8px; color:var(--text);">Why build custom vs Atlassian official?</h3>
+          <ul class="arrow" style="font-size:0.82rem;">
+            <li>Works on <strong>self-hosted or on-premise Jira</strong> — not only Jira Cloud</li>
+            <li>No dependency on third-party approval — deploy and run immediately</li>
+            <li>Apply custom logic: field filtering, read-only mode, custom scopes</li>
+            <li>Teams build deeper MCP understanding by creating, not just consuming</li>
+          </ul>
+        </div>
+        <div class="card" style="padding:14px 16px;">
+          <h3 style="font-size:0.88rem; margin-bottom:8px; color:var(--text);">4 tools to implement</h3>
+          <div style="font-size:0.8rem; line-height:2; color:var(--text-muted);">
+            <code class="inline">jira_get_issue(issueKey)</code><br>
+            <code class="inline">jira_search_issues(jql, maxResults?)</code><br>
+            <code class="inline">jira_create_issue(project, summary, type)</code><br>
+            <code class="inline">jira_add_comment(issueKey, body)</code>
+          </div>
+        </div>
+      </div>
+      <div>
+        <pre><code><span class="c">// jira_get_issue — handler excerpt</span>
+server.tool(
+  <span class="s">"jira_get_issue"</span>,
+  <span class="s">"Fetch a Jira issue: summary, ACs, status"</span>,
+  { issueKey: z.string().describe(<span class="s">"e.g. PROJ-1234"</span>) },
+  <span class="k">async</span> ({ issueKey }) =&gt; {
+    <span class="k">const</span> res = <span class="k">await</span> fetch(
+      <span class="s">`${process.env.JIRA_BASE_URL}`</span>
+      + <span class="s">`/rest/api/3/issue/${issueKey}`</span>,
+      { headers: {
+        <span class="s">"Authorization"</span>: <span class="s">`Bearer ${process.env.JIRA_API_TOKEN}`</span>,
+        <span class="s">"Accept"</span>: <span class="s">"application/json"</span>,
+      }}
+    );
+    <span class="k">if</span> (!res.ok) <span class="k">return</span> {
+      isError: <span class="k">true</span>,
+      content: [{ type: <span class="s">"text"</span>,
+        text: <span class="s">`Jira error ${res.status}`</span> }],
+    };
+    <span class="k">const</span> { fields } = <span class="k">await</span> res.json();
+    <span class="k">return</span> { content: [
+      { type: <span class="s">"text"</span>, text: JSON.stringify(fields) }
+    ]};
+  }
+);</code></pre>
+      </div>
+    </div>
+    <div class="card" style="padding:12px 16px;">
+      <h3 style="font-size:0.82rem; margin-bottom:8px; color:var(--text);">Wire in mcp.json — secrets via VS Code input variables</h3>
+      <pre><code><span class="k">"jira-custom"</span>: { <span class="k">"type"</span>: <span class="s">"stdio"</span>, <span class="k">"command"</span>: <span class="s">"npx"</span>, <span class="k">"args"</span>: [<span class="s">"tsx"</span>, <span class="s">"src/server.ts"</span>],
+  <span class="k">"env"</span>: { <span class="k">"JIRA_API_TOKEN"</span>: <span class="s">"${input:jira-api-token}"</span>, <span class="k">"JIRA_BASE_URL"</span>: <span class="s">"https://your-jira.example.com"</span> } }</code></pre>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════
+     SLIDE 14 — USE CASE B: FROM JIRA STORY TO CODE
+═══════════════════════════════════════════════════════════ -->
+<div class="slide overflow"
+     data-notes="Step 1 uses Atlassian MCP to fetch the Jira story — Copilot reads the acceptance criteria AND extracts the Figma frame link attached to the ticket. Step 2 uses Figma MCP to read the exact design and generate the component, applying copilot-instructions.md conventions. No manual copying or description pasting — Copilot gets the real AC and the real design. Run jira-to-code.prompt.md as a slash command to reproduce this in one command.">
   <div class="slide-content">
     <div class="phase-tag green">Phase 4 — Use Cases</div>
-    <h2>Use Case A: From Jira Story to Code</h2>
+    <h2>Use Case B: From Jira Story to Code</h2>
     <div style="margin-bottom:14px;">
-      <div style="font-size:0.75rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; color:var(--text-dim); margin-bottom:8px;">End-to-end workshop flow — 4 steps across 2 use case slides</div>
+      <div style="font-size:0.75rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; color:var(--text-dim); margin-bottom:8px;">End-to-end demo — 3 steps across 2 use case slides</div>
       <div class="flow" style="justify-content:center;">
         <div class="flow-box blue" style="font-weight:700; border-width:2px;">Step 1<br><span style="font-size:0.72rem; font-weight:600;">Jira → ACs + Figma link</span></div>
         <div class="flow-arrow">→</div>
         <div class="flow-box blue" style="font-weight:700; border-width:2px;">Step 2<br><span style="font-size:0.72rem; font-weight:600;">Figma → Code</span></div>
         <div class="flow-arrow" style="color:var(--border);">→</div>
         <div class="flow-box" style="opacity:0.4; border-style:dashed;">Step 3<br><span style="font-size:0.72rem;">Generate + Run Tests</span></div>
-        <div class="flow-arrow" style="color:var(--border);">→</div>
-        <div class="flow-box" style="opacity:0.4; border-style:dashed;">Step 4<br><span style="font-size:0.72rem;">Push Branch + PR</span></div>
       </div>
     </div>
     <div class="cols cols-2" style="margin-bottom:14px;">
@@ -984,7 +1112,7 @@
         <h3 class="blue">Step 1 — Atlassian MCP reads Jira story</h3>
         <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:10px;">Copilot fetches the story, extracts acceptance criteria, and identifies the linked Figma frame URL — all without leaving VS Code.</p>
         <div class="flow" style="margin-bottom:10px; flex-wrap:wrap;">
-          <div class="flow-box" style="font-size:0.78rem;">Prompt: "Get ACs from HUEAPP-1234"</div>
+          <div class="flow-box" style="font-size:0.78rem;">Prompt: "Get ACs from PROJ-1234"</div>
           <div class="flow-arrow">→</div>
           <div class="flow-box amber" style="font-size:0.78rem;"><code>get_issue</code> called</div>
           <div class="flow-arrow">→</div>
@@ -1025,7 +1153,7 @@
             <span style="color:var(--text-dim);">tools:</span> [<span style="color:var(--blue); font-weight:700;">get_issue</span>, <span style="color:var(--blue); font-weight:700;">get_design_context</span>, <span style="color:var(--blue); font-weight:700;">get_code</span>]
           </div>
           <div style="font-size:0.79rem; line-height:1.85; color:var(--text);">
-            1. <span style="color:var(--blue); font-weight:600; font-family:monospace; font-size:0.77rem;">get_issue</span> HUEAPP-{{ticket}} → extract ACs + Figma URL<br>
+            1. <span style="color:var(--blue); font-weight:600; font-family:monospace; font-size:0.77rem;">get_issue</span> PROJ-{{ticket}} → extract ACs + Figma URL<br>
             2. <span style="color:var(--blue); font-weight:600; font-family:monospace; font-size:0.77rem;">get_design_context</span> on the Figma frame URL<br>
             3. <span style="color:var(--blue); font-weight:600; font-family:monospace; font-size:0.77rem;">get_code</span> (mode: react-native)<br>
             4. Apply <code class="inline">copilot-instructions.md</code> conventions<br>
@@ -1039,658 +1167,24 @@
 </div>
 
 <!-- ═══════════════════════════════════════════════════════════
-     SLIDE 11a — HOW PLAYWRIGHT MCP SEES YOUR APP
+     SLIDE 15 — USE CASE C: GENERATE + RUN TESTS
 ═══════════════════════════════════════════════════════════ -->
 <div class="slide overflow"
-     data-notes="This is the most important mental model to land before any live demo. The single root cause of the locator maintenance pain from the survey — every HTML ID change breaks tests — is that classic test recording tools couple to implementation detail, not user intent. Playwright MCP reads the accessibility tree, which is what a screen reader sees. It's tied to what the app does for the user, not how it's coded. Rename a CSS class, restructure a div, change an element ID — none of that touches the accessibility tree as long as the button still says 'Submit' and has role='button'. That's the shift.">
-  <div class="slide-content">
-    <div class="phase-tag green">Playwright MCP — How It Works</div>
-    <h2>How Playwright MCP Sees Your App</h2>
-    <div class="cols cols-2" style="margin-bottom:16px; align-items:start;">
-      <div class="card red">
-        <h3 class="red">❌ How most test recorders work</h3>
-        <p style="font-size:0.84rem; color:var(--text-muted); margin-bottom:10px;">They read the <strong>DOM</strong> — implementation detail baked into the test.</p>
-        <pre style="margin:0 0 10px;"><span class="c">// Breaks when ID or class changes</span>
-page.locator(<span class="s">'#tab-class-a-btn'</span>)
-page.locator(<span class="s">'.LeaderboardTable_row__140Pj'</span>)
-page.locator(<span class="s">'xpath=//div[@data-v-12ab]'</span>)</pre>
-        <div class="callout red" style="margin:0;">
-          <p>Survey finding: <em>"Every UI change breaks existing automation test suites due to changed HTML element IDs, locators, and selectors."</em> — 180 Signify respondents</p>
-        </div>
-      </div>
-      <div class="card green">
-        <h3 class="green">✅ How Playwright MCP works</h3>
-        <p style="font-size:0.84rem; color:var(--text-muted); margin-bottom:10px;">It reads the <strong>accessibility tree</strong> — what a screen reader sees. Tied to user intent, not code structure.</p>
-        <pre style="margin:0 0 10px;"><span class="c">// Survives class renames, ID changes,</span>
-<span class="c">// framework migrations</span>
-page.getByRole(<span class="s">'tab'</span>, &#123; name: <span class="s">'Class A'</span> &#125;)
-page.getByLabel(<span class="s">'Student name'</span>)
-page.getByText(<span class="s">'Show All Students'</span>)</pre>
-        <div class="callout green" style="margin:0;">
-          <p>Rename a CSS class, restructure a <code class="inline">div</code>, upgrade your component library — none of it breaks these selectors as long as the label stays the same.</p>
-        </div>
-      </div>
-    </div>
-    <div class="cols cols-3">
-      <div class="card">
-        <h3 style="font-size:0.9rem;">📸 What the tool call looks like</h3>
-        <p style="font-size:0.83rem; color:var(--text-muted);">Playwright MCP calls <code class="inline">browser_snapshot</code> — it gets back an accessibility tree, not HTML. The LLM writes tests from that tree.</p>
-      </div>
-      <div class="card">
-        <h3 style="font-size:0.9rem;">🔁 The loop</h3>
-        <p style="font-size:0.83rem; color:var(--text-muted);">LLM → <code class="inline">browser_navigate</code> → <code class="inline">browser_snapshot</code> → LLM sees tree → writes <code class="inline">getByRole</code> tests → <code class="inline">browser_action</code> runs them → result back to LLM.</p>
-      </div>
-      <div class="card blue">
-        <h3 class="blue" style="font-size:0.9rem;">🔑 The key insight</h3>
-        <p style="font-size:0.83rem; color:var(--text-muted);">A screen reader can navigate your app without knowing HTML IDs. <strong>Your tests should too.</strong> That's Playwright MCP's default.</p>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- ═══════════════════════════════════════════════════════════
-     SLIDE 11b — PROMPT ANATOMY FOR PLAYWRIGHT MCP
-═══════════════════════════════════════════════════════════ -->
-<div class="slide overflow"
-     data-notes="Walk through the 4-part structure using the snap-code-project examples. The key teaching point is that Copilot needs an explicit trigger to invoke the Playwright MCP tool — phrases like 'open a browser', 'navigate to', 'generate a Playwright test for'. Without a trigger, it stays in chat mode and generates code from memory (which may have phantom selectors). The snap-code-project examples are realistic — the ClassFilterTabs and LeaderboardTable are in the repo participants can run. Point out the 'constraints' part — always telling it the framework prevents it from generating Jest/RTL code instead of Playwright. The 'context' part (include the app URL or the component name) avoids generic tests.">
-  <div class="slide-content">
-    <div class="phase-tag green">Playwright MCP — Prompting</div>
-    <h2>Prompt Anatomy for Playwright MCP</h2>
-    <div style="margin-bottom:14px;">
-      <div style="font-size:0.75rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; color:var(--text-dim); margin-bottom:10px;">The 4-part structure — every effective Playwright MCP prompt has these:</div>
-      <div class="cols cols-4" style="margin-bottom:16px;">
-        <div class="card blue">
-          <div style="font-size:1.4rem; font-weight:800; color:var(--blue); margin-bottom:6px;">1</div>
-          <h3 class="blue" style="font-size:0.88rem;">Trigger</h3>
-          <p style="font-size:0.82rem; color:var(--text-muted);">Tell Copilot to use the browser. <em>"Open a browser and navigate to…"</em></p>
-        </div>
-        <div class="card blue">
-          <div style="font-size:1.4rem; font-weight:800; color:var(--blue); margin-bottom:6px;">2</div>
-          <h3 class="blue" style="font-size:0.88rem;">Context</h3>
-          <p style="font-size:0.82rem; color:var(--text-muted);">Name the feature precisely. <em>"…the leaderboard tab-switching feature…"</em></p>
-        </div>
-        <div class="card blue">
-          <div style="font-size:1.4rem; font-weight:800; color:var(--blue); margin-bottom:6px;">3</div>
-          <h3 class="blue" style="font-size:0.88rem;">Framework</h3>
-          <p style="font-size:0.82rem; color:var(--text-muted);">Pin the output format. <em>"…using @playwright/test…"</em></p>
-        </div>
-        <div class="card blue">
-          <div style="font-size:1.4rem; font-weight:800; color:var(--blue); margin-bottom:6px;">4</div>
-          <h3 class="blue" style="font-size:0.88rem;">Constraints</h3>
-          <p style="font-size:0.82rem; color:var(--text-muted);">Set the selector rule. <em>"…use only getByRole and getByText selectors."</em></p>
-        </div>
-      </div>
-    </div>
-    <div class="cols cols-2" style="align-items:start;">
-      <div>
-        <div style="font-size:0.75rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; color:var(--green); margin-bottom:8px;">✅ snap-code-project — ClassFilterTabs</div>
-        <pre><span class="c">// Good prompt → MCP invokes browser_navigate</span>
-<span class="s">"Open a browser at localhost:3000. Navigate to
-the leaderboard section. The ClassFilterTabs
-component has tabs for All, Class A, B, C.
-Generate a @playwright/test for tab switching
-— verify the leaderboard updates on each click.
-Use only getByRole and getByText selectors."</span></pre>
-        <div class="callout green" style="margin-top:10px;">
-          <p>Result: Copilot calls <code class="inline">browser_navigate</code> → <code class="inline">browser_snapshot</code> → writes tests with <code class="inline">getByRole('tab', &#123; name: 'Class A' &#125;)</code>. No phantom selectors.</p>
-        </div>
-      </div>
-      <div>
-        <div style="font-size:0.75rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; color:var(--red); margin-bottom:8px;">❌ What happens without a trigger</div>
-        <pre><span class="c">// No trigger → stays in chat mode</span>
-<span class="s">"Generate a Playwright test for the
-leaderboard filter tabs."</span>
-
-<span class="c">// Copilot writes from memory — may invent
-// selectors that don't exist in the real DOM:</span>
-page.locator(<span class="s">'[data-testid="tab-all"]'</span>) <span class="c">// ← phantom</span>
-page.locator(<span class="s">'#leaderboard-tab-1'</span>)      <span class="c">// ← phantom</span></pre>
-        <div class="callout red" style="margin-top:10px;">
-          <p>Without <em>"open a browser"</em> or <em>"navigate to"</em>, Playwright MCP tools are never called. You get plausible-looking tests that fail on first run.</p>
-        </div>
-      </div>
-    </div>
-    <div class="cols cols-2" style="margin-top:12px;">
-      <div class="callout" style="margin:0;">
-        <p><strong>snapshot vs screenshot:</strong> <code class="inline">browser_snapshot</code> returns the <strong>accessibility tree</strong> — use this for test generation. <code class="inline">browser_screenshot</code> returns a <strong>pixel image</strong> — use this for visual documentation or design comparison. They are not interchangeable.</p>
-      </div>
-      <div class="callout amber" style="margin:0;">
-        <p><strong>Headed vs headless:</strong> MCP defaults to <strong>headed</strong> (visible browser window) — right for live demos and debugging. Set <code class="inline">"headless": true</code> in <code class="inline">.vscode/mcp.json</code> for CI runs where no display is available.</p>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- ═══════════════════════════════════════════════════════════
-     SLIDE 11c — SELECTOR HIERARCHY
-═══════════════════════════════════════════════════════════ -->
-<div class="slide overflow"
-     data-notes="This is the single rule that teams should encode in their copilot-instructions.md. The hierarchy exists because each level has a different coupling point. getByRole and getByLabel are coupled to the accessibility contract — they only break if the feature itself changes, which is what you want. getByText is slightly more fragile (UI copy changes) but still user-visible. getByTestId is explicit engineering — teams can add data-testid attributes deliberately. CSS and XPath are coupled to implementation, not behavior, which is exactly why they break on every HTML refactor. Playwright MCP, because it reads the accessibility tree, naturally gravitates to the top of this hierarchy. Your job is to constrain it from going lower.">
-  <div class="slide-content">
-    <div class="phase-tag green">Playwright MCP — Selectors</div>
-    <h2>Selector Hierarchy — Tests That Survive</h2>
-    <div style="margin-bottom:14px; font-size:0.84rem; color:var(--text-muted);">Playwright MCP reads the <strong>accessibility tree first</strong>. Your prompt constraints determine how far down this hierarchy it goes. Keep it at the top.</div>
-    <div style="display:flex; flex-direction:column; gap:8px; margin-bottom:16px;">
-      <div class="card green" style="display:flex; align-items:center; gap:16px; padding:12px 18px;">
-        <div style="font-size:1.5rem; font-weight:800; color:var(--green); min-width:32px; text-align:center;">1</div>
-        <div style="flex:1;">
-          <div style="display:flex; align-items:center; gap:10px; margin-bottom:4px;">
-            <code class="inline">getByRole('tab', &#123; name: 'Class A' &#125;)</code>
-            <span class="badge green">Most resilient</span>
-          </div>
-          <p style="font-size:0.81rem; margin:0;">Tied to ARIA role + visible label. Breaks only if the feature semantics change — which is intentional.</p>
-        </div>
-      </div>
-      <div class="card green" style="display:flex; align-items:center; gap:16px; padding:12px 18px;">
-        <div style="font-size:1.5rem; font-weight:800; color:var(--green); min-width:32px; text-align:center;">2</div>
-        <div style="flex:1;">
-          <div style="display:flex; align-items:center; gap:10px; margin-bottom:4px;">
-            <code class="inline">getByLabel('Student name')</code>
-            <span class="badge green">Resilient</span>
-          </div>
-          <p style="font-size:0.81rem; margin:0;">Tied to form label text. Survives HTML restructuring as long as the label copy stays.</p>
-        </div>
-      </div>
-      <div class="card" style="display:flex; align-items:center; gap:16px; padding:12px 18px;">
-        <div style="font-size:1.5rem; font-weight:800; color:var(--text-muted); min-width:32px; text-align:center;">3</div>
-        <div style="flex:1;">
-          <div style="display:flex; align-items:center; gap:10px; margin-bottom:4px;">
-            <code class="inline">getByText('Show All Students')</code>
-            <span class="badge blue">Acceptable</span>
-          </div>
-          <p style="font-size:0.81rem; margin:0;">Tied to visible copy. Add <code class="inline">&#123; exact: true &#125;</code> to prevent substring collisions.</p>
-        </div>
-      </div>
-      <div class="card" style="display:flex; align-items:center; gap:16px; padding:12px 18px;">
-        <div style="font-size:1.5rem; font-weight:800; color:var(--text-muted); min-width:32px; text-align:center;">4</div>
-        <div style="flex:1;">
-          <div style="display:flex; align-items:center; gap:10px; margin-bottom:4px;">
-            <code class="inline">getByTestId('leaderboard-row')</code>
-            <span class="badge amber">Deliberate</span>
-          </div>
-          <p style="font-size:0.81rem; margin:0;">Use when roles/labels aren't enough. Add <code class="inline">data-testid</code> intentionally — never let the AI invent a value that doesn't exist yet.</p>
-        </div>
-      </div>
-      <div class="card red" style="display:flex; align-items:center; gap:16px; padding:12px 18px;">
-        <div style="font-size:1.5rem; font-weight:800; color:var(--red); min-width:32px; text-align:center;">✕</div>
-        <div style="flex:1;">
-          <div style="display:flex; align-items:center; gap:10px; margin-bottom:4px;">
-            <code class="inline">#tab-class-a</code>&nbsp;&nbsp;<code class="inline">.LeaderboardTable_row__xyz</code>&nbsp;&nbsp;<code class="inline">xpath=//div[3]</code>
-            <span class="badge red">Never</span>
-          </div>
-          <p style="font-size:0.81rem; margin:0;">Coupled to implementation. Every HTML refactor, CSS module rebuild, or React upgrade is a breaking change.</p>
-        </div>
-      </div>
-    </div>
-    <div class="callout" style="margin:0;">
-      <p><strong>Encode this in your repo:</strong> add <code class="inline">getByRole &gt; getByLabel &gt; getByText &gt; getByTestId — never CSS IDs or XPath</code> to your <code class="inline">copilot-instructions.md</code>. Playwright MCP will follow it automatically.</p>
-    </div>
-  </div>
-</div>
-
-<!-- ═══════════════════════════════════════════════════════════
-     SLIDE 11d — ANTI-PATTERNS & THE REVIEW GATE
-═══════════════════════════════════════════════════════════ -->
-<div class="slide overflow"
-     data-notes="The single most common failure mode when teams adopt Playwright MCP is committing tests they haven't read. The test runs green, the PR merges, and three weeks later someone notices the test was asserting the wrong thing from the start. The review gate is a discipline, not a tool — three questions every AI-generated test must answer before it's committed. The context window point comes directly from the survey: 'chat session stops working when questions are big'. One feature at a time is the correct mental model for Playwright MCP — navigate to one page, test one flow, commit, repeat.">
-  <div class="slide-content">
-    <div class="phase-tag red">Playwright MCP — Anti-Patterns</div>
-    <h2>Anti-Patterns &amp; The Review Gate</h2>
-    <div class="cols cols-2" style="margin-bottom:16px; align-items:start;">
-      <div>
-        <div style="font-size:0.75rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; color:var(--red); margin-bottom:10px;">5 things that burn teams</div>
-        <div class="card red" style="margin-bottom:8px; padding:12px 16px;">
-          <div style="display:flex; gap:10px; align-items:flex-start;">
-            <span style="font-size:1.1rem; flex-shrink:0;">1</span>
-            <div>
-              <h3 style="font-size:0.88rem; color:var(--red);">Committing tests you haven't read</h3>
-              <p style="font-size:0.82rem; color:var(--text-muted); margin:0;">Green ≠ correct. A test that passes while asserting the wrong thing is worse than no test — it gives false confidence.</p>
-            </div>
-          </div>
-        </div>
-        <div class="card amber" style="margin-bottom:8px; padding:12px 16px;">
-          <div style="display:flex; gap:10px; align-items:flex-start;">
-            <span style="font-size:1.1rem; flex-shrink:0;">2</span>
-            <div>
-              <h3 style="font-size:0.88rem; color:var(--amber);">Testing mock data only</h3>
-              <p style="font-size:0.82rem; color:var(--text-muted); margin:0;">Always run Playwright MCP against the actual rendered app at <code class="inline">localhost:3000</code>. Testing <code class="inline">mockData.ts</code> directly tells you nothing about the real UI.</p>
-            </div>
-          </div>
-        </div>
-        <div class="card amber" style="margin-bottom:8px; padding:12px 16px;">
-          <div style="display:flex; gap:10px; align-items:flex-start;">
-            <span style="font-size:1.1rem; flex-shrink:0;">3</span>
-            <div>
-              <h3 style="font-size:0.88rem; color:var(--amber);">Letting the AI invent data-testid values</h3>
-              <p style="font-size:0.82rem; color:var(--text-muted); margin:0;">If you ask for <code class="inline">getByTestId</code> without those attributes in the DOM, the AI invents names. Phantom selectors fail silently.</p>
-            </div>
-          </div>
-        </div>
-        <div class="card" style="margin-bottom:8px; padding:12px 16px;">
-          <div style="display:flex; gap:10px; align-items:flex-start;">
-            <span style="font-size:1.1rem; flex-shrink:0;">4</span>
-            <div>
-              <h3 style="font-size:0.88rem;">One prompt for the whole app</h3>
-              <p style="font-size:0.82rem; color:var(--text-muted); margin:0;">Context window discipline: one feature, one flow, one test file per prompt. Survey finding: <em>"Chat session stops working when questions are big."</em></p>
-            </div>
-          </div>
-        </div>
-        <div class="card" style="padding:12px 16px; margin-bottom:8px;">
-          <div style="display:flex; gap:10px; align-items:flex-start;">
-            <span style="font-size:1.1rem; flex-shrink:0;">5</span>
-            <div>
-              <h3 style="font-size:0.88rem;">Skipping the selector review</h3>
-              <p style="font-size:0.82rem; color:var(--text-muted); margin:0;">Scan every generated selector. If you see a CSS ID, a class name with a hash, or XPath — rewrite it before committing.</p>
-            </div>
-          </div>
-        </div>
-        <div class="card amber" style="padding:12px 16px;">
-          <div style="display:flex; gap:10px; align-items:flex-start;">
-            <span style="font-size:1.1rem; flex-shrink:0;">6</span>
-            <div>
-              <h3 style="font-size:0.88rem; color:var(--amber);">Snapshotting before the page finishes loading</h3>
-              <p style="font-size:0.82rem; color:var(--text-muted); margin:0;">If content loads async (spinners, API calls), <code class="inline">browser_snapshot</code> may read a skeleton state. Instruct MCP to <em>"wait until the leaderboard data is visible"</em> before snapshotting — otherwise it generates tests against elements that don't exist in the loaded state.</p>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div>
-        <div style="font-size:0.75rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; color:var(--green); margin-bottom:10px;">The 3-question review gate</div>
-        <div class="card green" style="margin-bottom:14px;">
-          <p style="font-size:0.88rem; color:var(--text-muted); margin-bottom:12px;">Before committing any AI-generated Playwright test, answer all three:</p>
-          <div class="pillar" style="margin-bottom:10px; padding:12px 14px;">
-            <div class="pillar-num" style="font-size:1.3rem;">Q1</div>
-            <div class="pillar-body">
-              <h3 style="font-size:0.9rem;">Does this test describe what I actually want to verify?</h3>
-              <p style="font-size:0.82rem;">Read the assertion. Not the selector — the assertion. Does it match the user story?</p>
-            </div>
-          </div>
-          <div class="pillar" style="margin-bottom:10px; padding:12px 14px;">
-            <div class="pillar-num" style="font-size:1.3rem;">Q2</div>
-            <div class="pillar-body">
-              <h3 style="font-size:0.9rem;">Does it run against the real app?</h3>
-              <p style="font-size:0.82rem;">Run it. Not just <code class="inline">--dry-run</code>. A real browser, real server, real data flow.</p>
-            </div>
-          </div>
-          <div class="pillar" style="padding:12px 14px;">
-            <div class="pillar-num" style="font-size:1.3rem;">Q3</div>
-            <div class="pillar-body">
-              <h3 style="font-size:0.9rem;">Would this test catch the bug if the feature broke?</h3>
-              <p style="font-size:0.82rem;">Mentally break the feature. If the test would still pass — rewrite it. It's testing the wrong thing.</p>
-            </div>
-          </div>
-        </div>
-        <div class="callout amber" style="margin:0;">
-          <p><strong>Shortcut:</strong> for ClassFilterTabs, manually comment out the <code class="inline">onTabChange</code> handler. The leaderboard test should fail. If it passes anyway, the test isn't verifying the filter.</p>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- ═══════════════════════════════════════════════════════════
-     SLIDE 11e — SELF-HEALING: REPAIRING BROKEN TESTS
-═══════════════════════════════════════════════════════════ -->
-<div class="slide overflow"
-     data-notes="This is the daily pain from the survey — not writing new tests, but maintaining old ones. Every sprint someone renames a component class, changes a button label, restructures a div, and a pile of XPath tests go red. The self-healing workflow is: you take the failing test, open it alongside Playwright MCP, ask it to navigate the current page and propose updated selectors. It reads the live accessibility tree and gives you back selectors that actually exist. Your job is to review the repair — not just accept it. The snap-code-project example is realistic: the LeaderboardTable component uses CSS Modules, so any class rename generates a new hash suffix and breaks any test that references that class. Walk through the before/after slowly — the before selector is the kind of thing codegen produces, the after is what Playwright MCP proposes from the live tree.">
-  <div class="slide-content">
-    <div class="phase-tag amber">Playwright MCP — Self-Healing</div>
-    <h2>Self-Healing: Repairing Broken Tests</h2>
-    <div style="font-size:0.84rem; color:var(--text-muted); margin-bottom:14px;">The survey pain: <em>"Significant ongoing effort updating XPath and locator references rather than writing new tests."</em> This is the repair workflow.</div>
-
-    <div class="cols cols-2" style="margin-bottom:14px; align-items:start;">
-      <div>
-        <div style="font-size:0.75rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; color:var(--text-dim); margin-bottom:8px;">The 4-step repair loop</div>
-        <div class="pillar" style="margin-bottom:8px; padding:12px 14px;">
-          <div class="pillar-num" style="font-size:1.2rem; color:var(--red);">1</div>
-          <div class="pillar-body">
-            <h3 style="font-size:0.9rem;">Test fails after UI change</h3>
-            <p style="font-size:0.82rem;">CI goes red. A selector no longer matches the current DOM — class hash changed, ID removed, label reworded.</p>
-          </div>
-        </div>
-        <div class="pillar" style="margin-bottom:8px; padding:12px 14px;">
-          <div class="pillar-num" style="font-size:1.2rem; color:var(--amber);">2</div>
-          <div class="pillar-body">
-            <h3 style="font-size:0.9rem;">Paste the failing test + prompt Playwright MCP</h3>
-            <p style="font-size:0.82rem;">Give it the broken test and ask it to navigate the live page and propose new selectors from the accessibility tree.</p>
-          </div>
-        </div>
-        <div class="pillar" style="margin-bottom:8px; padding:12px 14px;">
-          <div class="pillar-num" style="font-size:1.2rem; color:var(--blue);">3</div>
-          <div class="pillar-body">
-            <h3 style="font-size:0.9rem;">MCP reads the live accessibility tree</h3>
-            <p style="font-size:0.82rem;"><code class="inline">browser_navigate</code> → <code class="inline">browser_snapshot</code> → proposes <code class="inline">getByRole</code> / <code class="inline">getByText</code> replacements that exist right now.</p>
-          </div>
-        </div>
-        <div class="pillar" style="padding:12px 14px;">
-          <div class="pillar-num" style="font-size:1.2rem; color:var(--green);">4</div>
-          <div class="pillar-body">
-            <h3 style="font-size:0.9rem;">Review the repair — don't just accept</h3>
-            <p style="font-size:0.82rem;">Did the selector change because the element moved, or because it was renamed? Verify the assertion still tests what you intended.</p>
-          </div>
-        </div>
-      </div>
-
-      <div>
-        <div style="font-size:0.75rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; color:var(--text-dim); margin-bottom:8px;">snap-code-project — LeaderboardTable</div>
-        <div class="card red" style="margin-bottom:10px;">
-          <h3 class="red" style="font-size:0.88rem; margin-bottom:8px;">❌ Before — CSS Module class breaks on rebuild</h3>
-          <pre style="margin:0;"><span class="c">// Generated by codegen — breaks on every</span>
-<span class="c">// CSS Modules rebuild or component rename</span>
-<span class="k">test</span>(<span class="s">'leaderboard shows correct student'</span>, <span class="k">async</span> () =&gt; &#123;
-  <span class="k">await</span> page.locator(
-    <span class="s">'.LeaderboardTable_row__140Pj'</span>  <span class="c">// ← hash changes</span>
-  ).first().click();
-  <span class="k">await</span> expect(page.locator(
-    <span class="s">'#student-rank-1'</span>               <span class="c">// ← ID removed</span>
-  )).toBeVisible();
-&#125;);</pre>
-        </div>
-        <div class="card green">
-          <h3 class="green" style="font-size:0.88rem; margin-bottom:8px;">✅ After — Playwright MCP proposes from live tree</h3>
-          <pre style="margin:0 0 8px;"><span class="c">// Prompt: "This test is failing after the last
-// UI update. Navigate to localhost:3000 and
-// suggest updated selectors using getByRole."</span>
-<span class="k">test</span>(<span class="s">'leaderboard shows correct student'</span>, <span class="k">async</span> () =&gt; &#123;
-  <span class="k">await</span> page
-    .getByRole(<span class="s">'row'</span>, &#123; name: <span class="s">/Alice/</span> &#125;)  <span class="c">// ← stable</span>
-    .click();
-  <span class="k">await</span> expect(
-    page.getByText(<span class="s">'Rank 1'</span>, &#123; exact: <span class="k">true</span> &#125;)
-  ).toBeVisible();                          <span class="c">// ← stable</span>
-&#125;);</pre>
-          <div class="callout green" style="margin:0; padding:8px 12px;">
-            <p style="font-size:0.8rem;">Run the repair prompt once. Review the diff. Selectors tied to behavior, not HTML structure — won't break on the next CSS Modules rebuild.</p>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="cols cols-2" style="align-items:start;">
-      <div class="card" style="padding:12px 16px;">
-        <h3 style="font-size:0.88rem; margin-bottom:8px;">The repair prompt pattern</h3>
-        <pre style="margin:0; font-size:0.75rem;"><span class="s">"The test below is failing after a recent UI change.
-Navigate to localhost:3000/[page], read the current
-accessibility tree, and propose updated selectors
-using getByRole or getByText. Do not change the
-test logic or assertions — only fix the selectors.
-
-[paste failing test here]"</span></pre>
-      </div>
-      <div class="card amber" style="padding:12px 16px;">
-        <h3 style="font-size:0.88rem; color:var(--amber); margin-bottom:8px;">⚠️ Review before you commit</h3>
-        <ul class="check" style="font-size:0.83rem;">
-          <li>Does the new selector target the same element?</li>
-          <li>Did the assertion intent change — or just the selector?</li>
-          <li>If the label changed in the UI, is the old test still valid?</li>
-          <li>Run the repaired test against a deliberate break to confirm it catches real failures.</li>
-        </ul>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- ═══════════════════════════════════════════════════════════
-     SLIDE 11f — LIMITS, AUTH & CI
-═══════════════════════════════════════════════════════════ -->
-<div class="slide overflow"
-     data-notes="This slide answers the three questions that will definitely come up in Q&A if you don't address them first. Lead with limits — engineers respect honesty about what a tool can't do, and it prevents the 'but what about...' questions from derailing the demo. The auth point is the most practically important: most real Signify apps require login, and storageState is the answer. You do one login manually, save the browser session to a file, and every subsequent test loads that session — Playwright MCP respects it. The CI point closes the loop: the tests we generated aren't useful until they run automatically. One YAML block is all it takes.">
-  <div class="slide-content">
-    <div class="phase-tag amber">Playwright MCP — Limits, Auth &amp; CI</div>
-    <h2>What You Still Need to Know</h2>
-    <div class="cols cols-3" style="margin-bottom:16px; align-items:start;">
-
-      <div class="card red">
-        <h3 class="red" style="font-size:0.9rem; margin-bottom:10px;">🚫 What Playwright MCP cannot do</h3>
-        <ul class="arrow" style="font-size:0.83rem;">
-          <li>Test mobile apps natively — use Appium for Android/iOS</li>
-          <li>Navigate pages behind login without auth setup (see centre column)</li>
-          <li>Interact with native OS dialogs (file upload pickers, alerts)</li>
-          <li>See inside cross-origin iframes</li>
-          <li>Test WebSocket real-time updates reliably</li>
-          <li>Replace visual regression tools — <code class="inline">browser_screenshot</code> is for documentation, not pixel diff</li>
-        </ul>
-        <div class="callout red" style="margin-top:10px; padding:8px 12px;">
-          <p style="font-size:0.8rem;">If your scenario hits any of these, say so in the prompt. MCP will tell you it can't proceed rather than generating something wrong.</p>
-        </div>
-      </div>
-
-      <div class="card amber">
-        <h3 class="amber" style="font-size:0.9rem; margin-bottom:10px;">🔐 Handling login / auth</h3>
-        <p style="font-size:0.83rem; color:var(--text-muted); margin-bottom:10px;">Most Signify apps require authentication. <code class="inline">storageState</code> is the answer — do the login once, save the session, reuse it in every test.</p>
-        <pre style="font-size:0.72rem; margin-bottom:10px;"><span class="c">// 1. One-time login script (run manually)</span>
-<span class="k">const</span> browser = <span class="k">await</span> chromium.launch();
-<span class="k">const</span> page = <span class="k">await</span> browser.newPage();
-<span class="k">await</span> page.goto(<span class="s">'https://app.signify.com/login'</span>);
-<span class="c">// fill credentials, submit...</span>
-<span class="k">await</span> page.context().storageState(&#123;
-  path: <span class="s">'auth.json'</span>
-&#125;);</pre>
-        <pre style="font-size:0.72rem; margin:0;"><span class="c">// 2. playwright.config.ts — all tests reuse it</span>
-use: &#123;
-  storageState: <span class="s">'auth.json'</span>
-&#125;</pre>
-        <div class="callout amber" style="margin-top:10px; padding:8px 12px;">
-          <p style="font-size:0.8rem;">Tell Playwright MCP: <em>"The app requires login. Auth state is saved in auth.json — assume the session is already active."</em></p>
-        </div>
-      </div>
-
-      <div class="card green">
-        <h3 class="green" style="font-size:0.9rem; margin-bottom:10px;">⚙️ Running in CI (Jenkins / Azure DevOps)</h3>
-        <p style="font-size:0.83rem; color:var(--text-muted); margin-bottom:10px;">The tests we generated run in any pipeline. One step is all it takes.</p>
-        <pre style="font-size:0.72rem; margin-bottom:10px;"><span class="c"># Azure DevOps — azure-pipelines.yml</span>
-- <span class="n">task</span>: NodeTool@0
-  <span class="n">inputs</span>:
-    <span class="n">versionSpec</span>: <span class="s">'20.x'</span>
-- <span class="n">script</span>: |
-    npm ci
-    npx playwright install --with-deps chromium
-    npm run test:e2e
-  <span class="n">displayName</span>: <span class="s">'Run Playwright e2e tests'</span></pre>
-        <ul class="check" style="font-size:0.82rem;">
-          <li>Set <code class="inline">"headless": true</code> in MCP config for CI</li>
-          <li>Publish <code class="inline">playwright-report/</code> as a pipeline artifact</li>
-          <li>Gate the PR merge on test pass</li>
-        </ul>
-        <div class="callout green" style="margin-top:10px; padding:8px 12px;">
-          <p style="font-size:0.8rem;">Jenkins: same script block inside a <code class="inline">sh</code> step. No Playwright-specific plugin needed.</p>
-        </div>
-      </div>
-
-    </div>
-    <div class="callout" style="margin:0;">
-      <p><strong>The full picture:</strong> Playwright MCP generates tests from the live app → you review with the 3-question gate → tests commit to the repo → CI runs them headless on every PR → failures block the merge. That's the self-correcting automation loop.</p>
-    </div>
-  </div>
-</div>
-
-<!-- ═══════════════════════════════════════════════════════════
-     SLIDE 11g — PLAYWRIGHT MCP TOOL REFERENCE
-═══════════════════════════════════════════════════════════ -->
-<div class="slide overflow"
-     data-notes="This is the reference slide — not a demo, but the map engineers need to write effective prompts. The key distinction: browser_snapshot reads the accessibility tree and returns structured text (what you use for test generation). browser_screenshot takes a pixel image (what you use for visual documentation or design comparison). browser_action covers clicks, typing, hovering, pressing keys. The wait tools are critical — browser_wait_for lets you tell MCP to pause until a condition is true before snapshotting, which solves the async loading problem from anti-pattern 6. browser_evaluate is the escape hatch for things the accessibility tree can't express, but it should be rare.">
-  <div class="slide-content">
-    <div class="phase-tag blue">Playwright MCP — Tool Reference</div>
-    <h2>What Playwright MCP Can Actually Do</h2>
-    <p style="margin-bottom:14px; font-size:0.84rem;">These are the tools Playwright MCP exposes to the LLM. Better prompts name the right tool explicitly — the LLM picks more accurately.</p>
-    <div class="cols cols-2" style="align-items:start; gap:16px;">
-      <div>
-        <div style="font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; color:var(--blue); margin-bottom:8px;">Navigation &amp; Observation</div>
-        <table style="margin-bottom:14px; font-size:0.82rem;">
-          <thead><tr><th>Tool</th><th>What it does</th></tr></thead>
-          <tbody>
-            <tr><td><code class="inline">browser_navigate</code></td><td>Go to a URL. Always the first step.</td></tr>
-            <tr><td><code class="inline">browser_snapshot</code></td><td>Read the <strong>accessibility tree</strong>. Use this for test generation.</td></tr>
-            <tr><td><code class="inline">browser_screenshot</code></td><td>Capture a <strong>pixel image</strong>. Use for visual docs — not test generation.</td></tr>
-            <tr><td><code class="inline">browser_wait_for</code></td><td>Wait until a selector is visible or a condition is true. Solves async loading.</td></tr>
-            <tr><td><code class="inline">browser_evaluate</code></td><td>Run JavaScript in the page. Escape hatch — use sparingly.</td></tr>
-          </tbody>
-        </table>
-        <div style="font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; color:var(--green); margin-bottom:8px;">Interaction</div>
-        <table style="font-size:0.82rem;">
-          <thead><tr><th>Tool</th><th>What it does</th></tr></thead>
-          <tbody>
-            <tr><td><code class="inline">browser_click</code></td><td>Click an element by selector or accessible name.</td></tr>
-            <tr><td><code class="inline">browser_type</code></td><td>Type text into an input field.</td></tr>
-            <tr><td><code class="inline">browser_hover</code></td><td>Hover over an element (for tooltip/dropdown testing).</td></tr>
-            <tr><td><code class="inline">browser_select_option</code></td><td>Choose a value from a <code class="inline">&lt;select&gt;</code> dropdown.</td></tr>
-            <tr><td><code class="inline">browser_press_key</code></td><td>Send a keyboard event: Tab, Enter, Escape, Arrow keys.</td></tr>
-            <tr><td><code class="inline">browser_drag</code></td><td>Drag-and-drop between two elements.</td></tr>
-          </tbody>
-        </table>
-      </div>
-      <div>
-        <div style="font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; color:var(--amber); margin-bottom:8px;">Prompt patterns that invoke the right tool</div>
-        <div class="card" style="margin-bottom:10px; padding:12px 14px;">
-          <h3 style="font-size:0.85rem; margin-bottom:6px;">Exploration (no tests yet)</h3>
-          <p style="font-size:0.81rem; color:var(--text-muted); margin:0;"><em>"Navigate to localhost:3000 and snapshot the page. Describe each interactive element and its accessible role."</em><br>→ calls <code class="inline">browser_navigate</code> + <code class="inline">browser_snapshot</code></p>
-        </div>
-        <div class="card" style="margin-bottom:10px; padding:12px 14px;">
-          <h3 style="font-size:0.85rem; margin-bottom:6px;">Wait for async content</h3>
-          <p style="font-size:0.81rem; color:var(--text-muted); margin:0;"><em>"Navigate to localhost:3000. Wait until the leaderboard table is visible, then snapshot."</em><br>→ calls <code class="inline">browser_navigate</code> + <code class="inline">browser_wait_for</code> + <code class="inline">browser_snapshot</code></p>
-        </div>
-        <div class="card" style="margin-bottom:10px; padding:12px 14px;">
-          <h3 style="font-size:0.85rem; margin-bottom:6px;">Interaction before snapshot</h3>
-          <p style="font-size:0.81rem; color:var(--text-muted); margin:0;"><em>"Navigate to localhost:3000, click the Class A tab, then snapshot the updated leaderboard."</em><br>→ calls <code class="inline">browser_navigate</code> + <code class="inline">browser_click</code> + <code class="inline">browser_snapshot</code></p>
-        </div>
-        <div class="callout" style="margin:0;">
-          <p><strong>Key rule:</strong> <code class="inline">browser_snapshot</code> for test generation. <code class="inline">browser_screenshot</code> for visual comparison. Using screenshot where you need snapshot gives the LLM a pixel image it can't read selectors from.</p>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- ═══════════════════════════════════════════════════════════
-     SLIDE 11h — DEBUGGING FAILING TESTS
-═══════════════════════════════════════════════════════════ -->
-<div class="slide overflow"
-     data-notes="Debugging is the biggest adoption barrier after initial generation. Engineers generate a test, it fails, and without knowing how to diagnose it they abandon the tool. Three tools fix 90% of failures: headed mode (watch what the browser actually does), trace viewer (full timeline of every action and the DOM at each step), and screenshot-on-failure (what the page looked like when the assertion threw). The selector mismatch pattern is the most common: the test was generated against a snapshot, the app has async content, and the element wasn't in the tree yet. browser_wait_for in the prompt fixes this. The timing issue pattern is second: the test clicks faster than the UI responds. Playwright's auto-waiting helps but sometimes you need an explicit expect().toBeVisible() before the action.">
-  <div class="slide-content">
-    <div class="phase-tag amber">Playwright MCP — Debugging</div>
-    <h2>Debugging Failing Generated Tests</h2>
-    <div class="cols cols-3" style="margin-bottom:16px; align-items:start;">
-      <div class="card green">
-        <h3 class="green" style="font-size:0.9rem; margin-bottom:10px;">🎬 Step 1 — Run headed</h3>
-        <p style="font-size:0.83rem; color:var(--text-muted); margin-bottom:10px;">Watch the browser execute the test in real time. Most failures become obvious immediately.</p>
-        <pre style="margin:0; font-size:0.74rem;"><span class="c"># Run one test in headed mode</span>
-npx playwright test \
-  class-filter-tabs.spec.ts \
-  --headed \
-  --project=chromium</pre>
-        <p style="font-size:0.8rem; color:var(--text-muted); margin-top:8px;">Add <code class="inline">--slowmo 500</code> to slow each action by 500ms — easier to follow.</p>
-      </div>
-      <div class="card blue">
-        <h3 class="blue" style="font-size:0.9rem; margin-bottom:10px;">🔍 Step 2 — Open Trace Viewer</h3>
-        <p style="font-size:0.83rem; color:var(--text-muted); margin-bottom:10px;">Full timeline: every action, the DOM snapshot before/after, network calls, console errors. Pinpoints exactly which line failed and what the page looked like.</p>
-        <pre style="margin:0; font-size:0.74rem;"><span class="c"># playwright.config.ts — enable on failure</span>
-use: &#123;
-  trace: <span class="s">'on-first-retry'</span>,
-  screenshot: <span class="s">'only-on-failure'</span>
-&#125;
-
-<span class="c"># Open the trace after a failed run</span>
-npx playwright show-trace \
-  test-results/*/trace.zip</pre>
-      </div>
-      <div class="card">
-        <h3 style="font-size:0.9rem; margin-bottom:10px;">🔬 Step 3 — Playwright Inspector</h3>
-        <p style="font-size:0.83rem; color:var(--text-muted); margin-bottom:10px;">Interactive debugger — step through each action, inspect the accessibility tree live, pick selectors interactively.</p>
-        <pre style="margin:0; font-size:0.74rem;"><span class="c"># Run with inspector open</span>
-PWDEBUG=1 npx playwright test \
-  class-filter-tabs.spec.ts</pre>
-        <p style="font-size:0.8rem; color:var(--text-muted); margin-top:8px;">Also the fastest way to verify a selector before committing it to a test file.</p>
-      </div>
-    </div>
-    <div style="font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; color:var(--text-dim); margin-bottom:8px;">Two most common failure patterns in MCP-generated tests</div>
-    <div class="cols cols-2">
-      <div class="card red" style="padding:12px 16px;">
-        <h3 class="red" style="font-size:0.87rem; margin-bottom:6px;">Selector not found — async content not loaded</h3>
-        <p style="font-size:0.81rem; color:var(--text-muted); margin-bottom:6px;">MCP snapshotted the page before an API call completed. The element was in the loading skeleton, not the real content.</p>
-        <p style="font-size:0.81rem; color:var(--green); margin:0;"><strong>Fix:</strong> add to your prompt — <em>"Wait until [specific content] is visible before snapshotting."</em> Then regenerate with <code class="inline">/repair-locators</code>.</p>
-      </div>
-      <div class="card amber" style="padding:12px 16px;">
-        <h3 class="amber" style="font-size:0.87rem; margin-bottom:6px;">Assertion passes but tests the wrong thing</h3>
-        <p style="font-size:0.81rem; color:var(--text-muted); margin-bottom:6px;">The element matched but the assertion doesn't verify the feature behaviour — it verifies that an element exists, not that it did the right thing.</p>
-        <p style="font-size:0.81rem; color:var(--green); margin:0;"><strong>Fix:</strong> apply the review gate Q3 — mentally break the feature and check if the test fails. If it doesn't, rewrite the assertion.</p>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- ═══════════════════════════════════════════════════════════
-     SLIDE 11i — MULTI-PAGE FLOWS & TEST ISOLATION
-═══════════════════════════════════════════════════════════ -->
-<div class="slide overflow"
-     data-notes="All the examples so far are single-page. Real apps navigate. The multi-step prompt pattern is the answer: describe the full journey in one prompt, let MCP follow it step by step — navigate, interact, snapshot, navigate again. The key instruction is 'navigate to each step in sequence' rather than writing separate tests per page. Test isolation is the other half — tests that share state infect each other. The beforeEach goto is the minimal fix: each test starts from a clean URL. For state that persists in localStorage or sessionStorage, add a page.evaluate to clear it. The data dependency pattern (test B needs test A to have run first) is the most common isolation bug in MCP-generated suites because MCP writes tests that assume a starting state based on the snapshot it took.">
-  <div class="slide-content">
-    <div class="phase-tag blue">Playwright MCP — Flows &amp; Isolation</div>
-    <h2>Multi-Page Flows &amp; Test Isolation</h2>
-    <div class="cols cols-2" style="margin-bottom:16px; align-items:start;">
-      <div>
-        <div style="font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; color:var(--blue); margin-bottom:8px;">Multi-step flow prompt pattern</div>
-        <p style="font-size:0.83rem; color:var(--text-muted); margin-bottom:10px;">Describe the full user journey. MCP navigates step by step, snapshots at each stage, and generates a test that covers the whole flow.</p>
-        <div class="card" style="margin-bottom:10px; padding:12px 14px;">
-          <h3 style="font-size:0.85rem; margin-bottom:6px;">Single-page (what we've shown so far)</h3>
-          <p style="font-size:0.81rem; color:var(--text-muted); margin:0;"><em>"Navigate to localhost:3000 and test the leaderboard tab filter."</em><br>Works when everything is on one page.</p>
-        </div>
-        <div class="card green" style="padding:12px 14px;">
-          <h3 class="green" style="font-size:0.85rem; margin-bottom:6px;">Multi-page flow</h3>
-          <p style="font-size:0.81rem; color:var(--text-muted); margin:0;"><em>"Navigate to localhost:3000/login. Log in as a coordinator. Navigate to the leaderboard. Click Class A. Verify the filtered results. Navigate back to the dashboard and verify the summary cards still show all classes."</em><br>MCP follows the full journey, snapshots at each step.</p>
-        </div>
-        <div class="callout" style="margin-top:10px;">
-          <p><strong>Rule:</strong> describe the journey the user takes, not the DOM you expect to find. MCP figures out the selectors from the accessibility tree at each step.</p>
-        </div>
-      </div>
-      <div>
-        <div style="font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; color:var(--amber); margin-bottom:8px;">Test isolation — keeping tests independent</div>
-        <p style="font-size:0.83rem; color:var(--text-muted); margin-bottom:10px;">MCP-generated tests sometimes assume state from the snapshot they were written against. Isolate every test so it starts clean.</p>
-        <pre style="font-size:0.75rem; margin-bottom:10px;"><span class="c">// ✅ Every test starts from a known URL</span>
-test.beforeEach(<span class="k">async</span> (&#123; page &#125;) => &#123;
-  <span class="k">await</span> page.goto(<span class="s">'/'</span>);
-  <span class="c">// Wait for the page to be interactive</span>
-  <span class="k">await</span> expect(
-    page.getByRole(<span class="s">'tablist'</span>)
-  ).toBeVisible();
-&#125;);</pre>
-        <pre style="font-size:0.75rem; margin-bottom:10px;"><span class="c">// ✅ Clear persisted state if your app uses it</span>
-test.beforeEach(<span class="k">async</span> (&#123; page &#125;) => &#123;
-  <span class="k">await</span> page.goto(<span class="s">'/'</span>);
-  <span class="k">await</span> page.evaluate(() => &#123;
-    sessionStorage.clear();
-    localStorage.clear();
-  &#125;);
-&#125;);</pre>
-        <div class="card red" style="padding:12px 14px;">
-          <h3 class="red" style="font-size:0.85rem; margin-bottom:4px;">Most common isolation bug</h3>
-          <p style="font-size:0.81rem; color:var(--text-muted); margin:0;">Test B depends on Test A having run first (e.g. Test A selects a tab, Test B assumes that tab is still active). MCP generates this because it snapshots in sequence. <strong>Fix:</strong> always navigate and set state explicitly inside each test — never rely on prior test state.</p>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- ═══════════════════════════════════════════════════════════
-     SLIDE 11 — USE CASE B: TESTS + PULL REQUEST
-═══════════════════════════════════════════════════════════ -->
-<div class="slide overflow"
-     data-notes="Step 3 picks up the generated component. Playwright MCP opens the actual page, reads the accessibility tree, generates a Playwright test using semantic selectors, runs it, and reports pass/fail. Step 4 uses Atlassian MCP (Bitbucket) to push to a branch named after the Jira ticket and create a PR with the ACs from Step 1 as the description — the participant never touches git manually. Playwright MCP is Signify-approved; Atlassian MCP is pending Cloud CoE approval. Step 4 is shown as the intended workflow.">
+     data-notes="Step 3 picks up the generated component from Use Case B. Playwright MCP opens the actual rendered page, reads the accessibility tree, generates a Playwright test using semantic selectors, runs it, and reports pass/fail. Uses getByRole and getByLabel selectors — not fragile XPath. The test result is reported back to Copilot in the same turn.">
   <div class="slide-content">
     <div class="phase-tag green">Phase 4 — Use Cases</div>
-    <h2>Use Case B: Tests &amp; Pull Request</h2>
+    <h2>Use Case C: Generate &amp; Run Tests</h2>
     <div style="margin-bottom:14px;">
-      <div style="font-size:0.75rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; color:var(--text-dim); margin-bottom:8px;">Continuing from Use Case A — same end-to-end run</div>
+      <div style="font-size:0.75rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; color:var(--text-dim); margin-bottom:8px;">Continuing from Use Case B — same end-to-end run</div>
       <div class="flow" style="justify-content:center;">
         <div class="flow-box" style="opacity:0.4; border-style:dashed;">Step 1<br><span style="font-size:0.72rem;">Jira → ACs + Figma link</span></div>
         <div class="flow-arrow" style="color:var(--border);">→</div>
         <div class="flow-box" style="opacity:0.4; border-style:dashed;">Step 2<br><span style="font-size:0.72rem;">Figma → Code</span></div>
         <div class="flow-arrow" style="color:var(--border);">→</div>
         <div class="flow-box blue" style="font-weight:700; border-width:2px;">Step 3<br><span style="font-size:0.72rem; font-weight:600;">Generate + Run Tests</span></div>
-        <div class="flow-arrow">→</div>
-        <div class="flow-box blue" style="font-weight:700; border-width:2px;">Step 4<br><span style="font-size:0.72rem; font-weight:600;">Push Branch + PR</span></div>
       </div>
     </div>
-    <div class="cols cols-2" style="margin-bottom:14px;">
+    <div style="margin-bottom:14px;">
       <div class="card green">
         <h3 class="green">Step 3 — Playwright MCP generates &amp; runs tests</h3>
         <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:10px;">Playwright MCP opens the actual rendered page, reads the accessibility tree, and generates a test using semantic selectors — then runs it and reports the result.</p>
@@ -1708,44 +1202,25 @@ test.beforeEach(<span class="k">async</span> (&#123; page &#125;) => &#123;
         </ul>
 
       </div>
-      <div class="card amber">
-        <h3 class="amber">Step 4 — Atlassian MCP pushes branch &amp; creates PR</h3>
-        <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:10px;">Atlassian MCP (Bitbucket) pushes the code and tests to a new branch named after the Jira ticket, then opens a PR with a description generated from the ACs captured in Step 1.</p>
-        <div class="flow" style="margin-bottom:10px; flex-wrap:wrap;">
-          <div class="flow-box" style="font-size:0.78rem;">Tests passing from Step 3</div>
-          <div class="flow-arrow">→</div>
-          <div class="flow-box amber" style="font-size:0.78rem;"><code>create_branch</code> + <code>create_pull_request</code></div>
-          <div class="flow-arrow">→</div>
-          <div class="flow-box green" style="font-size:0.78rem;">PR open on Bitbucket</div>
-        </div>
-        <ul class="check" style="font-size:0.84rem;">
-          <li>Branch name derived from Jira ticket ID automatically</li>
-          <li>PR description generated from ACs from Step 1</li>
-          <li>Human reviews and approves — Copilot never merges</li>
-        </ul>
-
-      </div>
     </div>
     <div style="max-width:560px;">
       <div class="pillar" style="margin-bottom:0; align-items:flex-start; flex-direction:column; padding:13px 15px; gap:0;">
         <div style="display:flex; align-items:center; gap:8px; margin-bottom:8px;">
           <div class="pillar-num" style="width:28px; height:28px; font-size:0.85rem; flex-shrink:0;">P</div>
-          <h3 style="font-size:0.9rem; margin:0;">test-and-pr.prompt.md</h3>
+          <h3 style="font-size:0.9rem; margin:0;">generate-tests.prompt.md</h3>
         </div>
         <div style="background:var(--bg); border:1px solid var(--border); border-radius:6px; padding:10px 12px; width:100%; box-sizing:border-box;">
           <div style="font-family:monospace; font-size:0.74rem; color:var(--text-dim); border-bottom:1px dashed var(--border); padding-bottom:7px; margin-bottom:9px; line-height:1.8;">
             <span style="color:var(--text-dim);">mode:</span> agent<br>
-            <span style="color:var(--text-dim);">tools:</span> [<span style="color:var(--blue); font-weight:700;">browser_navigate</span>, <span style="color:var(--blue); font-weight:700;">browser_snapshot</span>, <span style="color:var(--blue); font-weight:700;">create_pull_request</span>]
+            <span style="color:var(--text-dim);">tools:</span> [<span style="color:var(--blue); font-weight:700;">browser_navigate</span>, <span style="color:var(--blue); font-weight:700;">browser_snapshot</span>]
           </div>
           <div style="font-size:0.79rem; line-height:1.85; color:var(--text);">
             1. <span style="color:var(--blue); font-weight:600; font-family:monospace; font-size:0.77rem;">browser_navigate</span> to the rendered component page<br>
             2. <span style="color:var(--blue); font-weight:600; font-family:monospace; font-size:0.77rem;">browser_snapshot</span> → generate Playwright test<br>
-            3. Run test — confirm it passes<br>
-            4. Push to branch <code class="inline">feat/{{ticket}}</code><br>
-            5. <span style="color:var(--blue); font-weight:600; font-family:monospace; font-size:0.77rem;">create_pull_request</span> with ACs as description
+            3. Run test — confirm it passes
           </div>
         </div>
-        <div style="font-size:0.72rem; color:var(--text-dim); margin-top:8px;">Run with: <code class="inline">/test-and-pr</code> in Copilot Chat</div>
+        <div style="font-size:0.72rem; color:var(--text-dim); margin-top:8px;">Run with: <code class="inline">/generate-tests</code> in Copilot Chat</div>
       </div>
     </div>
   </div>
@@ -1777,8 +1252,8 @@ test.beforeEach(<span class="k">async</span> (&#123; page &#125;) => &#123;
         <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:8px;"><strong>Export Jira story as HTML:</strong></p>
         <ul class="arrow" style="font-size:0.84rem;">
           <li>In Jira: open story → Print / Export as HTML</li>
-          <li>Save to <code class="inline">specs/HUEAPP-1234.html</code> in your repo</li>
-          <li>Prompt: <em>"Read specs/HUEAPP-1234.html and generate test cases for each AC"</em></li>
+          <li>Save to <code class="inline">specs/PROJ-1234.html</code> in your repo</li>
+          <li>Prompt: <em>"Read specs/PROJ-1234.html and generate test cases for each AC"</em></li>
         </ul>
         <p style="font-size:0.78rem; color:var(--green); margin-top:8px;">✓ Works today — open the file in VS Code or attach it to your Copilot agent chat.</p>
       </div>
@@ -1846,14 +1321,14 @@ test.beforeEach(<span class="k">async</span> (&#123; page &#125;) => &#123;
      SLIDE 16 — BEST PRACTICES
 ═══════════════════════════════════════════════════════════ -->
 <div class="slide overflow"
-     data-notes="Eight best practices. Some repeat earlier slides but they're worth consolidating here. The most important: pin versions, never auto-approve destructive actions, use the input var syntax for secrets, and scope your prompts to avoid context bloat. The last one — contribute to the champions programme — is the strategic point. The hackathon is the kickoff, not the finish line. The Cloud CoE champions programme is what turns today's demos into Monday-morning workflows.">
+     data-notes="Eight best practices. Some repeat earlier slides but they're worth consolidating here. The most important: pin versions, never auto-approve destructive actions, use the input var syntax for secrets, and scope your prompts to avoid context bloat. The last one — build team habits and contribute to champions programmes — is the strategic point. Best practices applied consistently are what turn one-off demos into Monday-morning workflows.">
   <div class="slide-content">
     <div class="phase-tag">Phase 8 — Best Practices</div>
-    <h2>7 Best Practices for Using MCPs at Signify</h2>
+    <h2>7 Best Practices for Using MCP Servers</h2>
     <div class="cols cols-2" style="gap:12px;">
       <div class="card">
         <h3>1. Vendor-official servers only</h3>
-        <p style="font-size:0.87rem;">Only use servers from the Signify approved list or vendor-official servers pending review. No community servers without an internal security review.</p>
+        <p style="font-size:0.87rem;">Only use vendor-official servers or internally reviewed servers. Avoid unreviewed community servers without a security assessment.</p>
       </div>
       <div class="card">
         <h3>2. Pin server versions</h3>
@@ -1889,7 +1364,7 @@ test.beforeEach(<span class="k">async</span> (&#123; page &#125;) => &#123;
 <!-- Navigation -->
 <button class="nav-btn" id="btn-prev">‹</button>
 <button class="nav-btn" id="btn-next">›</button>
-<div id="counter">1 / 23</div>
+<div id="counter">1 / 14</div>
 <div id="progress-bar" style="width: 5%;"></div>
 <div id="hint">← → to navigate &nbsp;|&nbsp; S speaker notes &nbsp;|&nbsp; F fullscreen</div>
 <div id="theme-toggle" title="Switch theme">
