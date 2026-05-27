@@ -1,10 +1,6 @@
 ---
 agent: agent
 description: "Convert Figma design into implemented React components using UUI library."
-tools:
-  - mcp_framelink
-  - read_file
-  - semantic_search
 ---
 
 # Figma to Code

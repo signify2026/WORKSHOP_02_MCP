@@ -6,9 +6,10 @@ import {
     ClassOverviewCards, 
     ClassFilterTabs, 
     LeaderboardTable,
-    LearningProgrammeWidget 
+    LearningProgrammeWidget,
+    SupportTeamWidget 
 } from '../components';
-import { mockClassData, mockStudentData } from '../data/mockData';
+import { mockClassData, mockStudentData, mockSupportTeamData } from '../data/mockData';
 import { 
     createTabsFromStudentData, 
     createLeaderboardData, 
@@ -162,13 +163,17 @@ export const MainPage = () => {
                         <FlexCell width={340} rawProps={{ 
                             className: css.rightSidebar 
                         }}>
-                            <div style={{ padding: '24px 24px 0 0' }}>
+                            <div className={css.sidebarContent}>
                                 {!isLoading && !error && (
                                     <LearningProgrammeWidget
                                         totalTime={totalTime}
                                         programmes={programmes}
                                     />
                                 )}
+                                <SupportTeamWidget
+                                    className={css.supportTeamWidget}
+                                    groups={mockSupportTeamData}
+                                />
                                 {isLoading && (
                                     <div className={css.widgetPlaceholder}>
                                         Loading learning progress...

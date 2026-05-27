@@ -55,11 +55,16 @@
   position: relative;
   height: fit-content;
   align-self: flex-start;
-  
-  > div {
-    position: sticky;
-    top: 84px; // Account for header height (60px) + spacing
-  }
+}
+
+.sidebarContent {
+  position: sticky;
+  top: 84px; // Account for header height (60px) + spacing
+  padding: 24px 24px 0 0;
+}
+
+.supportTeamWidget {
+  margin-top: 18px;
 }
 
 .widgetPlaceholder {

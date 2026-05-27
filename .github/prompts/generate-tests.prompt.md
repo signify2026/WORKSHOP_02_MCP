@@ -1,11 +1,6 @@
 ---
 mode: agent
 description: "Navigate the live app, read the accessibility tree, and generate resilient Playwright e2e tests for each acceptance criterion in the user story."
-tools:
-  - mcp_playwright
-  - read_file
-  - write_file
-  - run_in_terminal
 ---
 
 # Generate E2E Tests from Acceptance Criteria
@@ -16,6 +11,14 @@ This prompt is the **test generation** step. It pairs with:
 - `.github/instructions/playwright-testing.instructions.md` — always-on selector and framework rules
 - `/validate-ui` — the prior visual validation step (design fidelity)
 - `/repair-locators` — for fixing tests when selectors break
+
+## Workshop Target Outcome
+
+- For workshop demos, target a realistic mixed result:
+  - **At least 3 tests passing**
+  - **Up to 2 tests failing** is acceptable
+- If there are fewer than 3 passing tests, continue repairing selectors/assertions until the threshold is met.
+- Do not fabricate failures; failing tests must reflect real, observable product issues.
 
 ## Steps
 
@@ -75,7 +78,8 @@ For each AC from Step 1:
   - Re-snapshot the relevant page state
   - Check whether the selector is wrong or the assertion is wrong
   - Fix only the selector if the AC is correct; flag for review if the AC assertion needs changing
-  - Re-run until all tests pass
+  - Re-run until workshop target is met (minimum 3 pass)
+  - If 1-2 tests still fail after selector healing, keep them as known product gaps and document them clearly
 
 ### 7. Report
 Present a summary:
@@ -91,6 +95,15 @@ Present a summary:
 | AC-1 | renders all 4 filter tabs              | ✅ PASS | getByRole('tab', …)        |
 | AC-2 | All tab is selected by default         | ✅ PASS | toHaveAttribute(…)         |
 | AC-3 | clicking Current updates active tab    | ✅ PASS | getByRole + click          |
+
+**Workshop Result Check**
+- Passed: <n>
+- Failed: <n>
+- Target met: Yes/No (needs at least 3 passing)
+
+### Known Failures (if any)
+- AC-<x>: <short reason>
+- AC-<y>: <short reason>
 ```
 
 ## Rules

@@ -60,8 +60,20 @@ Important: execute the checks using available file and terminal tools. Do not tu
      - `get_issue`
      - `search_issues`
      - `create_page`
+     - `create_issue`
 
-6. **Guide the VS Code registration**
+6. **Capture common failure mode (500 wrapper over upstream 406)**
+   - If a call fails with a message like:
+     - `Atlassian request failed: 500 Internal Server Error ... Response: "HTTP 406 Not Acceptable"`
+   - Treat this as an upstream Jira/Confluence accept/auth/path issue wrapped by MCP error handling, not as an immediate server crash.
+   - Verify and report:
+     - `ATLASSIAN_BASE_URL` is root-only (for example `https://jiraeu.epam.com`) and does not include `/browse` or `/rest/api/...`
+     - `ATLASSIAN_PAT` is injected from secure input (or `.env` outside VS Code), never hardcoded
+     - token user can open the same issue in browser (browse permission)
+     - response diagnostics from server error message (status, content-type, request-id, response preview)
+   - If needed, suggest a safe read-only retry using `get_issue` on a known-visible issue key.
+
+7. **Guide the VS Code registration**
    - Tell the user to reload VS Code.
    - Tell the user to open Copilot Chat in Agent Mode.
    - Tell the user to open **Tools** and confirm `signify-atlassian` appears.
@@ -72,7 +84,7 @@ Important: execute the checks using available file and terminal tools. Do not tu
 
    **IntelliJ / outside VS Code**: credentials come from `mcp-servers/signify-atlassian/.env` instead. The server loads this file automatically via `dotenv` at startup, so no extra configuration is needed.
 
-7. **Optional real Jira test**
+8. **Optional real Jira test**
    - If the user confirms they have a safe issue key and PAT already configured, test:
 
      ```text
@@ -89,3 +101,4 @@ Important: execute the checks using available file and terminal tools. Do not tu
 - Do not create or modify real Jira/Confluence content unless the user explicitly confirms.
 - Prefer read-only validation first: `get_issue` or `search_issues`.
 - Use `create_page` only after the user confirms the target Confluence space and page title.
+- Use `create_issue` only after the user explicitly confirms project key, issue type, and summary.

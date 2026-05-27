@@ -1,5 +1,18 @@
 import { RawStudentData, createClassMetadata, createTabsFromStudentData, createLeaderboardData, updateTabActiveState, getTabCount } from '../utils/dataUtils';
 
+export interface SupportTeamMemberData {
+  id: string;
+  name: string;
+  title: string;
+  avatarUrl: string;
+  details?: string;
+}
+
+export interface SupportTeamGroupData {
+  role: 'Curator' | 'Trainers' | 'Mentors';
+  members: SupportTeamMemberData[];
+}
+
 // Raw student data that will be processed - Using Class A, B, C as per Figma design
 export const mockStudentData: RawStudentData[] = [
   // Class A students (25 students as per Figma)
@@ -97,3 +110,63 @@ export const mockTabsData = createTabsFromStudentData(mockStudentData);
 
 // Create initial leaderboard data (showing all students)
 export const mockLeaderboardData = createLeaderboardData(mockStudentData);
+
+export const mockSupportTeamData: SupportTeamGroupData[] = [
+  {
+    role: 'Curator',
+    members: [
+      {
+        id: 'curator-1',
+        name: 'Andry Mahomedov',
+        title: 'Experience Design Manager',
+        avatarUrl: 'https://api.dicebear.com/7.x/avataaars/svg?seed=andry',
+        details: 'Coordinates learner support topics and escalation paths.',
+      },
+    ],
+  },
+  {
+    role: 'Trainers',
+    members: [
+      {
+        id: 'trainer-1',
+        name: 'Mykhaylo Klarkov',
+        title: 'Director, Experience Design',
+        avatarUrl: 'https://api.dicebear.com/7.x/avataaars/svg?seed=mykhaylo',
+        details: 'Leads trainer guidance for workshops and project reviews.',
+      },
+      {
+        id: 'trainer-2',
+        name: 'Iryna Kovalenko',
+        title: 'Senior Training Specialist',
+        avatarUrl: 'https://api.dicebear.com/7.x/avataaars/svg?seed=iryna',
+        details: 'Supports practical tasks, checkpoints, and training sessions.',
+      },
+    ],
+  },
+  {
+    role: 'Mentors',
+    members: [
+      {
+        id: 'mentor-1',
+        name: 'Alex Holovyatynskyi',
+        title: 'Senior People Advisory Specialist',
+        avatarUrl: 'https://api.dicebear.com/7.x/avataaars/svg?seed=alex-holo',
+        details: 'Provides long-term mentorship for development goals.',
+      },
+      {
+        id: 'mentor-2',
+        name: 'Kateryna Bondar',
+        title: 'Mentor, UX Discipline',
+        avatarUrl: 'https://api.dicebear.com/7.x/avataaars/svg?seed=kateryna',
+        details: 'Helps with portfolio improvements and UX problem-solving.',
+      },
+      {
+        id: 'mentor-3',
+        name: 'Artem Shevchuk',
+        title: 'Mentor, Frontend Discipline',
+        avatarUrl: 'https://api.dicebear.com/7.x/avataaars/svg?seed=artem',
+        details: 'Provides technical support for frontend implementation topics.',
+      },
+    ],
+  },
+];

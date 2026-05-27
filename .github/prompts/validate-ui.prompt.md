@@ -1,11 +1,6 @@
 ---
 agent: agent
 description: "Launch the app, validate rendered UI against Figma design using Playwright, and fix discrepancies."
-tools:
-  - mcp_playwright
-  - mcp_framelink
-  - run_in_terminal
-  - read_file
 ---
 
 # Validate UI with Playwright
