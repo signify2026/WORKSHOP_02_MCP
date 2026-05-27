@@ -4,6 +4,7 @@ export { ClassOverviewCards } from './ClassOverviewCards';
 export { ClassFilterTabs } from './ClassFilterTabs';
 export { LeaderboardTable } from './LeaderboardTable';
 export { LearningProgrammeWidget } from './LearningProgrammeWidget';
+export { SupportTeamWidget } from './SupportTeamWidget';
 
 export type { ClassOverviewCardsProps, ClassCardData, UserPerformance } from './ClassOverviewCards';
 export type { ClassFilterTabsProps } from './ClassFilterTabs';
