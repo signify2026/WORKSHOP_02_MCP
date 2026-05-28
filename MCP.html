@@ -1,0 +1,1706 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MCP WORKSHOP</title>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0d1117; --bg-card: #161b22; --bg-elevated: #1c2128;
+      --bg-code: #0d1117; --border: #30363d; --border-soft: #21262d;
+      --text: #e6edf3; --text-muted: #8b949e; --text-dim: #484f58;
+      --blue: #388bfd; --blue-light: #58a6ff; --blue-bg: #0d2040; --blue-border: #1f4068;
+      --green: #3fb950; --green-bg: #0d2818; --green-border: #1e4a2a;
+      --amber: #d29922; --amber-bg: #2a1e06; --amber-border: #4a360c;
+      --red: #f85149; --red-bg: #2a0d0d; --red-border: #4a1a1a;
+      --purple: #bc8cff; --purple-bg: #1e1035; --purple-border: #3d2060;
+      --nav-h: 52px; --r: 8px; --rl: 12px;
+    }
+    [data-theme="light"] {
+      --bg: #f5f7fa; --bg-card: #fff; --bg-elevated: #eef1f5; --bg-code: #f0f2f5;
+      --border: #d0d7de;
+      --text: #1c2128; --text-muted: #57606a; --text-dim: #8c959f;
+      --blue: #2155a0; --blue-light: #3a6ec8; --blue-bg: #dbeeff; --blue-border: #b0c8ee;
+      --green: #1a6e38; --green-bg: #ddf4e6; --green-border: #a2d2b2;
+      --amber: #8a5c00; --amber-bg: #fdf5e4; --amber-border: #e8d09a;
+      --red: #b52a2a; --red-bg: #fde8e8; --red-border: #e8b0b0;
+      --purple: #5a3ea0; --purple-bg: #f0eefb; --purple-border: #c8b8ee;
+    }
+
+    html, body { height: 100%; overflow: hidden; font-family: 'Inter', -apple-system, sans-serif; background: var(--bg); color: var(--text); -webkit-font-smoothing: antialiased; }
+
+    /* ── Navbar ── */
+    #top-nav { position: fixed; top: 0; left: 0; right: 0; z-index: 200; height: var(--nav-h); background: var(--bg-card); border-bottom: 1px solid var(--border); display: flex; align-items: center; padding: 0 20px; gap: 0; }
+    .nav-logo { display: flex; align-items: center; gap: 9px; padding-right: 18px; border-right: 1px solid var(--border); flex-shrink: 0; }
+    .nav-logo-icon { width: 28px; height: 28px; border-radius: 7px; background: linear-gradient(135deg, var(--purple) 0%, var(--blue-light) 100%); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .nav-logo-icon svg { width: 20px; height: 20px; display: block; }
+    .nav-logo-text { font-size: 0.85rem; font-weight: 700; white-space: nowrap; }
+    .nav-badge { font-size: 0.65rem; font-weight: 700; padding: 2px 8px; border-radius: 10px; background: var(--purple-bg); color: var(--purple); border: 1px solid var(--purple-border); margin-left: 7px; }
+    .nav-partner-badges { display:inline-flex; align-items:center; gap:8px; margin-left:10px; }
+    .nav-partner-sep { font-size:0.75rem; color:var(--text-dim); }
+    .nav-partner-logo { display:inline-flex; align-items:center; }
+    .nav-partner-logo img { height:18px; width:auto; object-fit:contain; display:block; }
+    .nav-sections { display: flex; align-items: center; gap: 3px; padding: 0 14px; flex: 1; overflow-x: auto; scrollbar-width: none; }
+    .nav-sections::-webkit-scrollbar { display: none; }
+    .nav-sec-btn { display: flex; align-items: center; gap: 5px; padding: 5px 11px; border-radius: 18px; border: 1px solid transparent; background: none; cursor: pointer; font-size: 0.75rem; font-weight: 500; color: var(--text-muted); white-space: nowrap; transition: all 0.12s; }
+    .nav-sec-btn svg { width: 11px; height: 11px; stroke: currentColor; }
+    .nav-sec-btn:hover { color: var(--text); background: var(--bg-elevated); }
+    .nav-sec-btn.active { color: var(--purple); background: var(--purple-bg); border-color: var(--purple-border); font-weight: 600; }
+    .nav-controls { display: flex; align-items: center; gap: 8px; padding-left: 14px; border-left: 1px solid var(--border); flex-shrink: 0; }
+    #theme-toggle { display: flex; align-items: center; background: var(--bg-elevated); border: 1px solid var(--border); border-radius: 18px; padding: 2px; gap: 1px; }
+    #theme-toggle button { background: none; border: none; cursor: pointer; width: 28px; height: 26px; border-radius: 13px; display: flex; align-items: center; justify-content: center; color: var(--text-muted); transition: all 0.12s; }
+    #theme-toggle button svg { width: 13px; height: 13px; stroke: currentColor; }
+    #theme-toggle button.active { background: var(--purple-bg); color: var(--purple); outline: 1px solid var(--purple-border); }
+    .ctrl-btn { background: var(--bg-elevated); border: 1px solid var(--border); border-radius: var(--r); padding: 5px 11px; cursor: pointer; color: var(--text-muted); font-size: 0.73rem; font-weight: 600; display: flex; align-items: center; gap: 4px; }
+    .ctrl-btn svg { width: 12px; height: 12px; stroke: currentColor; }
+    .ctrl-btn:hover { color: var(--purple); border-color: var(--purple-border); }
+
+    /* ── Deck ── */
+    #deck { position: fixed; top: var(--nav-h); left: 0; right: 0; bottom: 32px; }
+    .slide { position: absolute; inset: 0; display: none; flex-direction: column; justify-content: flex-start; align-items: center; padding: 32px 100px 28px; background: var(--bg); opacity: 0; transition: opacity 0.18s ease; overflow: hidden; }
+    .slide.active  { display: flex; }
+    .slide.visible { opacity: 1; }
+    .slide.overflow { overflow-y: auto; }
+    .slide-content { width: 100%; max-width: 1440px; margin: 0 auto; display: flex; flex-direction: column; }
+
+    /* ── Typography ── */
+    h2 { font-size: 1.75rem; font-weight: 700; color: var(--blue-light); margin-bottom: 18px; letter-spacing: -0.02em; display: flex; align-items: center; gap: 11px; }
+    h3 { font-size: 1rem; font-weight: 600; color: var(--text); margin-bottom: 6px; }
+    p  { font-size: 0.93rem; color: var(--text-muted); line-height: 1.65; }
+    li { font-size: 0.9rem; color: var(--text-muted); line-height: 1.75; }
+
+    .h2-icon { width: 30px; height: 30px; border-radius: 7px; background: var(--purple-bg); border: 1px solid var(--purple-border); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .h2-icon svg { width: 15px; height: 15px; stroke: var(--purple); }
+
+    .section-label { font-size: 0.76rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-dim); margin-bottom: 9px; }
+    .section-label.red    { color: var(--red); }
+    .section-label.green  { color: var(--green); }
+    .section-label.amber  { color: var(--amber); }
+    .section-label.purple { color: var(--purple); }
+
+    .phase-tag { display: inline-flex; align-items: center; gap: 5px; background: var(--purple-bg); color: var(--purple); border: 1px solid var(--purple-border); border-radius: 5px; padding: 3px 10px; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; margin-bottom: 10px; }
+    .phase-tag svg { width: 10px; height: 10px; stroke: currentColor; }
+    .phase-tag.red    { background: var(--red-bg);    color: var(--red);    border-color: var(--red-border); }
+    .phase-tag.green  { background: var(--green-bg);  color: var(--green);  border-color: var(--green-border); }
+    .phase-tag.amber  { background: var(--amber-bg);  color: var(--amber);  border-color: var(--amber-border); }
+    .phase-tag.blue   { background: var(--blue-bg);   color: var(--blue-light); border-color: var(--blue-border); }
+
+    /* ── Grid ── */
+    .cols   { display: grid; gap: 22px; width: 100%; }
+    .cols-2 { grid-template-columns: 1fr 1fr; }
+    .cols-3 { grid-template-columns: 1fr 1fr 1fr; }
+
+    /* ── Cards ── */
+    .card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--rl); padding: 20px 22px; }
+    .card.blue   { border-color: var(--blue-border);   background: var(--blue-bg); }
+    .card.green  { border-color: var(--green-border);  background: var(--green-bg); }
+    .card.amber  { border-color: var(--amber-border);  background: var(--amber-bg); }
+    .card.red    { border-color: var(--red-border);    background: var(--red-bg); }
+    .card.purple { border-color: var(--purple-border); background: var(--purple-bg); }
+    .ch { display: flex; align-items: center; gap: 9px; margin-bottom: 10px; }
+    .ch svg { width: 15px; height: 15px; stroke: currentColor; flex-shrink: 0; }
+    .ch h3 { margin: 0; }
+
+    /* ── Code ── */
+    pre { background: var(--bg-code); border: 1px solid var(--border); border-radius: var(--r); padding: 16px 20px; font-family: 'JetBrains Mono', monospace; font-size: 0.83rem; line-height: 1.7; overflow-x: auto; width: 100%; color: var(--text); }
+    code.inline { background: var(--bg-elevated); border: 1px solid var(--border); border-radius: 4px; padding: 2px 6px; font-family: 'JetBrains Mono', monospace; font-size: 0.85em; color: var(--blue-light); }
+    .k { color: #ff7b72; } .s { color: #a5d6ff; } .c { color: #8b949e; font-style: italic; }
+    .n { color: #79c0ff; } .hi { color: #ffa657; font-weight: 600; }
+
+    /* ── Callout ── */
+    .callout { display: flex; gap: 10px; align-items: flex-start; background: var(--blue-bg); border-left: 3px solid var(--blue); border-radius: 0 var(--r) var(--r) 0; padding: 13px 16px; margin: 10px 0; }
+    .callout p { font-size: 0.9rem; }
+    .callout.green  { background: var(--green-bg);  border-color: var(--green); }
+    .callout.amber  { background: var(--amber-bg);  border-color: var(--amber); }
+    .callout.red    { background: var(--red-bg);    border-color: var(--red); }
+    .callout.purple { background: var(--purple-bg); border-color: var(--purple); }
+
+    /* ── Badge ── */
+    .badge { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 0.7rem; font-weight: 700; border: 1px solid; }
+    .badge.red   { background: var(--red-bg);    color: var(--red);        border-color: var(--red-border); }
+    .badge.green { background: var(--green-bg);  color: var(--green);      border-color: var(--green-border); }
+    .badge.blue  { background: var(--blue-bg);   color: var(--blue-light); border-color: var(--blue-border); }
+
+    /* ── Step pill ── */
+    .step-pill { display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; border-radius: 50%; background: var(--purple-bg); border: 1px solid var(--purple-border); font-size: 0.75rem; font-weight: 800; color: var(--purple); flex-shrink: 0; }
+
+    /* ── Flow diagram ── */
+    .flow-row { display: flex; align-items: center; gap: 10px; flex-wrap: nowrap; }
+    .flow-node { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--r); padding: 11px 18px; font-size: 0.88rem; font-weight: 500; white-space: nowrap; line-height: 1.4; text-align: center; }
+    .flow-node small { display: block; font-size: 0.74rem; color: var(--text-muted); margin-top: 2px; font-weight: 400; }
+    .flow-node.purple { background: var(--purple-bg); border-color: var(--purple-border); color: var(--purple); }
+    .flow-node.blue   { background: var(--blue-bg);   border-color: var(--blue-border);   color: var(--blue-light); }
+    .flow-node.green  { background: var(--green-bg);  border-color: var(--green-border);  color: var(--green); }
+    .flow-node.amber  { background: var(--amber-bg);  border-color: var(--amber-border);  color: var(--amber); }
+    .flow-arr { color: var(--text-muted); font-size: 1.3rem; flex-shrink: 0; }
+    .flow-note { font-size: 0.76rem; color: var(--text-dim); font-style: italic; align-self: center; }
+
+    /* ── Problem list ── */
+    .prob-item { display: flex; gap: 10px; align-items: flex-start; font-size: 0.88rem; color: var(--text-muted); padding: 6px 0; border-bottom: 1px solid var(--border-soft, var(--border)); }
+    .prob-item:last-child { border-bottom: none; }
+    .prob-dot { font-weight: 800; flex-shrink: 0; margin-top: 1px; }
+
+    /* ── Tag pill ── */
+    .tool-tag { display: inline-flex; align-items: center; gap: 5px; border: 1px solid; border-radius: 5px; padding: 3px 9px; font-size: 0.74rem; font-weight: 700; white-space: nowrap; }
+    .tool-tag.purple { background: var(--purple-bg); color: var(--purple); border-color: var(--purple-border); }
+    .tool-tag.blue   { background: var(--blue-bg);   color: var(--blue-light); border-color: var(--blue-border); }
+    .tool-tag.green  { background: var(--green-bg);  color: var(--green);      border-color: var(--green-border); }
+
+    /* ── Bottom bar ── */
+    #bottom-bar { position: fixed; bottom: 0; left: 0; right: 0; height: 32px; display: flex; align-items: center; background: var(--bg-card); border-top: 1px solid var(--border); padding: 0 18px; z-index: 200; }
+    #progress-track { flex: 1; height: 3px; background: var(--border); border-radius: 2px; margin-right: 14px; overflow: hidden; }
+    #progress-fill { height: 100%; background: var(--purple); border-radius: 2px; transition: width 0.3s; width: 0%; }
+    #counter { font-size: 0.7rem; color: var(--text-dim); font-weight: 600; white-space: nowrap; min-width: 46px; text-align: right; }
+    #hint { font-size: 0.65rem; color: var(--text-dim); margin-right: 14px; white-space: nowrap; }
+
+    /* ── Nav arrows ── */
+    .nav-btn { position: fixed; top: calc(50% + var(--nav-h)/2); transform: translateY(-50%); background: var(--bg-card); border: 1px solid var(--border); color: var(--text-muted); width: 36px; height: 60px; border-radius: var(--r); cursor: pointer; font-size: 1.3rem; display: flex; align-items: center; justify-content: center; z-index: 100; transition: all 0.12s; }
+    .nav-btn:hover { color: var(--purple); border-color: var(--purple-border); background: var(--purple-bg); }
+    #btn-prev { left: 8px; } #btn-next { right: 8px; }
+
+    /* ── Speaker notes ── */
+    #notes { display: none; position: fixed; bottom: 40px; left: 50%; transform: translateX(-50%); width: 780px; max-width: 92vw; background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--rl); padding: 16px 20px; z-index: 300; max-height: 36vh; overflow-y: auto; box-shadow: 0 8px 32px rgba(0,0,0,0.5); }
+    #notes.visible { display: block; }
+    #notes h4 { color: var(--purple); font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 8px; }
+    #notes p { font-size: 0.85rem; color: var(--text-muted); line-height: 1.65; }
+
+    /* ── Playwright deck extras ── */
+    ul.check { list-style: none; padding: 0; }
+    ul.check li { padding: 5px 0; border-bottom: 1px solid var(--border-soft); display: flex; gap: 8px; align-items: flex-start; font-size: 0.9rem; }
+    ul.check li:last-child { border-bottom: none; }
+    ul.check li::before { content: '✓'; color: var(--green); font-weight: 700; flex-shrink: 0; font-size: 0.85rem; margin-top: 2px; }
+    ul.arrow { list-style: none; padding: 0; }
+    ul.arrow li { padding: 5px 0; display: flex; gap: 8px; align-items: flex-start; font-size: 0.9rem; }
+    ul.arrow li::before { content: '→'; color: var(--blue-light); flex-shrink: 0; font-size: 0.88rem; }
+    .flow { display: flex; align-items: center; gap: 7px; flex-wrap: wrap; margin: 10px 0; }
+    .flow-box { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--r); padding: 9px 14px; font-size: 0.88rem; font-weight: 500; text-align: left; }
+    .flow-box.blue  { background: var(--blue-bg);   border-color: var(--blue-border);   color: var(--blue-light); }
+    .flow-box.green { background: var(--green-bg);  border-color: var(--green-border);  color: var(--green); }
+    .flow-box.amber { background: var(--amber-bg);  border-color: var(--amber-border);  color: var(--amber); }
+    .flow-box.red   { background: var(--red-bg);    border-color: var(--red-border);    color: var(--red); }
+    .flow-arrow { color: var(--text-dim); font-size: 1.1rem; flex-shrink: 0; text-align: center; }
+    .pillar { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--r); padding: 13px 16px; display: flex; gap: 14px; align-items: flex-start; margin-bottom: 8px; }
+    .pillar-num { font-size: 1.4rem; font-weight: 800; color: var(--blue-light); min-width: 32px; line-height: 1; }
+    .pillar-body h3 { font-size: 0.95rem; margin-bottom: 4px; }
+    .pillar-body p  { font-size: 0.87rem; line-height: 1.55; }
+    .survey-quote { background: var(--red-bg); border: 1px solid var(--red-border); border-left: 4px solid var(--red); border-radius: 0 var(--rl) var(--rl) 0; padding: 16px 20px; margin-bottom: 14px; }
+    .survey-quote .sq-text { font-size: 1rem; color: var(--text); font-style: italic; line-height: 1.65; margin-bottom: 7px; }
+    .survey-quote .sq-source { font-size: 0.74rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--red); }
+    .title-main { font-size: 2.8rem; font-weight: 800; line-height: 1.1; letter-spacing: -0.03em; margin-bottom: 12px; }
+    .title-main span { color: var(--blue-light); }
+    .title-sub  { font-size: 1rem; color: var(--text-muted); margin-bottom: 26px; line-height: 1.6; }
+    .title-rule { width: 52px; height: 4px; background: var(--blue); border-radius: 2px; margin-bottom: 22px; }
+    .tag { display: inline-flex; align-items: center; gap: 5px; background: var(--bg-elevated); color: var(--blue-light); border: 1px solid var(--blue-border); border-radius: 4px; padding: 3px 9px; font-size: 0.75rem; font-weight: 600; margin: 3px 4px 3px 0; }
+    .tag svg { width: 10px; height: 10px; stroke: currentColor; }
+    .demo-step { display: flex; align-items: center; gap: 12px; background: var(--bg-elevated); border: 1px solid var(--border); border-radius: var(--r); padding: 11px 18px; margin-bottom: 18px; }
+    .demo-step-num { width: 28px; height: 28px; border-radius: 50%; background: var(--blue-bg); border: 1px solid var(--blue-border); display: flex; align-items: center; justify-content: center; font-size: 0.78rem; font-weight: 800; color: var(--blue-light); flex-shrink: 0; }
+    .demo-step-label { font-size: 0.72rem; font-weight: 700; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.07em; }
+    .demo-step-name { font-size: 0.92rem; font-weight: 600; color: var(--text); }
+    .ac-row { display: flex; gap: 10px; align-items: flex-start; padding: 9px 0; border-bottom: 1px solid var(--border-soft); }
+    .ac-row:last-child { border-bottom: none; }
+    .ac-badge { font-size: 0.68rem; font-weight: 800; padding: 3px 8px; border-radius: 4px; background: var(--blue-bg); color: var(--blue-light); border: 1px solid var(--blue-border); white-space: nowrap; flex-shrink: 0; margin-top: 1px; }
+    .ac-text { font-size: 0.88rem; color: var(--text-muted); line-height: 1.55; }
+    .hier-row { display: flex; align-items: center; gap: 14px; padding: 10px 14px; border-radius: var(--r); margin-bottom: 7px; }
+    .hier-row.lvl-1 { background: rgba(63,185,80,0.10);  border: 1px solid var(--green-border); }
+    .hier-row.lvl-x { background: rgba(248,81,73,0.08);  border: 1px solid var(--red-border); }
+    .hier-rank { font-size: 1.1rem; font-weight: 800; min-width: 26px; text-align: center; flex-shrink: 0; }
+    .lvl-1 .hier-rank { color: var(--green); }
+    .lvl-x .hier-rank { color: var(--red); }
+    .hier-body { flex: 1; }
+    .hier-code { font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; color: var(--text-muted); margin-top: 3px; }
+    .icon { display: inline-block; flex-shrink: 0; vertical-align: middle; width: 12px; height: 12px; stroke-width: 2; }
+    .nav-sec-btn .icon { width: 11px; height: 11px; }
+    .phase-tag .icon { width: 10px; height: 10px; }
+    table { width: 100%; border-collapse: collapse; }
+    table th, table td { padding: 6px 8px; text-align: left; border-bottom: 1px solid var(--border-soft); }
+
+    /* ── Combined deck nav ── */
+    .nav-sec-btn.atlassian-nav.active { color: var(--purple); background: var(--purple-bg); border-color: var(--purple-border); font-weight: 600; }
+    .nav-sec-btn.playwright-nav.active { color: var(--blue-light); background: var(--blue-bg); border-color: var(--blue-border); font-weight: 600; }
+    .nav-part-label { font-size: 0.62rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-dim); padding: 4px 8px; flex-shrink: 0; white-space: nowrap; }
+    .nav-part-label.purple { color: var(--purple); }
+    .nav-part-label.blue { color: var(--blue-light); }
+    .deck-playwright .h2-icon { background: var(--blue-bg); border-color: var(--blue-border); }
+    .deck-playwright .h2-icon svg { stroke: var(--blue-light); }
+    .deck-playwright h2 { color: var(--blue-light); }
+    .section-label.blue { color: var(--blue-light); }
+
+    @media (max-width: 1100px) {
+      .slide { padding: 28px 40px 22px; }
+      .cols-2, .cols-3 { grid-template-columns: 1fr; }
+      .title-main { font-size: 2rem; }
+    }
+    @media (max-width: 700px) {
+      #btn-prev, #btn-next { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<nav id="top-nav">
+  <div class="nav-logo">
+    <div class="nav-logo-icon"><svg viewBox="0 0 180 180" fill="none" xmlns="http://www.w3.org/2000/svg"><g clip-path="url(#mcp-nav-clip)"><path d="M18 84.8528L85.8822 16.9706C95.2548 7.59798 110.451 7.59798 119.823 16.9706V16.9706C129.196 26.3431 129.196 41.5391 119.823 50.9117L68.5581 102.177" stroke="white" stroke-width="16" stroke-linecap="round"/><path d="M69.2652 101.47L119.823 50.9117C129.196 41.5391 144.392 41.5391 153.765 50.9117L154.118 51.2652C163.491 60.6378 163.491 75.8338 154.118 85.2063L92.7248 146.6C89.6006 149.724 89.6006 154.789 92.7248 157.913L105.331 170.52" stroke="white" stroke-width="16" stroke-linecap="round"/><path d="M102.853 33.9411L52.6482 84.1457C43.2756 93.5183 43.2756 108.714 52.6482 118.087V118.087C62.0208 127.459 77.2167 127.459 86.5893 118.087L136.794 67.8822" stroke="white" stroke-width="16" stroke-linecap="round"/></g><defs><clipPath id="mcp-nav-clip"><rect width="180" height="180"/></clipPath></defs></svg></div>
+    <div class="nav-logo-text">MCP WORKSHOP<span class="nav-partner-badges">
+      <span class="nav-partner-logo">
+        <svg width="20" height="20" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="atl-g" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#2684FF"/><stop offset="100%" stop-color="#0052CC"/></linearGradient></defs><path fill="url(#atl-g)" d="M6.2 18.9c-.4-.4-1-.2-1.1.3L2.2 26.5c-.2.5.2 1 .7 1h8.2c.4 0 .7-.2.9-.6 1.6-3.7.6-6-5.8-8zm9.4-17a18.5 18.5 0 00-1 19l3.8 7.5c.2.4.6.6 1 .6h8.2c.5 0 .8-.5.6-1L17 2c-.3-.5-1-.7-1.4-.1z"/></svg>
+      </span>
+      <span class="nav-partner-sep">+</span>
+      <span class="nav-partner-logo">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" height="20" width="20">
+          <path fill="#2d4552" d="M7.99585 13.141725c-0.87725 0.248975-1.452775 0.685475-1.8319 1.12165 0.363125-0.317775 0.849525-0.609425 1.505675-0.795425 0.6711-0.1902 1.243625-0.188825 1.7167-0.09755v-0.369925c-0.40355-0.0369-0.866225-0.0075-1.390475 0.14125Zm-1.872-3.109775-3.25795 0.858325s0.059375 0.083875 0.1693 0.195775l2.76235-0.727875s-0.03915 0.5044-0.379075 0.9556c0.643-0.486475 0.705375-1.281825 0.705375-1.281825Zm2.727125 7.65675C4.26615 18.923575 1.8404825 13.61025 1.1060875 10.852425c-0.3393-1.273-0.487415-2.2371-0.5268925-2.859275-0.0042425-0.0646-0.0022825-0.11905 0.002285-0.16895-0.237835 0.01435-0.3517015 0.137975-0.328535 0.49525 0.0394775 0.621825 0.187595 1.585875 0.526895 2.859275C1.5139075 13.936125 3.9399 19.24945 8.52475 18.0146c0.99795-0.26885 1.747675-0.758525 2.310475-1.383625-0.51875 0.468525-1.168 0.8375-1.98425 1.057725Zm0.861575-10.90855v0.3263h1.79835c-0.0369-0.115525-0.074075-0.219625-0.110975-0.3263h-1.687375Z" stroke-width="0.25"></path>
+          <path fill="#e2574c" d="M9.7126 15.915175V14.388l-4.243175 1.2032s0.313525-1.82175 2.526475-2.4495c0.6711-0.1902 1.2437-0.1889 1.7167-0.09755V6.780125h2.124575c-0.231325-0.714825-0.4551-1.26515-0.64305-1.64755-0.310925-0.632925-0.62965-0.21335-1.35325 0.39185-0.50965 0.425775-1.797675 1.33405-3.7359 1.85635-1.938275 0.522625-3.50525 0.384025-4.15906 0.2708-0.9268825-0.1599-1.4116925-0.36345-1.3663375 0.34155 0.03947 0.621825 0.187595 1.58595 0.5268925 2.859275C1.8405325 13.609875 4.266525 18.9232 8.85135 17.68835c1.197625-0.3227 2.04295-0.960525 2.6289-1.7735h-1.76765v0.000325ZM2.865625 10.89025l3.258275-0.858325s-0.094975 1.25345-1.31645 1.57545c-1.2218 0.321675-1.941825-0.717125-1.941825-0.717125Z" stroke-width="0.25"></path>
+          <path fill="#2ead33" d="M21.975075 6.8525c-0.84695 0.148475-2.878875 0.33345-5.389975-0.339625-2.5118-0.672675-4.17835-1.849175-4.838625-2.402175-0.936-0.783975-1.347725-1.328825-1.752925-0.5047-0.358225 0.726875-0.816325 1.909875-1.259725 3.565925-0.960775 3.586125-1.67885 11.15385 4.260525 12.7463 5.938125 1.591125 9.09945-5.322175 10.0603-8.908625 0.4434-1.655725 0.637825-2.9095 0.691325-3.717925 0.061-0.915775-0.568025-0.64995-1.7709-0.439175Z" stroke-width="0.25"></path>
+        </svg>
+      </span>
+      <span class="nav-partner-sep">|</span>
+      <span class="nav-partner-logo">
+        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRVgvbvnZKzuiHiZVeydh6_tCZGEY9GNUWf7g&s" alt="Signify" height="18">
+      </span>
+    </span></div>
+  </div>
+  <div class="nav-sections" id="nav-sections">
+    <span class="nav-part-label purple">Part I</span>
+    <button class="nav-sec-btn atlassian-nav" data-slides="0" onclick="goToSlide(0)"><i data-lucide="lightbulb"></i>Why Custom MCP</button>
+    <button class="nav-sec-btn atlassian-nav" data-slides="1" onclick="goToSlide(1)"><i data-lucide="arrow-right-left"></i>Before / After</button>
+    <button class="nav-sec-btn atlassian-nav" data-slides="2" onclick="goToSlide(2)"><i data-lucide="hammer"></i>Build It — 4 Steps</button>
+    <button class="nav-sec-btn atlassian-nav" data-slides="3" onclick="goToSlide(3)"><i data-lucide="workflow"></i>How It Works</button>
+    <button class="nav-sec-btn atlassian-nav" data-slides="4" onclick="goToSlide(4)"><i data-lucide="bot"></i>Build with Copilot</button>
+    <button class="nav-sec-btn atlassian-nav" data-slides="5" onclick="goToSlide(5)"><i data-lucide="shield-alert"></i>Guardrails</button>
+    <span class="nav-part-label blue" style="margin-left:8px;">Part II</span>
+    <button class="nav-sec-btn playwright-nav" data-slides="7" onclick="goToSlide(7)">
+      <i data-lucide="play-circle" class="icon"></i>Handoff
+    </button>
+    <button class="nav-sec-btn playwright-nav" data-slides="8" onclick="goToSlide(8)">
+      <i data-lucide="brain" class="icon"></i>MCP Model
+    </button>
+    <button class="nav-sec-btn playwright-nav" data-slides="9" onclick="goToSlide(9)">
+      <i data-lucide="layers" class="icon"></i>3 Modes
+    </button>
+    <button class="nav-sec-btn playwright-nav" data-slides="10" onclick="goToSlide(10)">
+      <i data-lucide="message-square" class="icon"></i>Prompting
+    </button>
+    <button class="nav-sec-btn playwright-nav" data-slides="11" onclick="goToSlide(11)">
+      <i data-lucide="image" class="icon"></i>Validate
+    </button>
+    <button class="nav-sec-btn playwright-nav" data-slides="12" onclick="goToSlide(12)">
+      <i data-lucide="test-tube-2" class="icon"></i>Generate
+    </button>
+    <button class="nav-sec-btn playwright-nav" data-slides="13" onclick="goToSlide(13)">
+      <i data-lucide="alert-circle" class="icon"></i>Context
+    </button>
+    <button class="nav-sec-btn playwright-nav" data-slides="14" onclick="goToSlide(14)">
+      <i data-lucide="wand-2" class="icon"></i>Self-Heal
+    </button>
+    <button class="nav-sec-btn playwright-nav" data-slides="15" onclick="goToSlide(15)">
+      <i data-lucide="terminal" class="icon"></i>DevTools
+    </button>
+    <button class="nav-sec-btn playwright-nav" data-slides="16" onclick="goToSlide(16)">
+      <i data-lucide="check-circle-2" class="icon"></i>Takeaways
+    </button>
+    <button class="nav-sec-btn playwright-nav" data-slides="17" onclick="goToSlide(17)">
+      <i data-lucide="heart" class="icon"></i>Thank You
+    </button>
+  </div>
+  <div class="nav-controls">
+    <div id="theme-toggle">
+      <button id="th-dark" class="active" onclick="setTheme('dark')"><i data-lucide="moon"></i></button>
+      <button id="th-light" onclick="setTheme('light')"><i data-lucide="sun"></i></button>
+    </div>
+  </div>
+</nav>
+
+<div id="deck">
+
+<div class="slide overflow active"
+     data-notes="This is the 'why are we here' slide. Start conversational: 'How many of you have copy-pasted Jira requirements into Copilot this week?' Then: 'What if Copilot could read the ticket itself — live, every time?' Walk the three cards: what it is (a local server you own that wraps your APIs), when you need it (behind a firewall, no public MCP, repetitive manual steps), what you gain (live data, one prompt, team-wide). Close with the tools list: 'Five tools, one server. By the end of this session, one sentence in Copilot triggers the entire workflow.'"
+     data-section="0">
+  <div class="slide-content">
+    <div class="phase-tag blue"><i data-lucide="lightbulb"></i>Workshop Intro</div>
+    <h2><span class="h2-icon"><i data-lucide="lightbulb"></i></span>Why Build a Custom MCP Server?</h2>
+
+    <div class="cols cols-3" style="margin-bottom:18px;">
+      <div class="card blue" style="padding:16px 18px;">
+        <div class="ch" style="color:var(--blue-light);"><i data-lucide="cpu"></i><h3 style="color:var(--blue-light); font-size:0.9rem;">What is a Custom MCP?</h3></div>
+        <p style="font-size:0.82rem; margin-bottom:10px;">A Model Context Protocol server you build and own. It wraps your internal APIs in typed, callable tools — so AI agents like Copilot can query Jira, write to Confluence, or trigger any workflow directly, without copy-pasting context.</p>
+        <div style="background:var(--bg); border:1px solid var(--blue-border); border-radius:var(--r); padding:8px 11px; font-size:0.78rem; color:var(--text-muted);">Think of it as a structured bridge between Copilot and your internal systems — you define the tools, the AI decides when to call them.</div>
+      </div>
+      <div class="card amber" style="padding:16px 18px;">
+        <div class="ch" style="color:var(--amber);"><i data-lucide="help-circle"></i><h3 style="color:var(--amber); font-size:0.9rem;">When do you need one?</h3></div>
+        <div style="display:flex; flex-direction:column; gap:0;">
+          <div class="prob-item"><span class="prob-dot" style="color:var(--amber);">→</span><span>Your tools sit behind a firewall — Signify's Jira Data Center, internal Confluence</span></div>
+          <div class="prob-item"><span class="prob-dot" style="color:var(--amber);">→</span><span>No public MCP server covers your internal systems</span></div>
+          <div class="prob-item"><span class="prob-dot" style="color:var(--amber);">→</span><span>Engineers repeat the same steps every sprint — copy ACs, paste results, write docs</span></div>
+          <div class="prob-item"><span class="prob-dot" style="color:var(--amber);">→</span><span>You need tools scoped to your team's exact workflow and data model</span></div>
+        </div>
+        <div style="margin-top:10px; background:var(--amber-bg); border:1px solid var(--amber-border); border-radius:var(--r); padding:8px 11px; font-size:0.78rem; color:var(--text-muted);">The official Atlassian Rovo MCP is Cloud-only. Signify's self-hosted Jira and Confluence need a custom bridge.</div>
+      </div>
+      <div class="card green" style="padding:16px 18px;">
+        <div class="ch" style="color:var(--green);"><i data-lucide="trending-up"></i><h3 style="color:var(--green); font-size:0.9rem;">What you gain</h3></div>
+        <div style="display:flex; flex-direction:column; gap:0;">
+          <div class="prob-item"><span class="prob-dot" style="color:var(--green);">✓</span><span><strong style="color:var(--text);">Live data</strong> — Copilot reads directly from Jira, no stale copy-paste, no drift</span></div>
+          <div class="prob-item"><span class="prob-dot" style="color:var(--green);">✓</span><span><strong style="color:var(--text);">One prompt</strong> replaces 10+ manual steps across Jira, VS Code, and Confluence</span></div>
+          <div class="prob-item"><span class="prob-dot" style="color:var(--green);">✓</span><span><strong style="color:var(--text);">Team-wide</strong> — every engineer shares the same connection, no per-person setup</span></div>
+          <div class="prob-item"><span class="prob-dot" style="color:var(--green);">✓</span><span><strong style="color:var(--text);">You control access</strong> — define exactly what the AI can touch and what it cannot</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="cols cols-2" style="align-items:stretch;">
+      <div class="card" style="padding:16px 18px;">
+        <div class="ch"><i data-lucide="hammer" style="color:var(--purple);"></i><h3>What we build today &mdash; <code class="inline">signify-atlassian</code></h3></div>
+        <div style="display:flex; flex-direction:column; gap:7px; font-size:0.87rem; margin-top:4px;">
+          <div style="display:flex; gap:10px; align-items:baseline;"><code class="inline">get_issue</code><span style="color:var(--text-muted);">— fetch any Jira ticket by key</span></div>
+          <div style="display:flex; gap:10px; align-items:baseline;"><code class="inline">search_issues</code><span style="color:var(--text-muted);">— run JQL queries</span></div>
+          <div style="display:flex; gap:10px; align-items:baseline;"><code class="inline">create_page</code><span style="color:var(--text-muted);">— publish content to Confluence</span></div>
+          <div style="display:flex; gap:10px; align-items:baseline;"><code class="inline">get_project_meta</code><span style="color:var(--text-muted);">— project details <em>(added live)</em></span></div>
+          <div style="display:flex; gap:10px; align-items:baseline;"><code class="inline">create_issue</code><span style="color:var(--text-muted);">— create Jira tickets <em>(added live)</em></span></div>
+        </div>
+      </div>
+      <div class="callout purple" style="margin:0; flex-direction:column; gap:8px; align-items:flex-start;">
+        <p style="font-weight:700; color:var(--purple); margin-bottom:6px;">What this session covers</p>
+        <div style="display:flex; flex-direction:column; gap:5px; font-size:0.86rem;">
+          <div style="display:flex; gap:10px;"><span style="color:var(--purple); font-weight:700; flex-shrink:0;">01</span><span><strong>Before / After</strong> &mdash; the exact workflow that changes when MCP is live</span></div>
+          <div style="display:flex; gap:10px;"><span style="color:var(--purple); font-weight:700; flex-shrink:0;">02</span><span><strong>How It Works</strong> &mdash; from your prompt to Jira REST API and back</span></div>
+          <div style="display:flex; gap:10px;"><span style="color:var(--purple); font-weight:700; flex-shrink:0;">03</span><span><strong>Build It</strong> &mdash; live code in 4 steps, verified with MCP Inspector</span></div>
+          <div style="display:flex; gap:10px;"><span style="color:var(--purple); font-weight:700; flex-shrink:0;">04</span><span><strong>Build with Copilot</strong> &mdash; let AI write the boilerplate, you write the spec</span></div>
+          <div style="display:flex; gap:10px;"><span style="color:var(--purple); font-weight:700; flex-shrink:0;">05</span><span><strong>Guardrails</strong> &mdash; six rules for shipping this safely to your team</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide overflow"
+     data-notes="Bridge from slide 0: 'Let me show you the exact sprint workflow that changes.' Walk the Before column step by step — pause on step 4: 'Notice the Tech Lead comment about dynamic counts. Copy-paste into the chat? You will miss it unless you scroll. With get_issue the LLM receives the full issue JSON — every comment, every field — and reasons over structured data, not a screenshot.' Then walk the After column: Prompt 1 is three tool calls — get_issue, generate tests, create_page. Prompt 2 is one call — create_issue. Key message: the same engineer who spent 25+ minutes now does this in one sentence each. The MCP tools are the ones we built today: get_issue, search_issues, create_page, create_issue."
+     data-section="1">
+  <div class="slide-content">
+    <div class="phase-tag"><i data-lucide="arrow-right-left"></i>Before / After</div>
+    <h2><span class="h2-icon"><i data-lucide="arrow-right-left"></i></span>One Sprint Story — With and Without the MCP</h2>
+
+    <div class="cols cols-2" style="align-items:stretch; gap:22px;">
+
+      <!-- LEFT — BEFORE -->
+      <div style="display:flex; flex-direction:column; gap:14px;">
+        <div class="section-label red">Before — the manual sprint loop</div>
+
+        <div class="card red" style="padding:16px 18px;">
+          <div class="ch" style="color:var(--red);"><i data-lucide="clock"></i><h3 style="color:var(--red);">Implement Class Filter Tabs — EPMCDMETST-45161</h3></div>
+          <div style="display:flex; flex-direction:column; gap:0; border-top:1px solid var(--red-border); padding-top:12px;">
+            <div class="prob-item"><span class="prob-dot" style="color:var(--red); min-width:18px;">1</span><span>Open <code class="inline">EPMCDMETST-45161</code> in browser. Read description. Scroll to find ACs.</span></div>
+            <div class="prob-item"><span class="prob-dot" style="color:var(--red); min-width:18px;">2</span><span>Select + copy summary, ACs, and description into Copilot chat manually.</span></div>
+            <div class="prob-item"><span class="prob-dot" style="color:var(--amber); min-width:18px;">⚠</span><span><em>Miss the Tech Lead comment: "counts must be dynamic, don't hardcode." It's not in the AC block — it's in the activity stream.</em></span></div>
+            <div class="prob-item"><span class="prob-dot" style="color:var(--red); min-width:18px;">3</span><span>Copilot generates tests from the pasted text. No comment context → hardcoded count bug slips through.</span></div>
+            <div class="prob-item"><span class="prob-dot" style="color:var(--red); min-width:18px;">4</span><span>Open Confluence. Create page. Paste test plan. Manually fix formatting. Publish.</span></div>
+            <div class="prob-item"><span class="prob-dot" style="color:var(--red); min-width:18px;">5</span><span>During review: bug spotted. Open Jira again. Fill in create-issue form. Save.</span></div>
+          </div>
+        </div>
+
+        <div class="card" style="padding:16px 18px; flex:1;">
+          <div class="ch"><i data-lucide="alert-triangle" style="color:var(--amber);"></i><h3>What breaks</h3></div>
+          <div class="prob-item"><span class="prob-dot" style="color:var(--red);">×</span><span><strong style="color:var(--text);">Comments are invisible</strong> — only the ACs block gets copied; activity stream comments stay in Jira.</span></div>
+          <div class="prob-item"><span class="prob-dot" style="color:var(--red);">×</span><span><strong style="color:var(--text);">Stale context</strong> — ticket updated after you copied? Copilot still works from the old text.</span></div>
+          <div class="prob-item"><span class="prob-dot" style="color:var(--red);">×</span><span><strong style="color:var(--text);">No standard format</strong> — every engineer pastes differently; Copilot output quality varies.</span></div>
+          <div class="prob-item"><span class="prob-dot" style="color:var(--red);">×</span><span><strong style="color:var(--text);">Creating issues is a context switch</strong> — out of VS Code, into browser, fill form, back to code.</span></div>
+          <div style="margin-top:12px; background:var(--red-bg); border:1px solid var(--red-border); border-radius:var(--r); padding:9px 12px; font-size:0.8rem; color:var(--text-muted);">Estimated cost per story: <strong style="color:var(--red);">20–30 minutes</strong> of manual context transfer, format fixing, and tab switching — every sprint, for every engineer.</div>
+        </div>
+      </div>
+
+      <!-- RIGHT — AFTER -->
+      <div style="display:flex; flex-direction:column; gap:14px;">
+        <div class="section-label green">After — with signify-atlassian MCP (4 tools)</div>
+
+        <!-- Prompt 1 -->
+        <div class="card green" style="padding:16px 18px;">
+          <div class="ch" style="color:var(--green);"><i data-lucide="message-square"></i><h3 style="color:var(--green);">Prompt 1 — research + publish test plan</h3></div>
+          <pre style="margin:0; font-size:0.8rem; background:transparent; border:none; padding:0; border-top:1px solid var(--green-border); padding-top:12px;"><span class="s">"Fetch EPMCDMETST-45161, extract all ACs
+ and Tech Lead comments, generate Playwright
+ tests, then publish the test plan to
+ Confluence in the QA space."</span></pre>
+          <div style="margin-top:12px; display:flex; flex-direction:column; gap:6px; font-size:0.82rem;">
+            <div style="display:flex; gap:10px; align-items:flex-start;"><code class="inline" style="flex-shrink:0;">get_issue</code><span style="color:var(--text-muted);">Returns full JSON — summary, ACs, <strong style="color:var(--green);">Tech Lead comment included</strong>. No scroll needed.</span></div>
+            <div style="display:flex; gap:10px; align-items:flex-start;"><span style="color:var(--text-muted); padding-left:4px;">↓ AI generates tests from live structured data, respecting the dynamic-count requirement</span></div>
+            <div style="display:flex; gap:10px; align-items:flex-start;"><code class="inline" style="flex-shrink:0;">create_page</code><span style="color:var(--text-muted);">Publishes formatted test plan to Confluence. No browser. No formatting.</span></div>
+          </div>
+        </div>
+
+        <!-- Prompt 2 -->
+        <div class="card blue" style="padding:16px 18px;">
+          <div class="ch" style="color:var(--blue-light);"><i data-lucide="bug"></i><h3 style="color:var(--blue-light);">Prompt 2 — file a bug without leaving VS Code</h3></div>
+          <pre style="margin:0; font-size:0.8rem; background:transparent; border:none; padding:0; border-top:1px solid var(--blue-border); padding-top:12px;"><span class="s">"Create a Bug in EPMCDMETST — tab counts
+ are hardcoded and don't react to data
+ changes. Priority High."</span></pre>
+          <div style="margin-top:12px; display:flex; gap:10px; align-items:flex-start; font-size:0.82rem;">
+            <code class="inline" style="flex-shrink:0;">create_issue</code><span style="color:var(--text-muted);">Returns <code class="inline">EPMCDMETST-45162</code> + direct URL. Zero browser context switch.</span>
+          </div>
+        </div>
+
+        <!-- Bonus -->
+        <div class="card" style="padding:14px 18px;">
+          <div class="ch"><i data-lucide="search" style="color:var(--purple);"></i><h3>Bonus — sprint triage in one prompt</h3></div>
+          <pre style="margin:0; font-size:0.79rem; line-height:1.55;"><span class="c">// "Find all open bugs in EPMCDMETST this sprint"</span>
+search_issues({
+  jql: <span class="s">"project = EPMCDMETST AND issuetype = Bug
+        AND sprint in openSprints() ORDER BY priority"</span>
+})
+<span class="c">// → structured list; AI summarises and suggests priority order</span></pre>
+        </div>
+
+        <div class="callout green" style="margin:0; padding:12px 16px;">
+          <p><strong>Jira is the source of truth — always.</strong> Copilot reads live structured JSON, not a screenshot. Comments, updated ACs, reporter, assignee — all included, no copy-paste.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<div class="slide overflow"
+     data-notes="Step 2 is the key. This code is JavaScript ESM, not TypeScript. TypeScript is optional. Walk the annotations: env check, server container, tool name, description, Zod schema, handler, REST call, stdio connect."
+     data-section="2">
+  <div class="slide-content">
+    <div class="phase-tag green"><i data-lucide="hammer"></i>Build It</div>
+    <h2><span class="h2-icon"><i data-lucide="hammer"></i></span>Build signify-atlassian MCP in 4 Steps</h2>
+
+    <div class="cols cols-2" style="align-items:stretch; gap:22px;">
+      <div style="display:flex; flex-direction:column; gap:16px;">
+        <div class="card">
+          <div style="display:flex; align-items:center; gap:11px; margin-bottom:12px;"><div class="step-pill">1</div><h3>Install — one package</h3></div>
+          <pre style="margin:0;">mkdir mcp-servers/signify-atlassian
+cd    mcp-servers/signify-atlassian
+npm init -y
+npm install <span class="hi">@modelcontextprotocol/sdk</span></pre>
+        </div>
+        <div class="card">
+          <div style="display:flex; align-items:center; gap:11px; margin-bottom:12px;"><div class="step-pill">3</div><h3>Wire it — one block in mcp.json</h3></div>
+          <pre style="margin:0;"><span class="c">// .vscode/mcp.json — add alongside playwright</span>
+{
+  <span class="s">"servers"</span>: {
+    <span class="s">"playwright"</span>: { <span class="c">/* existing */</span> },
+    <span class="s">"<span class="hi">signify-atlassian</span>"</span>: {
+      <span class="s">"command"</span>: <span class="s">"node"</span>,
+      <span class="s">"args"</span>: [<span class="s">"./mcp-servers/signify-atlassian/server.js"</span>],
+      <span class="s">"env"</span>: { <span class="s">"ATLASSIAN_PAT"</span>: <span class="s">"${input:atlassian-pat}"</span> }
+    }
+  }
+}</pre>
+        </div>
+        <div class="card" style="flex:1;">
+          <div style="display:flex; align-items:center; gap:11px; margin-bottom:12px;"><div class="step-pill">4</div><h3>Verify — MCP Inspector before VS Code</h3></div>
+          <pre style="margin:0;">ATLASSIAN_BASE_URL=https://jira.signify.com \
+ATLASSIAN_PAT=*** \
+npx @modelcontextprotocol/inspector node server.js</pre>
+          <p style="margin-top:10px;">Click <strong>Tools</strong>. You should see <code class="inline">get_issue</code>, <code class="inline">search_issues</code>, and <code class="inline">create_page</code>. We add <code class="inline">get_project_meta</code> and <code class="inline">create_issue</code> live — Inspector will then show 5 tools.</p>
+        </div>
+      </div>
+
+      <div class="card" style="padding:22px 24px;">
+        <div style="display:flex; align-items:center; gap:11px; margin-bottom:14px;"><div class="step-pill">2</div><h3>Write the server — JavaScript example</h3></div>
+        <pre style="font-size:0.76rem; line-height:1.58;"><span class="k">import</span> { McpServer } <span class="k">from</span> <span class="s">'@modelcontextprotocol/sdk/server/mcp.js'</span>;
+<span class="k">import</span> { StdioServerTransport } <span class="k">from</span> <span class="s">'@modelcontextprotocol/sdk/server/stdio.js'</span>;
+<span class="k">import</span> { z } <span class="k">from</span> <span class="s">'zod'</span>;
+
+<span class="k">const</span> baseUrl = process.env.ATLASSIAN_BASE_URL;
+<span class="k">const</span> pat = process.env.ATLASSIAN_PAT;
+<span class="k">if</span> (!baseUrl || !pat) <span class="k">throw new</span> Error(<span class="s">'Atlassian env vars missing'</span>);
+
+<span class="k">const</span> server = <span class="k">new</span> McpServer({ name: <span class="s">'signify-atlassian'</span>, version: <span class="s">'1.0.0'</span> });
+
+server.tool(
+  <span class="hi">'get_issue'</span>,
+  <span class="s">'Fetch one Jira issue by key from a self-hosted Atlassian instance.'</span>,
+  { issueKey: z.string().describe(<span class="s">'Jira key e.g. US-4821'</span>) },
+  <span class="k">async</span> ({ issueKey }) =&gt; {
+    <span class="k">const</span> issue = <span class="k">await</span> fetch(
+      <span class="s">`${baseUrl}/rest/api/2/issue/${issueKey}`</span>,
+      { headers: { Authorization: <span class="s">`Bearer ${pat}`</span> } }
+    ).then(r =&gt; r.json());
+
+    <span class="k">return</span> { content: [{ type: <span class="s">'text'</span>, text: JSON.stringify({
+      key: issue.key,
+      summary: issue.fields.summary,
+      status: issue.fields.status.name,
+      description: issue.fields.description
+    }, null, <span class="n">2</span>) }] };
+  }
+);
+
+<span class="c">// search_issues and create_page follow the same pattern</span>
+<span class="k">await</span> server.connect(<span class="k">new</span> StdioServerTransport());</pre>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide overflow"
+     data-notes="Walk top row left to right. Key: the LLM never talks to Jira directly. VS Code sends structured JSON to the local MCP server, and the server calls Jira/Confluence REST APIs with PAT auth. Say clearly: MCP is not TypeScript-only; we use Node.js because it is fastest for the workshop."
+     data-section="3">
+  <div class="slide-content">
+    <div class="phase-tag blue"><i data-lucide="workflow"></i>How It Works</div>
+    <h2><span class="h2-icon"><i data-lucide="workflow"></i></span>What Happens When You Send a Prompt</h2>
+
+    <div class="card" style="padding:24px 28px; margin-bottom:22px;">
+      <div class="section-label" style="margin-bottom:16px;">Full flow — from your prompt to self-hosted Atlassian</div>
+      <div class="flow-row" style="justify-content:space-between; margin-bottom:6px;">
+        <div class="flow-node purple">You type a prompt<small>in Copilot Agent Mode</small></div>
+        <div class="flow-arr">→</div>
+        <div class="flow-node blue">LLM reads tool list<small>get_issue, search_issues, create_page (+ 2 live)</small></div>
+        <div class="flow-arr">→</div>
+        <div class="flow-node blue">LLM decides:<small>"I need get_issue"</small></div>
+        <div class="flow-arr">→</div>
+        <div class="flow-node amber">VS Code sends<small>structured tool call</small></div>
+      </div>
+
+      <div style="display:flex; justify-content:space-between; align-items:center; padding:6px 0; border-top:1px dashed var(--border); margin:10px 0;">
+        <span class="flow-note">Your handler receives typed JSON, not the raw sentence. Zod validates before any REST call runs.</span>
+        <div class="flow-arr" style="font-size:1.5rem; color:var(--amber);">↕</div>
+      </div>
+
+      <div class="flow-row" style="justify-content:space-between; flex-direction:row-reverse;">
+        <div class="flow-node purple">LLM uses result<small>drafts tests or docs</small></div>
+        <div class="flow-arr">←</div>
+        <div class="flow-node green">Your server returns<small>issue JSON or page URL</small></div>
+        <div class="flow-arr">←</div>
+        <div class="flow-node green">Handler runs<small>PAT auth → REST API</small></div>
+        <div class="flow-arr">←</div>
+        <div class="flow-node amber">signify-atlassian MCP<small>local Node.js process</small></div>
+      </div>
+    </div>
+
+    <div class="cols cols-3" style="gap:18px;">
+      <div class="card">
+        <div class="ch"><i data-lucide="list" style="color:var(--blue-light);"></i><h3>Tool list</h3></div>
+        <p>When VS Code starts the server it calls <code class="inline">tools/list</code>. The LLM sees <code class="inline">get_issue</code>, <code class="inline">search_issues</code>, and <code class="inline">create_page</code> with descriptions and schemas.</p>
+      </div>
+      <div class="card">
+        <div class="ch"><i data-lucide="braces" style="color:var(--green);"></i><h3>Typed call — not a prompt</h3></div>
+        <p>Your handler receives structured JSON — <code class="inline">&#123; issueKey: "US-4821" &#125;</code> — never the user's raw sentence. Zod rejects bad arguments before Jira is touched.</p>
+      </div>
+      <div class="card">
+        <div class="ch"><i data-lucide="cable" style="color:var(--amber);"></i><h3>stdio transport</h3></div>
+        <p>VS Code spawns your server with <code class="inline">node</code>. No port, no deploy step, no Cloud-only OAuth flow. Perfect for a workshop and for internal Data Center APIs.</p>
+      </div>
+    </div>
+
+    <div class="callout purple" style="margin-top:18px;">
+      <p><strong>MCP is language-neutral.</strong> We use Node.js here because the workshop is fast to follow, but the same tool contract can be implemented in Python, Java, Go, or C#. Discover tools by asking: what repeated work do engineers do, what inputs are needed, what should be returned, and is it read-only or write-capable?</p>
+    </div>
+  </div>
+</div>
+
+<div class="slide overflow"
+     data-notes="Bridge from slide 3: 'You just saw the finished server.js — 40 lines that connect Copilot to Jira. Here is how you get there in 60 seconds instead of an hour.' A vague prompt gets Cloud endpoints and hallucinated custom fields. A spec prompt gives tool names, REST paths, input types, return shapes, env var names, and one-sentence descriptions. Audience takeaway: they own the tool contract — Copilot writes the boilerplate from it."
+     data-section="4">
+  <div class="slide-content">
+    <div class="phase-tag blue"><i data-lucide="bot"></i>Build with Copilot</div>
+    <h2><span class="h2-icon"><i data-lucide="bot"></i></span>Let Copilot Write the Boilerplate — You Write the Spec</h2>
+
+    <div class="cols cols-2" style="align-items:stretch; gap:22px;">
+      <div style="display:flex; flex-direction:column; gap:14px;">
+        <div class="card" style="padding:18px 20px;">
+          <div class="ch"><i data-lucide="file-text" style="color:var(--blue-light);"></i><h3>Give Copilot a spec, not a vague request</h3></div>
+          <p style="margin-bottom:10px; font-size:0.87rem;">Copilot is excellent at SDK boilerplate. It is not excellent at guessing your internal Jira URL, auth method, or Confluence payload shape. TypeScript is optional; the contract is what matters.</p>
+          <pre style="margin:0; font-size:0.78rem; line-height:1.6;"><span class="s">"Create a Node.js MCP server called signify-atlassian.
+ Tools:
+ 1. get_issue(issueKey: string) → GET /rest/api/2/issue/{key}
+ 2. search_issues(jql: string, maxResults: 1-50)
+ 3. create_page(spaceKey, title, body) → POST /rest/api/content
+ 4. get_project_meta(projectKey: string) → GET /rest/api/2/project/{key}
+ 5. create_issue(projectKey, summary, description, issueType)
+
+ Use ATLASSIAN_BASE_URL, CONFLUENCE_BASE_URL, ATLASSIAN_PAT.
+ Use @modelcontextprotocol/sdk + Zod.
+ Keep each tool description to one sentence."</span></pre>
+        </div>
+        <div class="card" style="padding:18px 20px; flex:1;">
+          <div class="ch"><i data-lucide="sparkles" style="color:var(--purple);"></i><h3>What Copilot generates for you</h3></div>
+          <div style="display:flex; flex-direction:column; gap:8px; font-size:0.88rem; color:var(--text-muted);">
+            <div>✓ <code class="inline">McpServer</code> + <code class="inline">StdioServerTransport</code> setup</div>
+            <div>✓ Zod schemas with min/max constraints and useful <code class="inline">describe()</code> text</div>
+            <div>✓ Jira and Confluence fetch helpers with Bearer token auth</div>
+            <div>✓ Clear JSON return shapes for the LLM to reuse in later steps</div>
+            <div>✓ Startup env-var checks so failure happens before the demo starts</div>
+          </div>
+        </div>
+      </div>
+
+      <div style="display:flex; flex-direction:column; gap:14px;">
+        <div class="cols cols-2" style="gap:14px;">
+          <div class="card green" style="padding:16px 18px;">
+            <div class="ch" style="color:var(--green);"><i data-lucide="thumbs-up"></i><h3 style="color:var(--green);">Copilot is great at</h3></div>
+            <div style="display:flex; flex-direction:column; gap:5px; font-size:0.85rem; color:var(--text-muted);">
+              <div>✓ SDK boilerplate in seconds</div>
+              <div>✓ Zod schemas from plain English</div>
+              <div>✓ Shared REST helper functions</div>
+              <div>✓ Adding tools via follow-up prompts</div>
+              <div>✓ Inspector-ready examples</div>
+            </div>
+          </div>
+          <div class="card amber" style="padding:16px 18px;">
+            <div class="ch" style="color:var(--amber);"><i data-lucide="triangle-alert"></i><h3 style="color:var(--amber);">Watch out for</h3></div>
+            <div style="display:flex; flex-direction:column; gap:5px; font-size:0.85rem; color:var(--text-muted);">
+              <div>⚠ Cloud endpoints when you need Data Center</div>
+              <div>⚠ Verbose tool descriptions</div>
+              <div>⚠ Hallucinated custom fields</div>
+              <div>⚠ Missing confirmation before writes</div>
+              <div>⚠ Secrets inside code or descriptions</div>
+            </div>
+          </div>
+        </div>
+        <div class="card" style="padding:18px 20px; flex:1;">
+          <div class="ch"><i data-lucide="lightbulb" style="color:var(--purple);"></i><h3>How to discover useful tools</h3></div>
+          <div style="display:flex; flex-direction:column; gap:9px; font-size:0.87rem; color:var(--text-muted);">
+            <div><strong style="color:var(--green);">Read-only:</strong> <code class="inline">get_issue</code>, <code class="inline">search_issues</code>, <code class="inline">get_page</code>, <code class="inline">search_pages</code>, <code class="inline">get_sprint_issues</code></div>
+            <div><strong style="color:var(--amber);">Write:</strong> <code class="inline">create_issue</code>, <code class="inline">add_issue_comment</code>, <code class="inline">transition_issue</code>, <code class="inline">create_page</code></div>
+            <div><strong style="color:var(--blue-light);">Workflow:</strong> <code class="inline">create_test_plan_from_issue</code>, <code class="inline">create_release_notes_from_jql</code>, <code class="inline">create_bug_from_failed_test</code></div>
+            <div><strong style="color:var(--purple);">Rule:</strong> start with read-only tools. Add write tools only with confirmation, auditability, and tight input schemas.</div>
+          </div>
+        </div>
+        <div class="callout purple" style="margin:0;">
+          <p><strong>The pattern:</strong> write a 5-line tool contract → ask Copilot for boilerplate → trim descriptions → run Inspector → wire in <code class="inline">mcp.json</code>.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide overflow"
+     data-notes="Bridge from slide 4: 'You now know how to build a server fast — spec prompt, Copilot boilerplate, Inspector verify, wire in mcp.json. Before you share this with the team, six things must be right.' Walk the cards left to right, top then bottom. Architecture: 'one server, one job — easier to audit and revoke.' Schema safety: 'your Zod schema is the cheapest bug catcher you have.' Access control: 'AI clients can be tricked into hitting internal services, so block private IP ranges.' Rate limits: 'a retry loop can DoS your own Jira in seconds — 1,000 calls per minute.' Error handling: 'isError: true tells the LLM to stop retrying.' Close with logging: 'without an audit trail you cannot explain what the AI did.' Handoff: 'Your signify-atlassian server is now production-ready. In the next session we flip to the test side — Playwright MCP solves the same problem for selector stability.'"
+     data-section="5"
+     style="padding-top:16px; padding-bottom:12px;">
+  <div class="slide-content" style="flex:1; min-height:0;">
+    <div class="phase-tag amber"><i data-lucide="shield-alert"></i>Guardrails</div>
+    <h2><span class="h2-icon"><i data-lucide="shield-alert"></i></span>Production Guardrails &amp; Best Practices</h2>
+
+    <div style="display:flex; gap:10px; flex:1; min-height:0; width:100%;">
+
+      <!-- Left column: cards 1, 3, 5, 7 -->
+      <div style="flex:1; display:flex; flex-direction:column; gap:10px; min-height:0;">
+
+        <div class="card blue" style="flex:1 1 0; min-height:0; overflow:hidden; padding:11px 14px; display:flex; flex-direction:column;">
+          <div class="ch" style="color:var(--blue-light); margin-bottom:5px;"><i data-lucide="package"></i><h3 style="color:var(--blue-light);">One server, one job.</h3></div>
+          <p style="font-size:0.81rem; margin-bottom:6px;">Give each MCP server a single, clear purpose — scoped servers are easier to audit and a breach stays contained.</p>
+          <ul style="padding-left:14px; display:flex; flex-direction:column; gap:4px; font-size:0.79rem; color:var(--text-muted);">
+            <li>Enable or disable servers independently</li>
+            <li>Rotate PATs per-server — no shared master token</li>
+          </ul>
+        </div>
+
+        <div class="card amber" style="flex:1 1 0; min-height:0; overflow:hidden; padding:11px 14px; display:flex; flex-direction:column;">
+          <div class="ch" style="color:var(--amber); margin-bottom:5px;"><i data-lucide="lock"></i><h3 style="color:var(--amber);">Minimum access. No blind trust.</h3></div>
+          <p style="font-size:0.81rem; margin-bottom:6px;">Read-only by default. Block internal IP ranges — AI clients can be prompt-injected into calling internal services.</p>
+          <ul style="padding-left:14px; display:flex; flex-direction:column; gap:4px; font-size:0.79rem; color:var(--text-muted);">
+            <li>Read secrets only from env vars — never hardcode</li>
+            <li>Never accept user-supplied URLs — use an allowlist</li>
+          </ul>
+        </div>
+
+        <div class="card blue" style="flex:1 1 0; min-height:0; overflow:hidden; padding:11px 14px; display:flex; flex-direction:column;">
+          <div class="ch" style="color:var(--blue-light); margin-bottom:5px;"><i data-lucide="activity"></i><h3 style="color:var(--blue-light);">Handle failures deliberately.</h3></div>
+          <p style="font-size:0.81rem; margin-bottom:6px;">Return <code class="inline">isError: true</code> for execution errors — the LLM backs off instead of retrying blindly.</p>
+          <ul style="padding-left:14px; display:flex; flex-direction:column; gap:4px; font-size:0.79rem; color:var(--text-muted);">
+            <li>Always include a human-readable message</li>
+            <li>Wrap every handler in try/catch — no crashes</li>
+          </ul>
+        </div>
+
+        <div class="card purple" style="flex:1 1 0; min-height:0; overflow:hidden; padding:11px 14px; display:flex; flex-direction:column;">
+          <div class="ch" style="color:var(--purple); margin-bottom:5px;"><i data-lucide="tag"></i><h3 style="color:var(--purple);">Design your tools as prompts.</h3></div>
+          <p style="font-size:0.81rem; margin-bottom:6px;">Tool descriptions are read by the LLM to decide <em>when</em> to call — write them like concise, accurate instructions.</p>
+          <ul style="padding-left:14px; display:flex; flex-direction:column; gap:4px; font-size:0.79rem; color:var(--text-muted);">
+            <li>Use namespaced names: <code class="inline">jira_get_issue</code> not <code class="inline">get</code></li>
+            <li>stdio servers: never write to stdout — use stderr</li>
+          </ul>
+        </div>
+
+      </div>
+
+      <!-- Right column: cards 2, 4, 6, 8 -->
+      <div style="flex:1; display:flex; flex-direction:column; gap:10px; min-height:0;">
+
+        <div class="card red" style="flex:1 1 0; min-height:0; overflow:hidden; padding:11px 14px; display:flex; flex-direction:column;">
+          <div class="ch" style="color:var(--red); margin-bottom:5px;"><i data-lucide="shield-check"></i><h3 style="color:var(--red);">Validate inputs. Cap outputs.</h3></div>
+          <p style="font-size:0.81rem; margin-bottom:6px;">Check every argument with a schema before calling any API. Use Zod — reject unexpected fields explicitly.</p>
+          <ul style="padding-left:14px; display:flex; flex-direction:column; gap:4px; font-size:0.79rem; color:var(--text-muted);">
+            <li>Sanitise user text before embedding it in JQL</li>
+            <li>Sanitize outputs before returning to the model</li>
+          </ul>
+        </div>
+
+        <div class="card green" style="flex:1 1 0; min-height:0; overflow:hidden; padding:11px 14px; display:flex; flex-direction:column;">
+          <div class="ch" style="color:var(--green); margin-bottom:5px;"><i data-lucide="gauge"></i><h3 style="color:var(--green);">Rate-limit every tool.</h3></div>
+          <p style="font-size:0.81rem; margin-bottom:6px;">A stuck AI retry loop can fire <strong style="color:var(--red);">1,000+ calls/min</strong>. Cap reads at 120/min and writes at 10–30/min.</p>
+          <ul style="padding-left:14px; display:flex; flex-direction:column; gap:4px; font-size:0.79rem; color:var(--text-muted);">
+            <li>Apply per-session limits — one agent, one bucket</li>
+            <li>Include <code class="inline">Retry-After</code> in responses so the LLM waits</li>
+          </ul>
+        </div>
+
+        <div class="card purple" style="flex:1 1 0; min-height:0; overflow:hidden; padding:11px 14px; display:flex; flex-direction:column;">
+          <div class="ch" style="color:var(--purple); margin-bottom:5px;"><i data-lucide="eye"></i><h3 style="color:var(--purple);">Log every call. No exceptions.</h3></div>
+          <p style="font-size:0.81rem; margin-bottom:6px;">Record tool name, inputs, response status, and timestamp. No audit trail means no incident response.</p>
+          <ul style="padding-left:14px; display:flex; flex-direction:column; gap:4px; font-size:0.79rem; color:var(--text-muted);">
+            <li>Mask PATs and tokens before writing to any log store</li>
+            <li>Alert on error spikes — 4xx/5xx surges signal attacks</li>
+          </ul>
+        </div>
+
+        <div class="card green" style="flex:1 1 0; min-height:0; overflow:hidden; padding:11px 14px; display:flex; flex-direction:column;">
+          <div class="ch" style="color:var(--green); margin-bottom:5px;"><i data-lucide="search"></i><h3 style="color:var(--green);">Inspector before you wire it in.</h3></div>
+          <p style="font-size:0.81rem; margin-bottom:6px;">Run <code class="inline">npx @modelcontextprotocol/inspector</code> — it shows exactly what Copilot sees: tool names, descriptions, schemas.</p>
+          <ul style="padding-left:14px; display:flex; flex-direction:column; gap:4px; font-size:0.79rem; color:var(--text-muted);">
+            <li>Verify <code class="inline">tools/list</code> schemas &amp; pin SDK — never <code class="inline">@latest</code></li>
+            <li>Test all error paths — verify <code class="inline">isError: true</code> shape</li>
+          </ul>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- PART II divider -->
+<div class="slide overflow" data-notes="Transition: Part I covered the custom signify-atlassian MCP — Jira and Confluence on Data Center. Part II is Playwright MCP — validating UI and generating e2e tests from the accessibility tree. Press → to continue." data-section="6">
+  <div class="slide-content" style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:calc(100vh - 84px);text-align:center;">
+    <div class="phase-tag blue" style="background:var(--blue-bg);color:var(--blue-light);border-color:var(--blue-border);"><i data-lucide="theater"></i>Part II</div>
+    <h2 style="justify-content:center;"><span class="h2-icon" style="background:var(--blue-bg);border-color:var(--blue-border);"><i data-lucide="monitor" style="stroke:var(--blue-light);"></i></span>Playwright MCP</h2>
+    <p style="max-width:640px;font-size:1.05rem;margin-bottom:24px;">From Figma-to-code handoff → visual validation → resilient e2e tests</p>
+    <div style="display:flex;gap:12px;flex-wrap:wrap;justify-content:center;">
+      <span class="tool-tag purple">Part I · signify-atlassian</span>
+      <span style="color:var(--text-dim);font-size:1.2rem;">→</span>
+      <span class="tool-tag blue">Part II · Playwright MCP</span>
+    </div>
+  </div>
+</div>
+
+<div class="slide deck-playwright overflow"
+     data-notes="Bridge from Figma-to-code demo: 'We just watched the component get built from Figma — the developer had the design, the acceptance criteria, and used MCP to generate SupportTeamWidget. The code is there, it renders at localhost:3000. Now comes the part I own: does it actually look like the design? And does it behave exactly as the acceptance criteria say it should?' • Point at the 4 ACs: 'AC-1 through AC-3 are behavioural — those become Playwright tests. AC-4 is about visual fidelity — does the layout match Figma? That is a different question and a different tool.' • Point at the pipeline: 'Steps 1 and 2 are done. We are here at step 3. /validate-ui first, then /generate-tests. Two prompts. One conversation each. Both anchored to the real running app, not to guesses.'"
+     data-section="0">
+  <div class="slide-content">
+    <div class="phase-tag blue"><i data-lucide="play-circle" class="icon"></i>Picking Up the Handoff</div>
+    <h2><span class="h2-icon"><i data-lucide="play-circle"></i></span>The Component Is Built — Now We Verify It</h2>
+
+    <div class="cols cols-2" style="margin-bottom:14px;">
+      <div>
+        <div style="font-size:0.68rem; font-weight:700; text-transform:uppercase; letter-spacing:0.07em; color:var(--text-dim); margin-bottom:8px;">US-4822 — Acceptance criteria</div>
+        <div class="card" style="padding:11px 13px; margin-bottom:8px;">
+          <div class="ch"><i data-lucide="layers" style="color:var(--blue-light);"></i><h3 style="font-size:0.86rem;">AC-1 — Three sections rendered</h3></div>
+          <p style="font-size:0.8rem;">Curator, Trainers, and Mentors sections all visible with profile cards.</p>
+        </div>
+        <div class="card" style="padding:11px 13px; margin-bottom:8px;">
+          <div class="ch"><i data-lucide="chevrons-down" style="color:var(--blue-light);"></i><h3 style="font-size:0.86rem;">AC-2 — Show All toggle expands list</h3></div>
+          <p style="font-size:0.8rem;">When more items exist, "Show All" reveals the full list. Toggle works correctly.</p>
+        </div>
+        <div class="card" style="padding:11px 13px; margin-bottom:8px;">
+          <div class="ch"><i data-lucide="message-circle" style="color:var(--blue-light);"></i><h3 style="font-size:0.86rem;">AC-3 — Contact icons per person</h3></div>
+          <p style="font-size:0.8rem;">Each profile has a contact/message icon. Hover state reveals additional details.</p>
+        </div>
+        <div class="card amber" style="padding:11px 13px;">
+          <div class="ch"><i data-lucide="figma" style="color:var(--amber);"></i><h3 style="font-size:0.86rem;">AC-4 — Layout matches Figma design</h3></div>
+          <p style="font-size:0.8rem;">Uses UUI Avatar and IconButton. Spacing, typography, and colour match the Figma reference exactly.</p>
+        </div>
+      </div>
+
+      <div>
+        <div style="font-size:0.68rem; font-weight:700; text-transform:uppercase; letter-spacing:0.07em; color:var(--text-dim); margin-bottom:8px;">Pipeline — where we are now</div>
+        <div class="flow" style="flex-direction:column; gap:10px; align-items:stretch;">
+          <div class="flow-box green" style="text-align:left; padding:12px 14px; font-size:0.82rem;">
+            <strong>✓ Step 1 — Figma analysis</strong>
+            <div style="font-size:0.74rem; color:var(--text-muted); margin-top:4px;">Figma MCP read the design, extracted tokens and layout.</div>
+          </div>
+          <div style="text-align:center; font-size:0.72rem; color:var(--text-dim);">↓</div>
+          <div class="flow-box green" style="text-align:left; padding:12px 14px; font-size:0.82rem;">
+            <strong>✓ Step 2 — Component generation</strong>
+            <div style="font-size:0.74rem; color:var(--text-muted); margin-top:4px;">SupportTeamWidget generated. Renders at localhost:3000.</div>
+          </div>
+          <div style="text-align:center; font-size:0.72rem; color:var(--text-dim);">↓</div>
+          <div class="flow-box amber" style="text-align:left; padding:12px 14px; font-size:0.82rem; border-width:2px;">
+            <strong>▶ Step 3 — Validate UI fidelity</strong>
+            <div style="font-size:0.74rem; color:var(--text-muted); margin-top:4px;"><code class="inline">/validate-ui</code> — does the rendered component match Figma? (AC-4)</div>
+          </div>
+          <div style="text-align:center; font-size:0.72rem; color:var(--text-dim);">↓</div>
+          <div class="flow-box blue" style="text-align:left; padding:12px 14px; font-size:0.82rem; border-width:2px;">
+            <strong>▶ Step 4 — Generate behaviour tests</strong>
+            <div style="font-size:0.74rem; color:var(--text-muted); margin-top:4px;"><code class="inline">/generate-tests</code> — one Playwright spec per AC. (AC-1 to AC-3)</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout" style="padding:9px 14px;">
+      <p style="font-size:0.81rem;"><strong>Two different Playwright MCP tools:</strong> <code class="inline">browser_screenshot</code> captures pixels for visual comparison (Step 3) · <code class="inline">browser_snapshot</code> reads the accessibility tree for test generation (Step 4). Not interchangeable — we use both.</p>
+    </div>
+  </div>
+</div>
+
+<div class="slide deck-playwright overflow"
+     data-notes="• Bridge: 'We have two steps to complete — validate the visual fidelity, then generate the tests. Before we run either prompt, here is the mental model behind why MCP produces resilient selectors.' • Walk the flow left to right: 'Your prompt goes into Agent Mode. Agent Mode calls browser_snapshot. browser_snapshot reads the accessibility tree — not the DOM. And the a11y tree is what screen readers see: roles, labels, visible text. No hashes. No internal class names.' • Red card: 'This is the DOM layer. It is built by the bundler at compile time. Every CSS module rebuild gives it a new hash — your recorder never gets the same string twice.' • Green card: 'This is the a11y tree. It is built at runtime by the browser from your ARIA attributes and HTML semantics. It changes only when you change the user-facing label or role — which is intentional.' • Walk the hierarchy: '1 — getByRole is always first. ARIA role and label — survives rebuilds, renames, framework upgrades. 2 — getByLabel for form inputs. 3 — getByText for links without an explicit role. Never CSS hashes or XPath positions.'"
+     data-section="3">
+  <div class="slide-content">
+    <div class="phase-tag green"><i data-lucide="brain" class="icon"></i>Mental Model</div>
+    <h2><span class="h2-icon"><i data-lucide="brain"></i></span>How MCP Sees Your App</h2>
+
+    <!-- Flow: how browser_snapshot fits -->
+    <div class="flow" style="margin-bottom:16px; flex-wrap:nowrap; gap:5px;">
+      <div class="flow-box blue" style="font-size:0.78rem;">Copilot Agent Mode</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-box green" style="font-size:0.78rem;"><code class="inline" style="font-size:0.72rem; background:none; border:none; padding:0; color:inherit;">browser_snapshot</code></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-box" style="background:var(--purple-bg); border-color:var(--purple-border); color:var(--purple); font-size:0.78rem;">Accessibility Tree</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-box green" style="font-size:0.78rem;"><code class="inline" style="font-size:0.72rem; background:none; border:none; padding:0; color:inherit;">getByRole</code> selectors</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-box" style="font-size:0.78rem;">Playwright test file</div>
+    </div>
+
+    <!-- DOM vs a11y tree -->
+    <div class="cols cols-2" style="margin-bottom:14px; align-items:stretch;">
+      <div class="card red">
+        <div class="ch" style="color:var(--red);"><i data-lucide="code-2"></i><h3 style="color:var(--red);">DOM layer — what a recorder sees</h3></div>
+        <p style="font-size:0.8rem; margin-bottom:10px;">Generated by the bundler at <strong>compile time</strong>. Contains build artefacts that change on every rebuild — invisible to users, meaningless to tests.</p>
+        <pre style="margin:0; font-size:0.72rem;"><span class="c">// Compile-time artefacts — never stable</span>
+.ClassFilterTabs_tab__<span class="s">a4f92</span>        <span class="c">// CSS module hash</span>
+#tab-class-a-btn                     <span class="c">// internal generated ID</span>
+<span class="s">xpath=</span>//button[@aria-selected][<span class="s">1</span>]   <span class="c">// positional index</span></pre>
+      </div>
+      <div class="card green">
+        <div class="ch" style="color:var(--green);"><i data-lucide="scan-eye"></i><h3 style="color:var(--green);">A11y tree — what browser_snapshot reads</h3></div>
+        <p style="font-size:0.8rem; margin-bottom:10px;">Built by the <strong>browser at runtime</strong> from ARIA attributes and HTML semantics. Reflects what users see and screen readers announce — set by engineers, not build tools.</p>
+        <pre style="margin:0; font-size:0.72rem;"><span class="c">// Semantic contract — changes only when UX changes</span>
+role=<span class="s">"tab"</span>  name=<span class="s">"All"</span>          <span class="c">// ARIA role + visible label</span>
+role=<span class="s">"tab"</span>  name=<span class="s">"Current"</span>      <span class="c">// set by the component</span>
+aria-selected=<span class="s">"true"</span>           <span class="c">// ARIA state contract</span></pre>
+      </div>
+    </div>
+
+    <!-- Selector hierarchy -->
+    <div style="font-size:0.68rem; font-weight:700; text-transform:uppercase; letter-spacing:0.07em; color:var(--text-dim); margin-bottom:8px;">Selector hierarchy — follow this order, every time</div>
+    <div style="display:flex; flex-direction:column; gap:5px;">
+      <div class="hier-row lvl-1">
+        <div class="hier-rank">1</div>
+        <div class="hier-body">
+          <div style="display:flex; align-items:center; gap:8px;"><code class="inline" style="font-size:0.75rem;">getByRole('tab', &#123; name: 'All' &#125;)</code><span class="badge green">Always first</span></div>
+          <div class="hier-code">ARIA role + visible label. Survives CSS rebuilds, component renames, and UUI version upgrades.</div>
+        </div>
+      </div>
+      <div class="hier-row lvl-1">
+        <div class="hier-rank">2</div>
+        <div class="hier-body">
+          <div style="display:flex; align-items:center; gap:8px;"><code class="inline" style="font-size:0.75rem;">getByLabel('Student name')</code><span class="badge green">Form controls</span></div>
+          <div class="hier-code">For inputs, selects, checkboxes. Tied to the accessible label — not the input's generated ID.</div>
+        </div>
+      </div>
+      <div class="hier-row lvl-1">
+        <div class="hier-rank">3</div>
+        <div class="hier-body">
+          <div style="display:flex; align-items:center; gap:8px;"><code class="inline" style="font-size:0.75rem;">getByText('Show All Students')</code><span class="badge blue">Visible text</span></div>
+          <div class="hier-code">For buttons and links without an explicit ARIA role. Breaks only when the copy itself changes — which is intentional.</div>
+        </div>
+      </div>
+      <div class="hier-row lvl-x">
+        <div class="hier-rank">✕</div>
+        <div class="hier-body">
+          <div style="display:flex; align-items:center; gap:8px;"><code class="inline" style="font-size:0.75rem;">.ClassFilterTabs_tab__a4f92 &nbsp;·&nbsp; xpath=//div[1]</code><span class="badge red">Never generate</span></div>
+          <div class="hier-code">CSS hashes and positional XPath. Break on every rebuild — and MCP never produces these when it reads from the accessibility tree.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide deck-playwright overflow"
+     data-notes="• Bridge from Slide 1: 'The accessibility tree is how MCP sees your app. But MCP has three distinct ways to read it — three capability modes. Every prompt you write runs in one of them.' • Walk each card left to right. • Green card first: 'Snapshot is the default. No flags needed. It returns the accessibility tree as structured text — fast, token-efficient, and what every /generate-tests prompt uses today.' • Purple card: 'Vision mode adds screenshots. You enable it with --caps=vision in mcp.json args. Use it for visual components the accessibility tree cannot describe: canvas charts, SVG dashboards, drag-and-drop. This is what /validate-ui uses.' • Amber card: 'DevTools mode is the one most teams don't know about. --caps=devtools exposes Chrome DevTools Protocol data — console logs, network requests, security headers. It catches invisible failures: a 401 on the data API, a silent third-party error, a performance regression. Snapshot and Vision cannot see those. DevTools can.' • Token cost row at bottom: 'Snapshot is cheapest. Each screenshot adds significant token weight. Vision+DevTools combined is the most expensive mode — use it for exploratory testing, not daily runs.' • Tease Slide 8: 'We have a bonus slide at the end showing a live DevTools demo — catching a silent API failure that every other mode misses.'"
+     data-section="2">
+  <div class="slide-content">
+    <div class="phase-tag blue"><i data-lucide="layers" class="icon"></i>Capability Modes</div>
+    <h2><span class="h2-icon"><i data-lucide="layers"></i></span>Three Modes — Three Layers of Quality</h2>
+
+    <div class="cols cols-3" style="margin-bottom:14px; align-items:stretch;">
+
+      <!-- Snapshot -->
+      <div class="card green">
+        <div class="ch" style="color:var(--green);">
+          <i data-lucide="scan-text"></i>
+          <h3 style="color:var(--green);">Snapshot Mode</h3>
+        </div>
+        <div style="display:flex; align-items:center; gap:6px; margin-bottom:9px;">
+          <span class="badge green">Default</span>
+          <span class="badge green">No flags needed</span>
+        </div>
+        <p style="font-size:0.82rem; margin-bottom:10px;">Reads the <strong>accessibility tree</strong> — roles, names, and ARIA states as structured text. Fast and token-efficient.</p>
+        <pre style="margin:0; font-size:0.71rem; background:var(--bg-code);">"playwright": &#123;
+  "command": "npx",
+  "args": [<span class="s">"-y"</span>, <span class="s">"@playwright/mcp@latest"</span>]
+&#125;</pre>
+        <div style="margin-top:10px; font-size:0.76rem; color:var(--text-muted);">
+          <div style="margin-bottom:4px; font-weight:600; color:var(--green);">Tools available:</div>
+          <code class="inline" style="font-size:0.7rem;">browser_navigate</code>
+          <code class="inline" style="font-size:0.7rem;">browser_snapshot</code>
+          <code class="inline" style="font-size:0.7rem;">browser_click</code>
+        </div>
+        <div class="callout green" style="margin:10px 0 0; padding:7px 10px;">
+          <p style="font-size:0.77rem;">Use for: <strong>/generate-tests</strong> and <strong>/repair-locators</strong>. Everything in today's demo runs here.</p>
+        </div>
+      </div>
+
+      <!-- Vision -->
+      <div class="card purple">
+        <div class="ch" style="color:var(--purple);">
+          <i data-lucide="eye"></i>
+          <h3 style="color:var(--purple);">Vision Mode</h3>
+        </div>
+        <div style="display:flex; align-items:center; gap:6px; margin-bottom:9px;">
+          <span class="badge" style="background:var(--purple-bg); color:var(--purple); border-color:var(--purple-border);">--caps=vision</span>
+        </div>
+        <p style="font-size:0.82rem; margin-bottom:10px;">Adds <strong>pixel screenshots</strong> alongside the accessibility tree. For visual components the a11y tree cannot fully describe.</p>
+        <pre style="margin:0; font-size:0.71rem; background:var(--bg-code);">"args": [
+  <span class="s">"-y"</span>, <span class="s">"@playwright/mcp@latest"</span>,
+  <span class="s">"--caps=vision"</span>   <span class="c">// enables screenshots</span>
+]</pre>
+        <div style="margin-top:10px; font-size:0.76rem; color:var(--text-muted);">
+          <div style="margin-bottom:4px; font-weight:600; color:var(--purple);">Adds:</div>
+          <code class="inline" style="font-size:0.7rem;">browser_screenshot</code>
+        </div>
+        <div style="background:var(--purple-bg); border:1px solid var(--purple-border); border-radius:var(--r); padding:7px 10px; margin:10px 0 0; font-size:0.77rem; color:var(--text-muted);">
+          Use for: <strong>/validate-ui</strong> (Figma comparison), canvas charts, SVG dashboards, drag-and-drop UIs.
+          <br><span style="color:var(--amber); font-weight:600; font-size:0.73rem;">⚠ Token cost is higher — use for visual questions only.</span>
+        </div>
+      </div>
+
+      <!-- DevTools -->
+      <div class="card amber">
+        <div class="ch" style="color:var(--amber);">
+          <i data-lucide="terminal"></i>
+          <h3 style="color:var(--amber);">DevTools Mode</h3>
+        </div>
+        <div style="display:flex; align-items:center; gap:6px; margin-bottom:9px;">
+          <span class="badge amber">--caps=devtools</span>
+        </div>
+        <p style="font-size:0.82rem; margin-bottom:10px;">Exposes <strong>Chrome DevTools Protocol</strong> data — console logs, network requests, performance metrics, security headers.</p>
+        <pre style="margin:0; font-size:0.71rem; background:var(--bg-code);">"args": [
+  <span class="s">"-y"</span>, <span class="s">"@playwright/mcp@latest"</span>,
+  <span class="s">"--caps=devtools"</span>  <span class="c">// CDPtools</span>
+]</pre>
+        <div style="margin-top:10px; font-size:0.76rem; color:var(--text-muted);">
+          <div style="margin-bottom:4px; font-weight:600; color:var(--amber);">Adds:</div>
+          <code class="inline" style="font-size:0.7rem;">browser_console_messages</code>
+          <code class="inline" style="font-size:0.7rem;">browser_network_requests</code>
+        </div>
+        <div class="callout amber" style="margin:10px 0 0; padding:7px 10px;">
+          <p style="font-size:0.77rem;">Catches <strong>invisible defects</strong>: silent 401s, third-party console errors, performance regressions — things Snapshot and Vision miss entirely.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bottom comparison bar -->
+    <div class="card" style="padding:12px 16px;">
+      <div style="font-size:0.68rem; font-weight:700; text-transform:uppercase; letter-spacing:0.07em; color:var(--text-dim); margin-bottom:10px;">When to use each mode</div>
+      <div style="display:grid; grid-template-columns:1fr 1fr 1fr 1fr; gap:0; font-size:0.78rem;">
+        <div style="font-weight:700; color:var(--text-muted); padding:5px 8px; border-bottom:2px solid var(--border);">Question you're asking</div>
+        <div style="font-weight:700; color:var(--green); text-align:center; padding:5px 8px; border-bottom:2px solid var(--border);">Snapshot</div>
+        <div style="font-weight:700; color:var(--purple); text-align:center; padding:5px 8px; border-bottom:2px solid var(--border);">Vision</div>
+        <div style="font-weight:700; color:var(--amber); text-align:center; padding:5px 8px; border-bottom:2px solid var(--border);">DevTools</div>
+
+        <div style="padding:6px 8px; border-bottom:1px solid var(--border-soft); color:var(--text-muted);">Does it behave correctly?</div>
+        <div style="text-align:center; padding:6px 8px; border-bottom:1px solid var(--border-soft); color:var(--green);">✓ Primary</div>
+        <div style="text-align:center; padding:6px 8px; border-bottom:1px solid var(--border-soft); color:var(--text-dim);">—</div>
+        <div style="text-align:center; padding:6px 8px; border-bottom:1px solid var(--border-soft); color:var(--text-dim);">—</div>
+
+        <div style="padding:6px 8px; border-bottom:1px solid var(--border-soft); color:var(--text-muted);">Does it look like Figma?</div>
+        <div style="text-align:center; padding:6px 8px; border-bottom:1px solid var(--border-soft); color:var(--text-dim);">—</div>
+        <div style="text-align:center; padding:6px 8px; border-bottom:1px solid var(--border-soft); color:var(--purple);">✓ Primary</div>
+        <div style="text-align:center; padding:6px 8px; border-bottom:1px solid var(--border-soft); color:var(--text-dim);">—</div>
+
+        <div style="padding:6px 8px; color:var(--text-muted);">Is anything broken underneath?</div>
+        <div style="text-align:center; padding:6px 8px; color:var(--text-dim);">—</div>
+        <div style="text-align:center; padding:6px 8px; color:var(--text-dim);">—</div>
+        <div style="text-align:center; padding:6px 8px; color:var(--amber);">✓ Primary</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide deck-playwright overflow"
+     data-notes="• Bridge from the previous slide: 'You are set up and wired — mcp.json committed, Agent Mode verified. The most important thing to get right next is the prompt.' • The 4 blue cards = the 4 parts of every effective prompt. Read them top to bottom. • KEY: 'Open a browser' is the trigger phrase. Without it, MCP tools are never called. • Bad prompt: Copilot invents data-testid and #filter-tab-1 — they do not exist. Tests fail on first run. • Good prompt: MCP calls browser_navigate → browser_snapshot → writes selectors from the real a11y tree."
+     data-section="4">
+  <div class="slide-content">
+    <div class="phase-tag green"><i data-lucide="message-square" class="icon"></i>Prompting</div>
+    <h2><span class="h2-icon"><i data-lucide="message-square"></i></span>Prompt Anatomy for Playwright MCP</h2>
+    <div class="cols cols-2" style="margin-bottom:18px;">
+      <div class="card blue">
+        <div class="ch"><i data-lucide="mouse-pointer-click"></i><h3 style="color:var(--blue-light);">1 · Trigger</h3></div>
+        <p style="font-size:0.8rem;">Tell Copilot to use the browser.<br><em>"Open a browser and navigate to…"</em></p>
+      </div>
+      <div class="card blue">
+        <div class="ch"><i data-lucide="focus"></i><h3 style="color:var(--blue-light);">2 · Context</h3></div>
+        <p style="font-size:0.8rem;">Name the feature precisely.<br><em>"…the Class Filter Tabs…"</em></p>
+      </div>
+      <div class="card blue">
+        <div class="ch"><i data-lucide="code-2"></i><h3 style="color:var(--blue-light);">3 · Framework</h3></div>
+        <p style="font-size:0.8rem;">Pin the output format.<br><em>"…using @playwright/test…"</em></p>
+      </div>
+      <div class="card blue">
+        <div class="ch"><i data-lucide="sliders-horizontal"></i><h3 style="color:var(--blue-light);">4 · Constraints</h3></div>
+        <p style="font-size:0.8rem;">Set the selector rule.<br><em>"…use only getByRole and getByText."</em></p>
+      </div>
+    </div>
+    <div class="cols cols-2">
+      <div style="display:flex; flex-direction:column; gap:8px;">
+        <div style="font-size:0.68rem; font-weight:700; text-transform:uppercase; letter-spacing:0.07em; color:var(--green);">✓ With trigger — MCP invokes browser</div>
+        <pre style="font-size:0.72rem; flex:1; min-height:80px; margin:0;"><span class="s">"Open a browser at localhost:3000.
+Navigate to the Class Filter Tabs.
+Generate a @playwright/test for tab
+switching. Use only getByRole."</span></pre>
+        <div class="callout green" style="margin:0; padding:8px 11px;">
+          <p style="font-size:0.79rem;">MCP calls <code class="inline">browser_navigate</code> → <code class="inline">browser_snapshot</code> → writes <code class="inline">getByRole('tab', &#123; name: 'All' &#125;)</code>.</p>
+        </div>
+      </div>
+      <div style="display:flex; flex-direction:column; gap:8px;">
+        <div style="font-size:0.68rem; font-weight:700; text-transform:uppercase; letter-spacing:0.07em; color:var(--red);">✕ Without trigger — invents selectors</div>
+        <pre style="font-size:0.72rem; flex:1; min-height:80px; margin:0;"><span class="s">"Generate a Playwright test for
+the filter tabs."</span>
+
+<span class="c">// Invented selectors that don't exist:</span>
+page.locator(<span class="s">'[data-testid="tab-all"]'</span>)  <span class="c">// phantom</span>
+page.locator(<span class="s">'#filter-tab-1'</span>)             <span class="c">// phantom</span></pre>
+        <div class="callout red" style="margin:0; padding:8px 11px;">
+          <p style="font-size:0.79rem;">Without <em>"open a browser"</em>, MCP tools are never called. Tests fail on first run.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide deck-playwright overflow"
+     data-notes="• Bridge from Prompt Anatomy: 'Now let's run it. /validate-ui first — does the rendered component actually look like the Figma design? This is AC-4.' • Two different tools — do not confuse them: browser_screenshot = pixels for visual comparison, browser_snapshot = a11y tree for test generation. • 'A passing test doesn't prove the spacing is right. The screenshot comparison does. Tests verify behaviour, screenshots verify appearance — both are needed.' • Fix-and-revalidate: one chat, no manual back-and-forth. Propose → confirm → screenshot again."
+     data-section="3">
+  <div class="slide-content">
+    <div class="phase-tag purple"><i data-lucide="image" class="icon"></i>Demo: Validate</div>
+    <h2><span class="h2-icon"><i data-lucide="image"></i></span>Validating the Rendered UI Against Figma Design</h2>
+
+    <div class="demo-step">
+      <div class="demo-step-num">3</div>
+      <div>
+        <div class="demo-step-label">Running now — /validate-ui</div>
+        <div class="demo-step-name">Playwright MCP screenshots the rendered component and compares to the Figma reference</div>
+      </div>
+    </div>
+
+    <div class="cols cols-2" style="margin-bottom:12px;">
+      <div>
+        <div style="font-size:0.68rem; font-weight:700; text-transform:uppercase; letter-spacing:0.07em; color:var(--text-dim); margin-bottom:7px;">Validation flow</div>
+        <div class="flow" style="flex-direction:column; gap:12px; align-items:stretch; margin-bottom:10px;">
+          <div class="flow-box blue" style="text-align:left; padding:11px 14px; font-size:0.78rem;"><code class="inline">browser_navigate</code> to localhost:3000 component page</div>
+          <div style="text-align:center; font-size:0.72rem; color:var(--text-dim);">↓</div>
+          <div class="flow-box" style="text-align:left; padding:11px 14px; font-size:0.78rem;"><code class="inline">browser_screenshot</code> → captures rendered UI as pixel image</div>
+          <div style="text-align:center; font-size:0.72rem; color:var(--text-dim);">↓</div>
+          <div class="flow-box" style="text-align:left; padding:11px 14px; font-size:0.78rem;">Compare to <code class="inline">src/assets/figma-analysis/class-filter-tabs.png</code></div>
+          <div style="text-align:center; font-size:0.72rem; color:var(--text-dim);">↓</div>
+          <div class="flow-box amber" style="text-align:left; padding:11px 14px; font-size:0.78rem;">Discrepancy report with severity — spacing, typography, color</div>
+          <div style="text-align:center; font-size:0.72rem; color:var(--text-dim);">↓</div>
+          <div class="flow-box green" style="text-align:left; padding:11px 14px; font-size:0.78rem;">Proposes fixes → applies with confirmation → re-validates</div>
+        </div>
+      </div>
+
+      <div style="display:flex; flex-direction:column; gap:8px;">
+        <div style="font-size:0.68rem; font-weight:700; text-transform:uppercase; letter-spacing:0.07em; color:var(--text-dim);">Why this matters vs just running tests</div>
+        <div class="card" style="padding:11px 13px;">
+          <div class="ch"><i data-lucide="layers" style="color:var(--blue-light);"></i><h3 style="font-size:0.86rem;">Tests verify behaviour — screenshots verify appearance</h3></div>
+          <p style="font-size:0.8rem;">AC-4 says <em>"layout matches the Figma design."</em> A passing test doesn't prove that. The screenshot comparison does. Both are needed.</p>
+        </div>
+        <div class="card" style="padding:11px 13px;">
+          <div class="ch"><i data-lucide="repeat-2" style="color:var(--amber);"></i><h3 style="font-size:0.86rem;">Fix-and-revalidate loop</h3></div>
+          <p style="font-size:0.8rem;">If the spacing is wrong, MCP proposes a CSS fix, applies it (with your confirmation), then takes another screenshot. One conversation — no manual back-and-forth.</p>
+        </div>
+        <div class="card" style="padding:11px 13px;">
+          <div class="ch"><i data-lucide="camera" style="color:var(--text-muted);"></i><h3 style="font-size:0.86rem;"><code class="inline">browser_snapshot</code> vs <code class="inline">browser_screenshot</code></h3></div>
+          <p style="font-size:0.8rem;"><code class="inline">browser_snapshot</code> → accessibility tree → use for <strong>test generation</strong><br><code class="inline">browser_screenshot</code> → pixel image → use for <strong>visual validation</strong>. They are not interchangeable.</p>
+        </div>
+        <div class="card blue" style="padding:11px 13px;">
+          <div class="ch"><i data-lucide="check-square" style="color:var(--blue-light);"></i><h3 style="font-size:0.86rem;">Re-validate after every design change</h3></div>
+          <p style="font-size:0.8rem;">Run /validate-ui after any CSS change, component update, or UUI upgrade. Catches subtle spacing differences that passing E2E tests won't surface.</p>
+        </div>
+      </div>
+    </div>
+    <div class="callout" style="margin-top:2px; padding:10px 14px;">
+      <p style="font-size:0.81rem;"><strong>Tip:</strong> Keep the Figma reference PNG (<code class="inline">src/assets/figma-analysis/class-filter-tabs.png</code>) in version control. When the design intentionally changes, update the PNG in the same commit — the validation step then tracks the new baseline.</p>
+    </div>
+  </div>
+</div>
+
+<div class="slide deck-playwright overflow"
+     data-notes="• LIVE DEMO. Bridge from Validate: 'Visual fidelity confirmed — the rendered component matches Figma. Now let's prove it behaves correctly. /generate-tests.' • Switch to VS Code now. Type /generate-tests in Copilot Agent Mode. • While it runs: 'Watch the tool calls on the left — browser_navigate, then browser_snapshot. It is reading the accessibility tree of the live component.' • Point at generated test: 'getByRole came from the accessibility tree snapshot. Not from memory. Not guessed. The component has a tab with role=tab and the visible label All — MCP found it and wrote it.' • 'These selectors survive UUI upgrades, CSS rebuilds, and component renames. You will see exactly why on the next slide.'"
+     data-section="4">
+  <div class="slide-content">
+    <div class="phase-tag green"><i data-lucide="test-tube-2" class="icon"></i>Demo: Generate</div>
+    <h2><span class="h2-icon"><i data-lucide="test-tube-2"></i></span>Generating Tests from Acceptance Criteria</h2>
+
+    <div class="demo-step">
+      <div class="demo-step-num">4</div>
+      <div>
+        <div class="demo-step-label">Running now — /generate-tests</div>
+        <div class="demo-step-name">/generate-tests — Playwright MCP reads the accessibility tree of ClassFilterTabs and generates specs from ACs</div>
+      </div>
+    </div>
+
+    <div class="cols cols-2">
+      <div style="display:flex; flex-direction:column; gap:8px;">
+        <div style="font-size:0.68rem; font-weight:700; text-transform:uppercase; letter-spacing:0.07em; color:var(--text-dim);">The prompt anchored to EPMCDMETST-45161 ACs</div>
+        <pre style="flex:1; min-height:120px; margin:0;"><span class="c">// The 4-part structure for ClassFilterTabs</span>
+<span class="s">"Open a browser at localhost:3000.
+Navigate to the Class Filter Tabs section.
+
+The component has tabs: All, Current,
+Upcoming, Past (EPMCDMETST-45161 AC-1).
+The 'All' tab is by default (AC-2).
+Clicking a tab filters the list below (AC-3).
+
+Generate a @playwright/test for each AC.
+Use only getByRole and getByText selectors."</span></pre>
+        <div class="callout" style="margin:0; padding:8px 11px;">
+          <p style="font-size:0.79rem;"><strong>Why this works:</strong> the trigger <em>"Open a browser"</em> invokes <code class="inline">browser_navigate</code> + <code class="inline">browser_snapshot</code>. Without it, Copilot stays in chat and invents selectors from memory.</p>
+        </div>
+      </div>
+
+      <div>
+        <div style="font-size:0.68rem; font-weight:700; text-transform:uppercase; letter-spacing:0.07em; color:var(--text-dim); margin-bottom:7px;">What MCP generates — one test per AC</div>
+        <pre style="margin-bottom:8px;"><span class="c">// AC-1: all 4 tabs are rendered</span>
+<span class="k">test</span>(<span class="s">'renders all 4 filter tabs'</span>, <span class="k">async</span> (&#123; page &#125;) =&gt; &#123;
+  <span class="k">for</span> (<span class="k">const</span> label <span class="k">of</span> [<span class="s">'All'</span>,<span class="s">'Current'</span>,<span class="s">'Upcoming'</span>,<span class="s">'Past'</span>]) &#123;
+    <span class="k">await</span> expect(
+      page.getByRole(<span class="s">'tab'</span>, &#123; name: label &#125;)
+    ).toBeVisible();
+  &#125;
+&#125;);
+
+<span class="c">// AC-2: 'All' is selected by default</span>
+<span class="k">test</span>(<span class="s">'All tab selected by default'</span>, <span class="k">async</span> (&#123; page &#125;) =&gt; &#123;
+  <span class="k">await</span> expect(
+    page.getByRole(<span class="s">'tab'</span>, &#123; name: <span class="s">'All'</span> &#125;)
+  ).toHaveAttribute(<span class="s">'aria-selected'</span>, <span class="s">'true'</span>);
+&#125;);
+
+<span class="c">// AC-3: clicking updates state</span>
+<span class="k">test</span>(<span class="s">'clicking Current updates tab'</span>, <span class="k">async</span> (&#123; page &#125;) =&gt; &#123;
+  <span class="k">await</span> page.getByRole(<span class="s">'tab'</span>, &#123; name: <span class="s">'Current'</span> &#125;).click();
+  <span class="k">await</span> expect(
+    page.getByRole(<span class="s">'tab'</span>, &#123; name: <span class="s">'Current'</span> &#125;)
+  ).toHaveAttribute(<span class="s">'aria-selected'</span>, <span class="s">'true'</span>);
+&#125;);</pre>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide deck-playwright overflow"
+     data-notes="• Bridge from Generate: 'You just saw /generate-tests produce clean, scoped output. The reason it stayed clean is the discipline we applied to the prompt. Let me show you what happens when you do the opposite.' • Ask: 'Has Copilot ever forgotten what you asked 5 messages ago? That's the context window.' • Red side: each browser_snapshot injects the full a11y tree. 5 components = 5× the context consumed. Session dies halfway. • Green side: scoped to ClassFilterTabs only. 1 navigate + 1–2 snapshots. Output stays clean. • Rule: one component, one user flow, one output file. Say it three times."
+     data-section="5">
+  <div class="slide-content">
+    <div class="phase-tag amber"><i data-lucide="alert-circle" class="icon"></i>Context Window</div>
+    <h2><span class="h2-icon"><i data-lucide="alert-circle"></i></span>Scope Your Prompts — One Component at a Time</h2>
+
+    <div class="cols cols-2" style="margin-bottom:12px;">
+      <div>
+        <div style="font-size:0.68rem; font-weight:700; text-transform:uppercase; letter-spacing:0.07em; color:var(--red); margin-bottom:8px;">What fills the context window</div>
+        <div class="card red" style="margin-bottom:8px; padding:11px 13px;">
+          <div class="ch" style="color:var(--red);"><i data-lucide="x-circle"></i><h3 style="font-size:0.85rem; color:var(--red);">One giant prompt for the whole app</h3></div>
+          <pre style="margin:0; font-size:0.7rem;"><span class="c">// What burns the context window</span>
+<span class="s">"Open a browser at localhost:3000.
+Test the entire Learning Dashboard.
+Include the header, class filter tabs,
+leaderboard table, pagination, modals,
+user profile, and all sidebar navigation.
+Cover all edge cases and error states.
+Generate a complete test suite."</span>
+
+<span class="c">// What happens:</span>
+<span class="c">// - MCP tool calls: 12+ browser_snapshot calls</span>
+<span class="c">// - Context fills after 3rd component</span>
+<span class="c">// - Copilot "forgets" the first feature</span>
+<span class="c">// - Session degrades → useless output</span></pre>
+        </div>
+        <div style="display:flex; flex-direction:column; gap:6px;">
+          <div class="card" style="padding:9px 12px;">
+            <div class="ch"><i data-lucide="cpu" style="color:var(--amber);"></i><h3 style="font-size:0.83rem;">Why MCP makes it worse</h3></div>
+            <p style="font-size:0.79rem;">Each <code class="inline">browser_snapshot</code> injects the full accessibility tree into the context. Snapshotting 5 components = 5× the context consumed — on top of the conversation history.</p>
+          </div>
+          <div class="callout amber" style="margin:0; padding:7px 10px;">
+            <p style="font-size:0.79rem;">Each snapshot adds hundreds of tokens. A fresh Copilot session with a scoped prompt stays coherent from start to finish.</p>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div style="font-size:0.68rem; font-weight:700; text-transform:uppercase; letter-spacing:0.07em; color:var(--green); margin-bottom:8px;">The fix: one feature → one prompt → one test file</div>
+        <div class="card green" style="margin-bottom:8px; padding:11px 13px;">
+          <div class="ch" style="color:var(--green);"><i data-lucide="focus"></i><h3 style="font-size:0.85rem; color:var(--green);">Scoped prompt for ClassFilterTabs only</h3></div>
+          <pre style="margin:0; font-size:0.7rem;"><span class="c">// What keeps the context clean</span>
+<span class="s">"Open a browser at localhost:3000.
+Navigate to the Class Filter Tabs section.
+
+Generate a @playwright/test for:
+  AC-1: 4 tabs are rendered
+  AC-2: 'All' tab is selected by default
+  AC-3: clicking a tab updates state
+
+Use only getByRole and getByText.
+Output to tests/e2e/class-filter-tabs.spec.ts"</span>
+
+<span class="c">// What happens:</span>
+<span class="c">// - MCP tool calls: 1 browser_navigate +</span>
+<span class="c">//   1–2 browser_snapshot calls only</span>
+<span class="c">// - Full session stays coherent</span>
+<span class="c">// - Output is clean and reviewable</span></pre>
+        </div>
+        <div style="font-size:0.68rem; font-weight:700; text-transform:uppercase; letter-spacing:0.07em; color:var(--text-dim); margin-bottom:7px;">The scoping rule</div>
+        <div style="display:flex; flex-direction:column; gap:6px;">
+          <div class="card" style="padding:9px 12px; display:flex; gap:10px; align-items:center;">
+            <span style="font-size:1.3rem; font-weight:800; color:var(--green); min-width:28px; text-align:center;">1</span>
+            <p style="font-size:0.8rem; margin:0;"><strong>One component</strong> per prompt — ClassFilterTabs, not the whole Dashboard</p>
+          </div>
+          <div class="card" style="padding:9px 12px; display:flex; gap:10px; align-items:center;">
+            <span style="font-size:1.3rem; font-weight:800; color:var(--blue-light); min-width:28px; text-align:center;">2</span>
+            <p style="font-size:0.8rem; margin:0;"><strong>One user flow</strong> per prompt — tab selection, not tab selection + pagination + modals</p>
+          </div>
+          <div class="card" style="padding:9px 12px; display:flex; gap:10px; align-items:center;">
+            <span style="font-size:1.3rem; font-weight:800; color:var(--amber); min-width:28px; text-align:center;">3</span>
+            <p style="font-size:0.8rem; margin:0;"><strong>One output file</strong> per prompt — name it explicitly: <code class="inline">class-filter-tabs.spec.ts</code></p>
+          </div>
+          <div class="callout green" style="margin:0; padding:7px 10px;">
+            <p style="font-size:0.79rem;"><strong>The demo uses exactly this pattern.</strong> /validate-ui targets ClassFilterTabs only. The LeaderboardTable gets its own separate prompt and test file.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide deck-playwright overflow"
+     data-notes="• Bridge from the previous slide: 'We have generated stable tests and validated the rendered UI. Now the scenario every team faces — next sprint the component changes and CI goes red Monday morning.' • Pain #2 from survey: 'Significant effort updating locators instead of writing new tests.' • Scenario: UUI 6→7 upgrade. CSS hash changed. CI is red. Old approach: selector hunt, hours gone. • Show repair prompt: paste the failing test. Add 'do not change test logic — only fix selectors.' That phrase is essential. • Time table: 4 hrs → 1 prompt. This is the headline stat to take away."
+     data-section="6">
+  <div class="slide-content">
+    <div class="phase-tag amber"><i data-lucide="wand-2" class="icon"></i>Self-Healing</div>
+    <h2><span class="h2-icon"><i data-lucide="wand-2"></i></span>Next Sprint: The UI Changes — Tests Don't Break</h2>
+
+    <div class="cols cols-2" style="margin-bottom:12px;">
+      <div>
+        <div style="font-size:0.68rem; font-weight:700; text-transform:uppercase; letter-spacing:0.07em; color:var(--red); margin-bottom:7px;">Scenario: UUI upgrade breaks old tests</div>
+        <div class="card red" style="margin-bottom:8px;">
+          <div class="ch" style="color:var(--red);"><i data-lucide="x-circle"></i><h3 style="font-size:0.84rem; color:var(--red);">Old test — CI goes red after UUI 7.x upgrade</h3></div>
+          <pre style="margin:0; font-size:0.71rem;"><span class="c">// This was fine last sprint</span>
+page.locator(
+  <span class="s">'.ClassFilterTabs_tab__a4f92'</span>  <span class="c">// new hash</span>
+).click();
+
+<span class="c">// Error: locator resolved to 0 elements</span>
+<span class="c">// Time to fix: unknown. Selector hunt begins.</span></pre>
+        </div>
+
+        <div style="font-size:0.68rem; font-weight:700; text-transform:uppercase; letter-spacing:0.07em; color:var(--green); margin-bottom:7px;">The repair — one prompt, not a sprint</div>
+        <div class="card" style="margin-bottom:6px; padding:10px 12px;">
+          <div class="ch"><i data-lucide="clipboard-list" style="color:var(--amber);"></i><h3 style="font-size:0.82rem;">Repair prompt template</h3></div>
+          <pre style="margin:0; font-size:0.7rem;"><span class="s">"Test below fails after UUI upgrade.
+Navigate to localhost:3000/class-filter-tabs,
+read the current accessibility tree, propose
+updated selectors using getByRole or getByText.
+Do not change test logic — only fix selectors.
+
+[paste failing test]"</span></pre>
+        </div>
+        <div class="callout amber" style="margin:0; padding:7px 10px;">
+          <p style="font-size:0.79rem;">MCP calls <code class="inline">browser_navigate</code> → <code class="inline">browser_snapshot</code> → returns selectors that exist <em>right now</em> in the live tree. Not from memory. Not guessed.</p>
+        </div>
+      </div>
+
+      <div style="display:flex; flex-direction:column; gap:10px;">
+        <div style="font-size:0.68rem; font-weight:700; text-transform:uppercase; letter-spacing:0.07em; color:var(--text-dim);">Why today's generated tests are already more resilient</div>
+        <div style="display:flex; flex-direction:column; gap:5px;">
+          <div class="hier-row lvl-1">
+            <div class="hier-rank">✓</div>
+            <div class="hier-body">
+              <div style="display:flex; align-items:center; gap:8px;"><code class="inline" style="font-size:0.72rem;">getByRole('tab', &#123; name: 'All' &#125;)</code></div>
+              <div class="hier-code">UUI upgrade changes the hash. This selector doesn't care. Still works.</div>
+            </div>
+          </div>
+          <div class="hier-row lvl-1">
+            <div class="hier-rank">✓</div>
+            <div class="hier-body">
+              <div style="display:flex; align-items:center; gap:8px;"><code class="inline" style="font-size:0.72rem;">toHaveAttribute('aria-selected', 'true')</code></div>
+              <div class="hier-code">Checks the ARIA contract — not an internal class. Survives component rewrites.</div>
+            </div>
+          </div>
+          <div class="hier-row lvl-x">
+            <div class="hier-rank">✕</div>
+            <div class="hier-body">
+              <div style="display:flex; align-items:center; gap:8px;"><code class="inline" style="font-size:0.72rem;">.ClassFilterTabs_tab__a4f92</code></div>
+              <div class="hier-code">This is Pain #1 from the survey. Never generate this. Never commit this.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card green" style="padding:11px 13px; flex:1; min-height:0;">
+          <div class="ch" style="color:var(--green);"><i data-lucide="clock"></i><h3 style="font-size:0.86rem; color:var(--green);">Time saved — Pain #2 addressed</h3></div>
+          <table style="font-size:0.79rem; margin-top:4px;">
+            <thead><tr><th>Task</th><th>Before</th><th>After</th></tr></thead>
+            <tbody>
+              <tr><td>Selector breaks in CI</td><td style="color:var(--red);">~4 hrs hunt</td><td style="color:var(--green);">1 prompt</td></tr>
+              <tr><td>New feature tests</td><td style="color:var(--red);">~1 day write</td><td style="color:var(--green);">~15 min</td></tr>
+              <tr><td>Post-upgrade repair</td><td style="color:var(--red);">Full sprint</td><td style="color:var(--green);">~30 min</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide deck-playwright overflow"
+     data-notes="• Frame: 'Everything we have demonstrated so far catches two types of defect — broken behaviour and visual regression. There is a third category that both Snapshot and Vision miss entirely.' • Left card scenario: 'Imagine the Support Team Widget renders correctly. The Playwright test passes. The screenshot matches Figma. And yet your API endpoint is returning a 401 on every load — the widget is showing cached data, not live data. No test caught it. No screenshot showed it. Because both tools only see what the browser renders, not what the network did underneath.' • Right side — the one config change: 'You add --caps=devtools to the args array in mcp.json. Reload VS Code. Now Copilot has browser_console_messages and browser_network_requests available alongside the snapshot tools.' • Example prompt: walk through it word by word — trigger phrase, component name, what to check. • Tool calls: browser_navigate → browser_console_messages → browser_network_requests. Structured lists back. Every console error with its source. Every request with its status code. • Bottom callout: 'Token cost warning — this is the most expensive mode. Use it for exploratory testing and pre-release validation, not for your daily test pipeline. The --caps=snapshot default is what you want running in CI every hour.'"
+     data-section="8">
+  <div class="slide-content">
+    <div class="phase-tag amber"><i data-lucide="terminal" class="icon"></i>Bonus — DevTools Mode</div>
+    <h2><span class="h2-icon"><i data-lucide="terminal"></i></span>Catching Invisible Defects — What Snapshot Misses</h2>
+
+    <div class="cols cols-2" style="margin-bottom:12px; align-items:stretch;">
+
+      <!-- Left: the scenario -->
+      <div>
+        <div style="font-size:0.68rem; font-weight:700; text-transform:uppercase; letter-spacing:0.07em; color:var(--red); margin-bottom:7px;">The invisible defect scenario</div>
+        <div class="card red" style="margin-bottom:9px;">
+          <div class="ch" style="color:var(--red);"><i data-lucide="eye-off"></i><h3 style="font-size:0.84rem; color:var(--red);">Component renders ✓  Test passes ✓  But…</h3></div>
+          <ul class="arrow" style="margin:0;">
+            <li style="font-size:0.8rem;">Data API returns <code class="inline">401 Unauthorized</code> — widget shows cached stale data</li>
+            <li style="font-size:0.8rem;">Third-party dependency throws <code class="inline">console.error</code> silently on load</li>
+            <li style="font-size:0.8rem;">Page makes 14 duplicate network requests — invisible in CI, kills mobile performance</li>
+          </ul>
+          <div style="margin-top:9px; padding:8px 10px; background:var(--red-bg); border-radius:5px; font-size:0.77rem; color:var(--red);">
+            <strong>Snapshot and Vision cannot see any of this.</strong> They only see what the browser rendered.
+          </div>
+        </div>
+
+        <div style="font-size:0.68rem; font-weight:700; text-transform:uppercase; letter-spacing:0.07em; color:var(--amber); margin-bottom:7px;">One config change</div>
+        <div class="card" style="margin-bottom:9px;">
+          <div class="ch"><i data-lucide="settings" style="color:var(--amber);"></i><h3 style="font-size:0.83rem;">Add <code class="inline">--caps=devtools</code> to mcp.json</h3></div>
+          <pre style="margin:0; font-size:0.71rem;"><span class="s">"playwright"</span>: &#123;
+  <span class="s">"command"</span>: <span class="s">"npx"</span>,
+  <span class="s">"args"</span>: [
+    <span class="s">"-y"</span>, <span class="s">"@playwright/mcp@latest"</span>,
+    <span class="s">"--caps=devtools"</span>  <span class="c">// &lt;-- add this</span>
+  ]
+&#125;</pre>
+        </div>
+        <div class="callout" style="margin:0; padding:8px 11px; font-size:0.78rem;">
+          <p>Reload VS Code after saving. Now Copilot has <code class="inline">browser_console_messages</code> and <code class="inline">browser_network_requests</code> alongside its usual snapshot tools.</p>
+        </div>
+      </div>
+
+      <!-- Right: example prompt + what it catches -->
+      <div style="display:flex; flex-direction:column; gap:9px;">
+        <div style="font-size:0.68rem; font-weight:700; text-transform:uppercase; letter-spacing:0.07em; color:var(--green); margin-bottom:0;">DevTools-mode prompt</div>
+        <div class="card" style="padding:10px 12px;">
+          <div class="ch"><i data-lucide="clipboard-list" style="color:var(--amber);"></i><h3 style="font-size:0.82rem;">Example prompt</h3></div>
+          <pre style="margin:0; font-size:0.7rem;"><span class="s">"Open a browser at localhost:3000.
+Load the Support Team Widget.
+Check the browser console for
+any errors or warnings.
+List all network requests and flag
+any that returned a non-2xx status."</span></pre>
+        </div>
+
+        <div class="card" style="padding:10px 12px;">
+          <div class="ch"><i data-lucide="activity" style="color:var(--amber);"></i><h3 style="font-size:0.82rem;">Tool call sequence</h3></div>
+          <div class="flow" style="flex-direction:column; align-items:flex-start; gap:5px; margin:0;">
+            <div style="display:flex; align-items:center; gap:7px; font-size:0.77rem;">
+              <span style="width:6px; height:6px; border-radius:50%; background:var(--blue); flex-shrink:0;"></span>
+              <code class="inline" style="font-size:0.7rem;">browser_navigate</code>
+              <span style="color:var(--text-dim);">→ opens localhost:3000</span>
+            </div>
+            <div style="display:flex; align-items:center; gap:7px; font-size:0.77rem;">
+              <span style="width:6px; height:6px; border-radius:50%; background:var(--amber); flex-shrink:0;"></span>
+              <code class="inline" style="font-size:0.7rem;">browser_console_messages</code>
+              <span style="color:var(--text-dim);">→ returns all errors/warnings</span>
+            </div>
+            <div style="display:flex; align-items:center; gap:7px; font-size:0.77rem;">
+              <span style="width:6px; height:6px; border-radius:50%; background:var(--amber); flex-shrink:0;"></span>
+              <code class="inline" style="font-size:0.7rem;">browser_network_requests</code>
+              <span style="color:var(--text-dim);">→ returns all requests with status codes</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="card green" style="padding:11px 13px; flex:1;">
+          <div class="ch" style="color:var(--green);"><i data-lucide="shield-check"></i><h3 style="font-size:0.86rem; color:var(--green);">What DevTools mode catches</h3></div>
+          <ul class="check" style="margin:0;">
+            <li style="font-size:0.79rem;">Silent 401 / 403 / 500 on data APIs</li>
+            <li style="font-size:0.79rem;">Third-party script console errors</li>
+            <li style="font-size:0.79rem;">Duplicate or redundant network requests</li>
+            <li style="font-size:0.79rem;">Security header violations</li>
+            <li style="font-size:0.79rem;">Slow responses hurting performance</li>
+          </ul>
+        </div>
+
+        <div class="callout amber" style="margin:0; padding:8px 11px;">
+          <p style="font-size:0.77rem;"><strong>Token cost:</strong> DevTools + Vision combined (<code class="inline">--caps=vision,devtools</code>) is expensive. Use default Snapshot for CI. Use DevTools for pre-release exploratory testing.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide deck-playwright overflow"
+     data-notes="• 'Let's close the loop. Three pains from your survey — here's what we just built for each one.' • Read each pain + solution pair aloud — don't skip this, it reinforces the value. • Ask: 'Which of these three pains do you feel most on your team?' — pause for 5 seconds. • Close: '5 actions. Each one takes under 30 minutes. Start with #1 — commit the mcp.json today.'"
+     data-section="7">
+  <div class="slide-content">
+    <div class="phase-tag green"><i data-lucide="check-circle-2" class="icon"></i>Takeaways</div>
+    <h2><span class="h2-icon"><i data-lucide="check-circle-2"></i></span>Survey Pain → What We Just Demonstrated</h2>
+
+    <div style="display:flex; flex-direction:column; gap:8px; margin-bottom:14px;">
+      <div class="card" style="padding:11px 14px;">
+        <div style="display:flex; gap:12px; align-items:flex-start;">
+          <div style="flex-shrink:0; min-width:200px;">
+            <div style="font-size:0.65rem; font-weight:700; text-transform:uppercase; letter-spacing:0.07em; color:var(--red); margin-bottom:4px;">Survey Pain</div>
+            <p style="font-size:0.81rem; font-style:italic; color:var(--text-muted);">"Every UI change breaks existing automation suites due to changed HTML IDs, locators, and selectors."</p>
+          </div>
+          <div style="width:1px; background:var(--border); flex-shrink:0; align-self:stretch;"></div>
+          <div>
+            <div style="font-size:0.65rem; font-weight:700; text-transform:uppercase; letter-spacing:0.07em; color:var(--green); margin-bottom:4px;">What We Demonstrated</div>
+            <p style="font-size:0.81rem;"><code class="inline">getByRole('tab', &#123; name: 'All' &#125;)</code> — tied to ARIA role + label, not CSS hash. UUI upgrades, component renames, and CSS module rebuilds don't touch this selector.</p>
+          </div>
+        </div>
+      </div>
+      <div class="card" style="padding:11px 14px;">
+        <div style="display:flex; gap:12px; align-items:flex-start;">
+          <div style="flex-shrink:0; min-width:200px;">
+            <div style="font-size:0.65rem; font-weight:700; text-transform:uppercase; letter-spacing:0.07em; color:var(--red); margin-bottom:4px;">Survey Pain</div>
+            <p style="font-size:0.81rem; font-style:italic; color:var(--text-muted);">"Significant ongoing effort updating XPath and locator references rather than writing new tests."</p>
+          </div>
+          <div style="width:1px; background:var(--border); flex-shrink:0; align-self:stretch;"></div>
+          <div>
+            <div style="font-size:0.65rem; font-weight:700; text-transform:uppercase; letter-spacing:0.07em; color:var(--green); margin-bottom:4px;">What We Demonstrated</div>
+            <p style="font-size:0.81rem;">Self-healing repair loop: paste failing test + one prompt → MCP reads the live accessibility tree → returns selectors that exist right now. Minutes, not sprints.</p>
+          </div>
+        </div>
+      </div>
+      <div class="card" style="padding:11px 14px;">
+        <div style="display:flex; gap:12px; align-items:flex-start;">
+          <div style="flex-shrink:0; min-width:200px;">
+            <div style="font-size:0.65rem; font-weight:700; text-transform:uppercase; letter-spacing:0.07em; color:var(--red); margin-bottom:4px;">Survey Pain</div>
+            <p style="font-size:0.81rem; font-style:italic; color:var(--text-muted);">"Chat session stops working when questions are big — context window fills up."</p>
+          </div>
+          <div style="width:1px; background:var(--border); flex-shrink:0; align-self:stretch;"></div>
+          <div>
+            <div style="font-size:0.65rem; font-weight:700; text-transform:uppercase; letter-spacing:0.07em; color:var(--green); margin-bottom:4px;">What We Demonstrated</div>
+            <p style="font-size:0.81rem;">One feature → one prompt → one test file. The /validate-ui prompt targets only ClassFilterTabs. No entire-app context dumps. Context window stays clean.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div style="font-size:0.68rem; font-weight:700; text-transform:uppercase; letter-spacing:0.07em; color:var(--text-dim); margin-bottom:8px;">5 actions for Monday</div>
+    <div class="cols cols-2" style="gap:8px;">
+      <div style="display:flex; flex-direction:column; gap:6px;">
+        <div class="pillar" style="padding:9px 12px; background:var(--green-bg); border-color:var(--green-border);">
+          <div class="pillar-num" style="font-size:1.1rem; color:var(--green);">1</div>
+          <div class="pillar-body"><h3 style="font-size:0.85rem; color:var(--green);">Commit <code class="inline">.vscode/mcp.json</code></h3><p style="font-size:0.78rem;">5 lines. Every team member gets Playwright MCP on clone. No individual setup.</p></div>
+        </div>
+        <div class="pillar" style="padding:9px 12px; background:var(--blue-bg); border-color:var(--blue-border);">
+          <div class="pillar-num" style="font-size:1.1rem; color:var(--blue-light);">2</div>
+          <div class="pillar-body"><h3 style="font-size:0.85rem; color:var(--blue-light);">Add selector rule to <code class="inline">copilot-instructions.md</code></h3><p style="font-size:0.78rem;"><code class="inline">getByRole &gt; getByLabel &gt; getByText</code> — MCP follows it automatically.</p></div>
+        </div>
+        <div class="pillar" style="padding:9px 12px;">
+          <div class="pillar-num" style="font-size:1.1rem; color:var(--blue-light);">3</div>
+          <div class="pillar-body"><h3 style="font-size:0.85rem;">Pick one failing test and repair it</h3><p style="font-size:0.78rem;">Use the repair prompt template from the Self-Healing slide. Share the before/after with your team.</p></div>
+        </div>
+      </div>
+      <div style="display:flex; flex-direction:column; gap:6px;">
+        <div class="pillar" style="padding:9px 12px; background:var(--amber-bg); border-color:var(--amber-border);">
+          <div class="pillar-num" style="font-size:1.1rem; color:var(--amber);">4</div>
+          <div class="pillar-body"><h3 style="font-size:0.85rem; color:var(--amber);">Apply the 3-question review gate</h3><p style="font-size:0.78rem;">Q1: does it test what I want? Q2: real app? Q3: would it catch the bug?</p></div>
+        </div>
+        <div class="pillar" style="padding:9px 12px;">
+          <div class="pillar-num" style="font-size:1.1rem; color:var(--green);">5</div>
+          <div class="pillar-body"><h3 style="font-size:0.85rem;">Add <code class="inline">npm run test:e2e</code> to your PR pipeline</h3><p style="font-size:0.78rem;">Gate merge on passing tests. Self-correcting loop starts from your next commit.</p></div>
+        </div>
+        <div class="callout" style="margin:0; padding:8px 11px;">
+          <p style="font-size:0.79rem;"><strong>Resources:</strong> <code class="inline">playwright-mcp-cheatsheet.html</code> &nbsp;·&nbsp; <code class="inline">signify2026/snap-code-project</code></p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide deck-playwright overflow"
+     data-notes="Close warmly: 'That is everything. Thank you for your time and attention.' Pause. 'Before you leave — the cheatsheet is in the Assets folder in the repository. It has everything you need to keep going: the full tool reference, prompt templates, selector hierarchy, self-healing guide, and the guardrails section for things that will trip you up in CI.' Point at the sections list. 'Start with Core Concepts and Limits & Anti-Patterns — those two sections together cover 80% of the mistakes teams make in the first week.' Leave time for questions."
+     data-section="8">
+  <div class="slide-content" style="display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:calc(100vh - 84px); text-align:center;">
+
+    <!-- Thank you block -->
+    <div style="margin-bottom:36px;">
+      <div style="font-size:3.2rem; font-weight:800; letter-spacing:-0.03em; color:var(--text); line-height:1.1; margin-bottom:10px;">Thank <span style="color:var(--blue-light);">You</span></div>
+      <p style="font-size:1rem; color:var(--text-muted); max-width:520px; line-height:1.7;">Questions? The cheatsheet covers everything you need to keep going — guardrails, best practices, and all 31 MCP tools.</p>
+    </div>
+
+    <!-- Cheatsheet card -->
+    <div class="card blue" style="max-width:680px; width:100%; text-align:left; padding:22px 26px; margin-bottom:24px;">
+      <div class="ch" style="color:var(--blue-light); margin-bottom:14px;"><i data-lucide="book-open"></i><h3 style="color:var(--blue-light); font-size:1rem;">Playwright MCP — Complete Cheatsheet</h3></div>
+      <div style="font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.07em; color:var(--text-dim); margin-bottom:10px;">Location &nbsp;·&nbsp; <code class="inline">Assets/playwright-mcp-cheatsheet.html</code></div>
+      <div class="cols cols-2" style="gap:8px;">
+        <div style="display:flex; flex-direction:column; gap:6px;">
+          <div style="display:flex; align-items:flex-start; gap:8px; padding:7px 10px; background:var(--bg-elevated); border-radius:var(--r); border:1px solid var(--border-soft);">
+            <span style="color:var(--green); font-weight:700; font-size:0.75rem; flex-shrink:0; margin-top:1px;">§1</span>
+            <div><div style="font-size:0.82rem; font-weight:600; color:var(--text);">Core Concepts</div><div style="font-size:0.75rem; color:var(--text-muted);">Mental model, tool types, a11y tree explained</div></div>
+          </div>
+          <div style="display:flex; align-items:flex-start; gap:8px; padding:7px 10px; background:var(--bg-elevated); border-radius:var(--r); border:1px solid var(--border-soft);">
+            <span style="color:var(--blue-light); font-weight:700; font-size:0.75rem; flex-shrink:0; margin-top:1px;">§2</span>
+            <div><div style="font-size:0.82rem; font-weight:600; color:var(--text);">MCP Tool Reference</div><div style="font-size:0.75rem; color:var(--text-muted);">All 31 tools with inputs and when to use each</div></div>
+          </div>
+          <div style="display:flex; align-items:flex-start; gap:8px; padding:7px 10px; background:var(--bg-elevated); border-radius:var(--r); border:1px solid var(--border-soft);">
+            <span style="color:var(--blue-light); font-weight:700; font-size:0.75rem; flex-shrink:0; margin-top:1px;">§3</span>
+            <div><div style="font-size:0.82rem; font-weight:600; color:var(--text);">Prompting, Assertions &amp; Self-Healing</div><div style="font-size:0.75rem; color:var(--text-muted);">4-part prompt anatomy, repair templates</div></div>
+          </div>
+          <div style="display:flex; align-items:flex-start; gap:8px; padding:7px 10px; background:var(--bg-elevated); border-radius:var(--r); border:1px solid var(--border-soft);">
+            <span style="color:var(--amber); font-weight:700; font-size:0.75rem; flex-shrink:0; margin-top:1px;">§4</span>
+            <div><div style="font-size:0.82rem; font-weight:600; color:var(--text);">Reliability &amp; Debugging</div><div style="font-size:0.75rem; color:var(--text-muted);">Flaky test fixes, wait strategies, CI patterns</div></div>
+          </div>
+        </div>
+        <div style="display:flex; flex-direction:column; gap:6px;">
+          <div style="display:flex; align-items:flex-start; gap:8px; padding:7px 10px; background:var(--bg-elevated); border-radius:var(--r); border:1px solid var(--border-soft);">
+            <span style="color:var(--text-muted); font-weight:700; font-size:0.75rem; flex-shrink:0; margin-top:1px;">§5</span>
+            <div><div style="font-size:0.82rem; font-weight:600; color:var(--text);">Auth, Network &amp; Accessibility</div><div style="font-size:0.75rem; color:var(--text-muted);">storageState, intercept, a11y assertions</div></div>
+          </div>
+          <div style="display:flex; align-items:flex-start; gap:8px; padding:7px 10px; background:var(--bg-elevated); border-radius:var(--r); border:1px solid var(--border-soft);">
+            <span style="color:var(--text-muted); font-weight:700; font-size:0.75rem; flex-shrink:0; margin-top:1px;">§6</span>
+            <div><div style="font-size:0.82rem; font-weight:600; color:var(--text);">CI / CD</div><div style="font-size:0.75rem; color:var(--text-muted);">GitHub Actions setup, sharding, reporting</div></div>
+          </div>
+          <div style="display:flex; align-items:flex-start; gap:8px; padding:7px 10px; background:var(--red-bg); border-radius:var(--r); border:1px solid var(--red-border);">
+            <span style="color:var(--red); font-weight:700; font-size:0.75rem; flex-shrink:0; margin-top:1px;">§7</span>
+            <div><div style="font-size:0.82rem; font-weight:600; color:var(--red);">Limits &amp; Anti-Patterns</div><div style="font-size:0.75rem; color:var(--text-muted);">What MCP cannot do and what breaks first</div></div>
+          </div>
+          <div style="display:flex; align-items:flex-start; gap:8px; padding:7px 10px; background:var(--bg-elevated); border-radius:var(--r); border:1px solid var(--border-soft);">
+            <span style="color:var(--text-muted); font-weight:700; font-size:0.75rem; flex-shrink:0; margin-top:1px;">§8</span>
+            <div><div style="font-size:0.82rem; font-weight:600; color:var(--text);">Quick Config Reference</div><div style="font-size:0.75rem; color:var(--text-muted);">mcp.json, playwright.config, selector rules</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="callout amber" style="margin-top:12px; padding:8px 12px;">
+        <p style="font-size:0.8rem;">Start with <strong>§1 Core Concepts</strong> and <strong>§7 Limits &amp; Anti-Patterns</strong> — those two sections cover 80% of the mistakes teams make in the first week.</p>
+      </div>
+    </div>
+
+    <!-- Repo reference -->
+    <div style="display:flex; align-items:center; gap:10px; font-size:0.8rem; color:var(--text-muted);">
+      <i data-lucide="github" style="width:15px; height:15px; stroke:currentColor; flex-shrink:0;"></i>
+      <span><code class="inline">signify2026/snap-code-project</code> &nbsp;·&nbsp; open <code class="inline">Assets/playwright-mcp-cheatsheet.html</code> in any browser</span>
+    </div>
+
+  </div>
+</div>
+
+</div><!-- /deck -->
+
+<div id="bottom-bar">
+  <div id="progress-track"><div id="progress-fill"></div></div>
+  <span id="hint">← → Space · N notes · F fullscreen</span>
+  <span id="counter">1 / 18</span>
+</div>
+<button class="nav-btn" id="btn-prev" onclick="prevSlide()" aria-label="Previous">‹</button>
+<button class="nav-btn" id="btn-next" onclick="nextSlide()" aria-label="Next">›</button>
+
+<div id="notes">
+  <h4><i data-lucide="message-circle" style="display:inline-block;width:12px;height:12px;stroke:currentColor;vertical-align:middle;margin-right:4px;"></i>Speaker Notes</h4>
+  <p id="notes-text"></p>
+</div>
+
+<script>
+  const ATLASSIAN_SLIDES = 6;
+  lucide.createIcons();
+  const slides = document.querySelectorAll('.slide');
+  const total   = slides.length;
+  let   current = 0;
+  let   notesVisible = false;
+  let   hideSlideTimer = null;
+  const sectionBtns = document.querySelectorAll('.nav-sec-btn');
+
+  function updateNav() {
+    sectionBtns.forEach(btn => {
+      const nums = (btn.dataset.slides || '').split(',').map(Number);
+      const isActive = nums.includes(current);
+      btn.classList.toggle('active', isActive);
+    });
+    const fill = document.getElementById('progress-fill');
+    fill.style.background = current <= ATLASSIAN_SLIDES
+      ? 'var(--purple)'
+      : 'var(--blue-light)';
+  }
+
+  function showSlide(idx) {
+    const next = ((idx % total) + total) % total;
+    if (next === current) return;
+
+    if (hideSlideTimer) {
+      clearTimeout(hideSlideTimer);
+      hideSlideTimer = null;
+    }
+
+    const prev = current;
+    slides[prev].classList.remove('visible');
+    hideSlideTimer = setTimeout(() => {
+      slides[prev].classList.remove('active');
+      hideSlideTimer = null;
+    }, 200);
+
+    current = next;
+    slides[current].classList.add('active');
+    requestAnimationFrame(() => requestAnimationFrame(() => slides[current].classList.add('visible')));
+    const pct = total > 1 ? (current / (total - 1)) * 100 : 100;
+    document.getElementById('progress-fill').style.width = pct + '%';
+    document.getElementById('counter').textContent = (current + 1) + ' / ' + total;
+    document.getElementById('notes-text').textContent = slides[current].dataset.notes || '';
+    updateNav();
+    lucide.createIcons();
+  }
+
+  function nextSlide() { showSlide(current + 1); }
+  function prevSlide() { showSlide(current - 1); }
+  function goToSlide(idx) { showSlide(idx); }
+
+  slides[0].classList.add('visible');
+  document.getElementById('notes-text').textContent = slides[0].dataset.notes || '';
+  updateNav();
+
+  document.addEventListener('keydown', e => {
+    if (['ArrowRight', ' ', 'PageDown'].includes(e.key)) { e.preventDefault(); nextSlide(); }
+    if (['ArrowLeft', 'PageUp'].includes(e.key)) { e.preventDefault(); prevSlide(); }
+    if (e.key === 'n' || e.key === 'N') toggleNotes();
+    if (e.key === 'f' || e.key === 'F') {
+      if (!document.fullscreenElement) document.documentElement.requestFullscreen?.();
+      else document.exitFullscreen?.();
+    }
+    if (e.key === 'Home') goToSlide(0);
+    if (e.key === 'End') goToSlide(total - 1);
+  });
+
+  let touchX = 0;
+  document.addEventListener('touchstart', e => { touchX = e.touches[0].clientX; });
+  document.addEventListener('touchend', e => {
+    const dx = e.changedTouches[0].clientX - touchX;
+    if (Math.abs(dx) > 50) dx < 0 ? nextSlide() : prevSlide();
+  });
+
+  function setTheme(t) {
+    document.documentElement.setAttribute('data-theme', t);
+    document.getElementById('th-dark').classList.toggle('active', t === 'dark');
+    document.getElementById('th-light').classList.toggle('active', t === 'light');
+  }
+  function toggleNotes() {
+    notesVisible = !notesVisible;
+    document.getElementById('notes').classList.toggle('visible', notesVisible);
+  }
+</script>
+</body>
+</html>
