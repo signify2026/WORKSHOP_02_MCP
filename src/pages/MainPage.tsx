@@ -6,10 +6,9 @@ import {
     ClassOverviewCards, 
     ClassFilterTabs, 
     LeaderboardTable,
-    LearningProgrammeWidget,
-    SupportTeamWidget 
+    LearningProgrammeWidget 
 } from '../components';
-import { mockClassData, mockStudentData, mockSupportTeamData } from '../data/mockData';
+import { mockClassData, mockStudentData } from '../data/mockData';
 import { 
     createTabsFromStudentData, 
     createLeaderboardData, 
@@ -170,10 +169,6 @@ export const MainPage = () => {
                                         programmes={programmes}
                                     />
                                 )}
-                                <SupportTeamWidget
-                                    className={css.supportTeamWidget}
-                                    groups={mockSupportTeamData}
-                                />
                                 {isLoading && (
                                     <div className={css.widgetPlaceholder}>
                                         Loading learning progress...
