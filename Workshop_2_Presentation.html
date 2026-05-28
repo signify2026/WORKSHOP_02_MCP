@@ -394,8 +394,8 @@
     <div class="title-sub">Advanced usage, use cases, governance &amp; best practices</div>
     <div class="title-rule"></div>
     <div class="title-meta">
-      <span>📍 Bangalore, Yelahanka</span>
-      <span>📅 May 29, 2026</span>
+      <span>📍 Bangalore</span>
+      <span>📅 May 28, 2026</span>
       <span>⏱ 90 minutes</span>
     </div>
     <div>
@@ -1353,6 +1353,84 @@ server.tool(
       <div class="card">
         <h3>7. Task framing, not question framing</h3>
         <p style="font-size:0.87rem;">Prompts that describe a task invoke MCP tools. Prompts that ask a question get answered from training data. Use "get from Figma" not "what are the brand colours".</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════
+     SLIDE 17 — BONUS: IOT DEVICES + MCP
+═══════════════════════════════════════════════════════════ -->
+<div class="slide overflow"
+     data-notes="The same server pattern from Use Case A applies to any HTTP-accessible IoT device or MQTT broker. Expose tools like get_sensor_reading, list_anomalies, set_device_state — structurally identical to jira_get_issue. The powerful angle is MCP Resources: stream live sensor data as read-only context so Copilot reasons over real-time device state without the developer manually pasting values. Example: a temperature spike in Zone B at 14:32 correlates with a firmware deployment at 14:30 — Copilot surfaces that link automatically. No vendor MCP server exists yet for most IoT platforms, which makes this a first-mover opportunity. Let the flow diagram do the work. Leave the audience curious — this is a teaser, not a tutorial.">
+  <div class="slide-content">
+    <div class="phase-tag amber">Bonus — Going Further</div>
+    <h2>What If Your Devices Could Talk to Copilot?</h2>
+    <div style="display:flex; align-items:center; justify-content:center; gap:20px; margin:28px 0 28px; flex-wrap:wrap;">
+      <div class="flow-box amber" style="padding:28px 44px; text-align:center; display:flex; flex-direction:column; align-items:center; gap:10px;">
+        <span style="font-size:2.8rem; line-height:1;">🌡</span>
+        <span style="font-size:1.15rem; font-weight:700;">Physical Device</span>
+      </div>
+      <div class="flow-arrow" style="font-size:2rem;">→</div>
+      <div class="flow-box purple" style="padding:28px 44px; text-align:center; display:flex; flex-direction:column; align-items:center; gap:10px;">
+        <span style="font-size:2.8rem; line-height:1;">⚡</span>
+        <span style="font-size:1.15rem; font-weight:700;">MCP Server</span>
+      </div>
+      <div class="flow-arrow" style="font-size:2rem;">→</div>
+      <div class="flow-box blue" style="padding:28px 44px; text-align:center; display:flex; flex-direction:column; align-items:center; gap:10px;">
+        <span style="font-size:2.8rem; line-height:1;">🤖</span>
+        <span style="font-size:1.15rem; font-weight:700;">Copilot Chat</span>
+      </div>
+    </div>
+    <div class="card amber" style="margin-bottom:20px;">
+      <h3 class="amber">💬 Imagine asking...</h3>
+      <p style="font-size:1.05rem; font-style:italic; color:var(--text); margin:8px 0 0;">"Are any sensors in Zone B showing anomalies? Which firmware was running when it started?"</p>
+    </div>
+    <div class="cols cols-2" style="gap:12px;">
+      <div class="card">
+        <h3>The pattern you already know</h3>
+        <p style="font-size:0.87rem; color:var(--text-muted);">You built an MCP server today. The same skills work for any physical device.</p>
+      </div>
+      <div class="card" style="border-style:dashed;">
+        <h3>🔍 There's more to this story...</h3>
+        <p style="font-size:0.87rem; color:var(--text-muted);">Device control. Anomaly correlation. Predictive maintenance. All from your IDE.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════
+     SLIDE 18 — NEXT STEPS
+═══════════════════════════════════════════════════════════ -->
+<div class="slide overflow"
+     data-notes="Five concrete things participants can walk away and do. Keep this fast — read each item aloud and let people pick what resonates. The monitoring wrap (1) has the highest immediate ROI for most teams. Committing mcp.json (2) costs 10 minutes and gives the whole team MCP on git clone. The prompt library (3) is a force-multiplier for onboarding. Extending the Jira server (4) builds directly on today's work — lowest activation energy. The IoT bridge (5) is the most ambitious and connects back to the bonus slide.">
+  <div class="slide-content">
+    <div class="phase-tag green">What's Next</div>
+    <h2>Next Steps</h2>
+    <div class="cols cols-2" style="gap:12px; margin-bottom:14px;">
+      <div class="card">
+        <h3>1. Wrap your monitoring stack</h3>
+        <p style="font-size:0.87rem; color:var(--text-muted);">Build an MCP server for Grafana, Datadog, or New Relic. Ask Copilot <em>"Any active alerts on the auth service?"</em> without leaving VS Code.</p>
+      </div>
+      <div class="card">
+        <h3>2. Standardise the team setup</h3>
+        <p style="font-size:0.87rem; color:var(--text-muted);">Commit <code class="inline">.vscode/mcp.json</code> with approved servers pre-wired. Every developer gets the same MCP stack on <code class="inline">git clone</code>.</p>
+      </div>
+      <div class="card">
+        <h3>3. Build a prompt library</h3>
+        <p style="font-size:0.87rem; color:var(--text-muted);">Write <code class="inline">.prompt.md</code> slash commands for your most-used MCP workflows — <code class="inline">/jira-to-code</code>, <code class="inline">/generate-tests</code> — and commit them to <code class="inline">.github/prompts/</code>.</p>
+      </div>
+      <div class="card">
+        <h3>4. Extend the Jira MCP server</h3>
+        <p style="font-size:0.87rem; color:var(--text-muted);">Add <code class="inline">add_comment</code>, <code class="inline">update_issue</code>, or a custom <code class="inline">search_my_open_bugs</code> tool onto the server you built in Use Case A.</p>
+      </div>
+      <div class="card">
+        <h3>5. Build a Bitbucket MCP Server</h3>
+        <p style="font-size:0.87rem; color:var(--text-muted);">Connect Copilot directly to Bitbucket for source control — review open PRs, check pipeline status, create branches from Jira tickets, and trigger git actions from natural language in VS Code.</p>
+      </div>
+      <div class="card">
+        <h3>6. Bridge a physical device 🌡</h3>
+        <p style="font-size:0.87rem; color:var(--text-muted);">Try connecting your IoT devices with GitHub Copilot using a custom MCP server.</p>
       </div>
     </div>
   </div>
